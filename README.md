@@ -1,4 +1,4 @@
-# Banking Page Login
+# Banking Page Login System
 
 Key features:
 - Allows user to register or login to the banking page
