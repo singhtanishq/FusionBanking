@@ -82,7 +82,7 @@ a:hover {
 .home, .contact-us {
     max-width: 500px;
     margin: 100px auto;
-    background-color: #ffe371;
+    background-color: #fff8b5;
     padding: 20px;
     border-radius: 30px;
     box-shadow: 20px 20px 30px rgb(0, 0, 0);
@@ -91,7 +91,7 @@ a:hover {
 .about-us {
     max-width: 700px;
     margin: 100px auto;
-    background-color: #ffe371;
+    background-color: #fff8b5;
     padding: 20px;
     border-radius: 30px;
     box-shadow: 20px 20px 30px rgb(0, 0, 0);
