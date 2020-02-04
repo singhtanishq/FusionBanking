@@ -1,3 +1,5 @@
+var registeredUsers = [];
+
 function toggleForm(formId) {
     var loginForm = document.getElementById('loginForm');
     var signupForm = document.getElementById('signupForm');
@@ -33,7 +35,12 @@ document.getElementById('loginForm').addEventListener('submit', function(event) 
     var username = document.getElementById('username').value;
     var password = document.getElementById('password').value;
 
-    if (username === "admin" && password === "password123") {
+    // Check if the username and password match any registered user
+    var user = registeredUsers.find(function(user) {
+        return user.username === username && user.password === password;
+    });
+
+    if (user) {
         window.location.href = "sample.html";
     } else {
         alert("Invalid credentials. Please try again.");
@@ -52,12 +59,25 @@ document.getElementById('signUpStep2').addEventListener('submit', function(event
         return;
     }
 
+    // Check if the username already exists
+    var userExists = registeredUsers.some(function(user) {
+        return user.username === username;
+    });
+
+    if (userExists) {
+        alert("Username already exists. Please choose a different one.");
+        return;
+    }
+
+    // Add the new user to the array
+    registeredUsers.push({ username: username, password: password });
+
     alert("User registered successfully!");
-    
+
     document.getElementById('signUpStep1').style.display = 'block';
     document.getElementById('signUpStep2').style.display = 'none';
     document.getElementById('signUpStep1').reset();
     document.getElementById('signUpStep2').reset();
-    
+
     toggleForm('loginForm');
 });
