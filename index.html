@@ -1,29 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+    <!-- Set character encoding and viewport for responsiveness -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Title of the webpage -->
     <title>Tanishq Payments Bank</title>
+
+    <!-- Link to an external stylesheet (styles.css) -->
     <link rel="stylesheet" href="styles.css">
+
+    <!-- Internal CSS for styling -->
     <style>
+        /* Style for form container */
         .form-container {
             text-align: center;
         }
+
+        /* Style for forms within form container */
         .form-container form {
             display: inline-block;
             text-align: left;
             margin: 0 auto;
         }
+
+        /* Initially hide password fields */
         .password-fields {
             display: none;
         }
     </style>
 </head>
+
 <body>
+    <!-- Header section containing bank name and navigation -->
     <header>
+        <!-- Bank name -->
         <h1 class="header-title">Tanishq Payments Bank</h1>
+
+        <!-- Navigation menu -->
         <nav>
             <ul>
+                <!-- Links to various pages -->
                 <li><a href="home.html">Home</a></li>
                 <li><a href="contact.html">Contact Us</a></li>
                 <li><a href="about.html">About Us</a></li>
@@ -31,60 +50,107 @@
         </nav>
     </header>
 
+    <!-- Main content section -->
     <main>
+        <!-- Container for forms -->
         <div class="form-container">
+            <!-- Heading for Internet Banking section -->
             <h2>Internet Banking</h2>
             <br>
+
+            <!-- Login form section -->
             <div id="loginForm">
+                <!-- Heading for login form -->
                 <h3>Login</h3>
+
+                <!-- Actual form for login -->
                 <form>
+                    <!-- Label and input field for username -->
                     <label for="username">Username:</label>
                     <input type="text" id="username" name="username" required minlength="5"><br>
 
+                    <!-- Label and input field for password -->
                     <label for="password">Password:</label>
                     <input type="password" id="password" name="password" required pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"><br>
 
-                    <button type="submit">Login</button>
+                    <!-- Button to trigger login function -->
+                    <button type="button" onclick="login()">Login</button>
                 </form>
+
+                <!-- Link for sign up form toggle -->
                 <p>Don't have an account? <a href="#" onclick="toggleForm('signupForm')">Sign Up</a></p>
             </div>
 
+            <!-- Content displayed after successful login -->
+            <div id="loggedInContent" style="display:none;">
+                <!-- Welcome message with dynamic username -->
+                <h2>Welcome, <span id="loggedInUsername"></span>!</h2>
+
+                <!-- Display user's balance -->
+                <p>Balance: $<span id="balance">53,0233.00</span></p>
+                <br>
+
+                <!-- Section for recent transactions -->
+                <p>Recent Transactions:</p>
+                <ol id="transactions">
+                </ol>
+
+                <!-- Button to trigger logout function -->
+                <button onclick="logout()">Logout</button>
+            </div>
+
+            <!-- Sign up form section -->
             <div id="signupForm" style="display:none;">
+                <!-- Heading for sign up form -->
                 <h3>Sign Up</h3>
+
+                <!-- Step 1 of sign up form -->
                 <form id="signUpStep1">
+                    <!-- Label and input field for name -->
                     <label for="name">Name:</label>
                     <input type="text" id="name" name="name" required><br>
 
+                    <!-- Label and input field for email -->
                     <label for="email">Email:</label>
                     <input type="email" id="email" name="email" required><br>
 
+                    <!-- Label and input field for date of birth -->
                     <label for="dob">Date of Birth:</label>
                     <input type="date" id="dob" name="dob" required><br>
 
+                    <!-- Button to proceed to step 2 of sign up -->
                     <button type="button" onclick="proceedToStep2()">Proceed</button>
                 </form>
 
+                <!-- Step 2 of sign up form (password fields) -->
                 <form id="signUpStep2" class="password-fields">
+                    <!-- Label and input field for username -->
                     <label for="username2">Choose Username:</label>
                     <input type="text" id="username2" name="username" required pattern="[a-zA-Z]{5,}" title="Minimum 5 characters, alphabets only"><br>
-                
+
+                    <!-- Label and input field for password -->
                     <label for="password2">Password:</label>
                     <input type="password" id="password2" name="password" required pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"><br>
-                
+
+                    <!-- Label and input field for confirming password -->
                     <label for="confirmPassword2">Confirm Password:</label>
                     <input type="password" id="confirmPassword2" name="confirmPassword" required pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$"><br>
-                    
+
+                    <!-- Container for buttons (Go Back and Sign Up) -->
                     <div class="button-container">
                         <button type="button" class="back-button" onclick="goBack()">Go Back</button>
                         <button type="submit" class="login-button">Sign Up</button>
                     </div>
                 </form>
 
+                <!-- Link for login form toggle -->
                 <p>Already have an account? <a href="#" onclick="toggleForm('loginForm')">Login</a></p>
             </div>
         </div>
     </main>
 
+    <!-- Link to an external JavaScript file (script.js) -->
     <script src="script.js"></script>
 </body>
+
 </html>
