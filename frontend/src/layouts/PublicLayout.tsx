@@ -24,7 +24,7 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
         <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" aria-label="Global">
           <div className="flex h-16 items-center justify-between">
             <div className="flex items-center">
-              <Link href="/" className="flex items-center gap-2" aria-label="FusionBanking Home">
+              <Link to="/" className="flex items-center gap-2" aria-label="FusionBanking Home">
                 <div className="w-8 h-8 rounded-lg bg-primary-600 flex items-center justify-center">
                   <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
