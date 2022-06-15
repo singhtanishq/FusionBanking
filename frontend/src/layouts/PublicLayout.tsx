@@ -38,7 +38,7 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
               {navigation.map((item) => (
                 <Link
                   key={item.name}
-                  href={item.href}
+                  to={item.to}
                   className={cn(
                     'text-sm font-medium transition-colors',
                     item.current
