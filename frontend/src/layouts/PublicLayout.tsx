@@ -85,7 +85,7 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div className="col-span-2 md:col-span-1">
-              <Link href="/" className="flex items-center gap-2">
+              <Link to="/" className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-primary-600 flex items-center justify-center">
                   <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
@@ -98,27 +98,27 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
             <div>
               <h3 className="text-sm font-semibold text-white uppercase tracking-wider">Products</h3>
               <ul className="mt-4 space-y-2">
-                <li><Link href="/products/savings" className="text-sm hover:text-white">Savings Account</Link></li>
-                <li><Link href="/products/current" className="text-sm hover:text-white">Current Account</Link></li>
-                <li><Link href="/products/fd" className="text-sm hover:text-white">Fixed Deposits</Link></li>
-                <li><Link href="/products/loans" className="text-sm hover:text-white">Personal Loans</Link></li>
+                <li><Link to="/products/savings" className="text-sm hover:text-white">Savings Account</Link></li>
+                <li><Link to="/products/current" className="text-sm hover:text-white">Current Account</Link></li>
+                <li><Link to="/products/fd" className="text-sm hover:text-white">Fixed Deposits</Link></li>
+                <li><Link to="/products/loans" className="text-sm hover:text-white">Personal Loans</Link></li>
               </ul>
             </div>
             <div>
               <h3 className="text-sm font-semibold text-white uppercase tracking-wider">Support</h3>
               <ul className="mt-4 space-y-2">
-                <li><Link href="/help" className="text-sm hover:text-white">Help Center</Link></li>
-                <li><Link href="/contact" className="text-sm hover:text-white">Contact Us</Link></li>
-                <li><Link href="/track-application" className="text-sm hover:text-white">Track Application</Link></li>
-                <li><Link href="/security" className="text-sm hover:text-white">Security</Link></li>
+                <li><Link to="/help" className="text-sm hover:text-white">Help Center</Link></li>
+                <li><Link to="/contact" className="text-sm hover:text-white">Contact Us</Link></li>
+                <li><Link to="/track-application" className="text-sm hover:text-white">Track Application</Link></li>
+                <li><Link to="/security" className="text-sm hover:text-white">Security</Link></li>
               </ul>
             </div>
             <div>
               <h3 className="text-sm font-semibold text-white uppercase tracking-wider">Legal</h3>
               <ul className="mt-4 space-y-2">
-                <li><Link href="/privacy" className="text-sm hover:text-white">Privacy Policy</Link></li>
-                <li><Link href="/terms" className="text-sm hover:text-white">Terms of Service</Link></li>
-                <li><Link href="/security" className="text-sm hover:text-white">Security Policy</Link></li>
+                <li><Link to="/privacy" className="text-sm hover:text-white">Privacy Policy</Link></li>
+                <li><Link to="/terms" className="text-sm hover:text-white">Terms of Service</Link></li>
+                <li><Link to="/security" className="text-sm hover:text-white">Security Policy</Link></li>
               </ul>
             </div>
           </div>
