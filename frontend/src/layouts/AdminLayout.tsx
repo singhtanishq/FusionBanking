@@ -1,6 +1,6 @@
 import { Fragment, useState } from 'react'
 import { Link, useLocation, NavLink, Outlet } from 'react-router-dom'
-import { Dialog, Transition, Menu } from '@headlessui/react'
+import { Dialog, Transition } from '@headlessui/react'
 import { 
   HomeIcon, 
   DocumentTextIcon, 
@@ -12,7 +12,7 @@ import {
   ArrowPathIcon,
   BanknotesIcon,
   Cog6ToothIcon,
-  XIcon,
+  XMarkIcon,
   Bars3Icon,
   ChevronDownIcon,
   ChevronRightIcon,
@@ -21,7 +21,6 @@ import {
   KeyIcon,
 } from '@heroicons/react/24/outline'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/Button'
 import { Avatar } from '@/components/ui/Avatar'
 import { useAuth } from '@/hooks/useAuth'
 
