@@ -110,7 +110,7 @@ export function AdminLayout() {
                     onClick={() => setSidebarOpen(false)}
                     aria-label="Close sidebar"
                   >
-                    <XIcon className="h-6 w-6" />
+                    <XMarkIcon className="h-6 w-6" />
                   </button>
                 </div>
                 <nav className="flex-1 overflow-y-auto p-4 space-y-1">
