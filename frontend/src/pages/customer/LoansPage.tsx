@@ -321,7 +321,7 @@ export function LoansPage() {
             label="Loan Purpose"
             placeholder="Home renovation, education, medical, etc."
             error={form.formState.errors.purpose?.message}
-          )
+          />
 
           <Alert variant="warning" className="text-sm">
             <p className="font-medium">Important:</p>
