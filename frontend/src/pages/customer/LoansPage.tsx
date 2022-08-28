@@ -228,7 +228,7 @@ export function LoansPage() {
                     </Badge>
                     <span className="font-semibold text-navy-900 tabular-nums">
                       {loan.approved_amount ? formatCurrency(loan.approved_amount) : formatCurrency(loan.principal_amount)}
-                    </Badge>
+                    </span>
                     {loan.emi && <span className="text-sm text-navy-500">EMI: {formatCurrency(loan.emi)}</span>}
                   </div>
                 </Link>
