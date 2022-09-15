@@ -28,7 +28,7 @@ import { NotificationsPage } from '@/pages/customer/NotificationsPage'
 import { SupportPage } from '@/pages/customer/SupportPage'
 
 function ProtectedRoute({ children, userType = 'customer' }: { children: React.ReactNode; userType?: 'customer' | 'admin' }) {
-  const { authorized, loading } = useRequireAuth(userType)
+  const { authorized, loading, isAuthenticated } = useRequireAuth(userType)
   
   if (loading) {
     return (
@@ -38,8 +38,12 @@ function ProtectedRoute({ children, userType = 'customer' }: { children: React.R
     )
   }
   
-  if (!authorized) {
+  if (!isAuthenticated) {
     return <Navigate to={userType === 'admin' ? '/admin/login' : '/netbanking/login'} replace />
+  }
+  
+  if (!authorized) {
+    return <Navigate to="/" replace />
   }
   
   return <>{children}</>
