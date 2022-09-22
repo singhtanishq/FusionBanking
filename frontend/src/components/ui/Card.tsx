@@ -31,7 +31,7 @@ export function Card({ className, children, hover = false, padding = 'md' }: Car
 
 interface CardHeaderProps {
   className?: string
-  children: React.ReactNode
+  children?: React.ReactNode
   title: string
   description?: string
   action?: React.ReactNode
@@ -43,6 +43,7 @@ export function CardHeader({ className, children, title, description, action }: 
       <div>
         <h3 className="text-lg font-semibold text-navy-900">{title}</h3>
         {description && <p className="mt-1 text-sm text-navy-500">{description}</p>}
+        {children && <div>{children}</div>}
       </div>
       {action && <div>{action}</div>}
     </div>
