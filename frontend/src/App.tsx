@@ -74,9 +74,9 @@ export default function App() {
       <Route element={<PublicLayout />}>
         <Route path="/" element={<HomePage />} />
         <Route path="/products" element={<ProductsPage />} />
-        <Route path="/loans" element={<LoansPage />} />
+        <Route path="/loans" element={<PublicLoansPage />} />
         <Route path="/deposits" element={<DepositsPage />} />
-        <Route path="/security" element={<SecurityPage />} />
+        <Route path="/security" element={<PublicSecurityPage />} />
         <Route path="/help" element={<HelpPage />} />
         
         {/* Public auth routes */}
