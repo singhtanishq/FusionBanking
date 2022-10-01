@@ -27,7 +27,7 @@ import { SecurityPage } from '@/pages/customer/SecurityPage'
 import { NotificationsPage } from '@/pages/customer/NotificationsPage'
 import { SupportPage } from '@/pages/customer/SupportPage'
 
-function ProtectedRoute({ children, userType = 'customer' }: { children: React.ReactNode; userType?: 'customer' | 'admin' }) {
+function ProtectedRoute({ userType = 'customer' }: { userType?: 'customer' | 'admin' }) {
   const { authorized, loading, isAuthenticated } = useRequireAuth(userType)
   
   if (loading) {
@@ -46,10 +46,10 @@ function ProtectedRoute({ children, userType = 'customer' }: { children: React.R
     return <Navigate to="/" replace />
   }
   
-  return <>{children}</>
+  return <Outlet />
 }
 
-function PublicOnlyRoute({ children }: { children: React.ReactNode }) {
+function PublicOnlyRoute() {
   const { isAuthenticated, loading } = useRequireAuth()
   
   if (loading) {
@@ -64,7 +64,7 @@ function PublicOnlyRoute({ children }: { children: React.ReactNode }) {
     return <Navigate to="/customer/dashboard" replace />
   }
   
-  return <>{children}</>
+  return <Outlet />
 }
 
 export default function App() {
