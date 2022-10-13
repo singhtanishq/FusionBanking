@@ -9,7 +9,7 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ className, label, error, helperText, id, ...props }, ref) => {
+  ({ className, label, error, helperText, id, icon, ...props }, ref) => {
     const inputId = id || label?.toLowerCase().replace(/\s+/g, '-')
 
     return (
@@ -19,20 +19,30 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             {label}
           </label>
         )}
-        <input
-          ref={ref}
-          id={inputId}
-          className={cn(
-            'w-full rounded-lg border bg-white px-4 py-2.5 text-sm text-navy-900 placeholder:text-navy-400 transition-all duration-200 focus:outline-none focus:ring-2',
-            error
-              ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
-              : 'border-navy-300 focus:border-primary-500 focus:ring-primary-500/20',
-            className
+        <div className="relative">
+          {icon && (
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-navy-400">
+              {icon}
+            </div>
           )}
-          aria-invalid={error ? 'true' : 'false'}
-          aria-describedby={error ? `${inputId}-error` : helperText ? `${inputId}-helper` : undefined}
-          {...props}
-        />
+          <input
+            ref={ref}
+            id={inputId}
+            className={cn(
+              'w-full rounded-lg border bg-white transition-all duration-200 focus:outline-none focus:ring-2',
+              'text-sm text-navy-900 placeholder:text-navy-400',
+              error
+                ? 'border-red-500 focus:border-red-500 focus:ring-red-500/20'
+                : 'border-navy-300 focus:border-primary-500 focus:ring-primary-500/20',
+              icon ? 'pl-10' : 'pl-4',
+              'pr-4 py-2.5',
+              className
+            )}
+            aria-invalid={error ? 'true' : 'false'}
+            aria-describedby={error ? `${inputId}-error` : helperText ? `${inputId}-helper` : undefined}
+            {...props}
+          />
+        </div>
         {error && (
           <p id={`${inputId}-error`} className="mt-1.5 text-sm text-red-600" role="alert">
             {error}
