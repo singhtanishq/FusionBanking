@@ -1,9 +1,8 @@
 import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import { XIcon, Bars3Icon } from '@heroicons/react/24/outline'
+import { XMarkIcon, Bars3Icon } from '@heroicons/react/24/outline'
 import { Link } from 'react-router-dom'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/Button'
 import { useState } from 'react'
 
 const navigation = [
