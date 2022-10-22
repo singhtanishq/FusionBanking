@@ -12,7 +12,7 @@ import {
   DocumentTextIcon,
   BanknotesIcon,
   Cog6ToothIcon,
-  XIcon,
+  XMarkIcon,
   Bars3Icon,
   ChevronDownIcon,
   ChevronRightIcon,
