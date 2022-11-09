@@ -174,9 +174,9 @@ export function CustomerLayout() {
           </nav>
 
           <div className="p-4 border-t border-navy-100">
-            <div className="flex items-center gap-3">
+<div className="flex items-center gap-3">
               <Avatar 
-                name={user?.full_name || 'User'} 
+                name={user?.full_name || 'Customer'} 
                 size="md" 
               />
               <div className="flex-1 min-w-0">
@@ -184,7 +184,7 @@ export function CustomerLayout() {
                   {user?.full_name || 'Customer'}
                 </p>
                 <p className="text-xs text-navy-500 truncate">
-                  {user?.customer_id || 'Customer ID'}
+                  {'customer_id' in user ? user.customer_id : 'Customer ID'}
                 </p>
               </div>
             </div>
