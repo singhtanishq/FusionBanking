@@ -187,7 +187,7 @@ export function AdminLayout() {
                     {user?.full_name || 'Administrator'}
                   </p>
                   <p className="text-xs text-navy-500 truncate">
-                    {'isAdmin' in user && user.is_master ? 'Master Admin' : 'Admin'}
+                    {user && 'isAdmin' in user && user.is_master ? 'Master Admin' : 'Admin'}
                   </p>
                 </div>
               </div>
