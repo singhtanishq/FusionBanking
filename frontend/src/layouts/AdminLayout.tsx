@@ -221,8 +221,8 @@ export function AdminLayout() {
               
               <div className="hidden sm:flex items-center gap-3">
                 <div className="text-right">
-                  <p className="text-xs text-navy-500">{'isAdmin' in user && user.is_master ? 'Master Admin' : 'Administrator'}</p>
-                  <p className="text-sm font-medium text-navy-900">{'isAdmin' in user ? user.username : 'admin'}</p>
+                  <p className="text-xs text-navy-500">{user && 'isAdmin' in user && user.is_master ? 'Master Admin' : 'Administrator'}</p>
+                  <p className="text-sm font-medium text-navy-900">{user && 'isAdmin' in user ? user.username : 'admin'}</p>
                 </div>
                 <Avatar name={user?.full_name || 'Admin'} size="sm" />
               </div>
