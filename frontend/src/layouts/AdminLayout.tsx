@@ -239,15 +239,10 @@ export function AdminLayout() {
   )
 }
 
-interface AdminNavSectionProps {
-  item: typeof adminNavigation[0]
-  isExpanded: boolean
-  onToggle: () => void
-  isDesktop?: boolean
-}
-
 function AdminNavSection({ item, isExpanded, onToggle, isDesktop = true }: AdminNavSectionProps) {
   const hasChildren = item.children && item.children.length > 0
+  const location = useLocation()
+  const isActive = location.pathname.startsWith(item.href)
 
   if (!hasChildren) {
     return (
