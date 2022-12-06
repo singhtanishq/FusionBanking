@@ -3,7 +3,6 @@ import { Link, useLocation, NavLink, Outlet } from 'react-router-dom'
 import { Dialog, Transition } from '@headlessui/react'
 import { 
   HomeIcon, 
-  DocumentTextIcon, 
   UserCircleIcon, 
   ShieldCheckIcon, 
   BellIcon,
@@ -15,7 +14,6 @@ import {
   XMarkIcon,
   Bars3Icon,
   ChevronDownIcon,
-  ChevronRightIcon,
   BuildingOfficeIcon,
   ClipboardDocumentListIcon,
   KeyIcon,
@@ -23,6 +21,14 @@ import {
 import { cn } from '@/lib/utils'
 import { Avatar } from '@/components/ui/Avatar'
 import { useAuth } from '@/hooks/useAuth'
+
+function isAdminUser(user: any): user is { is_master: boolean; username: string } {
+  return user && 'isAdmin' in user && user.isAdmin === true
+}
+
+function isCustomerUser(user: any): user is { customer_id: string } {
+  return user && 'customer_id' in user
+}
 
 const adminNavigation = [
   { name: 'Overview', href: '/admin', icon: HomeIcon, current: false },
