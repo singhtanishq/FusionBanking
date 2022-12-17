@@ -14,7 +14,7 @@ const navigation = [
   { name: 'Help', to: '/help', current: false },
 ]
 
-export function PublicLayout({ children }: { children: React.ReactNode }) {
+export function PublicLayout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   return (
