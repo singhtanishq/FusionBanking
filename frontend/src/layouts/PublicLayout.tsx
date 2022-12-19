@@ -77,7 +77,7 @@ export function PublicLayout() {
       </header>
 
       <main className="pt-16 min-h-screen">
-        {children}
+        <Outlet />
       </main>
 
       <footer className="bg-navy-900 text-navy-300">
