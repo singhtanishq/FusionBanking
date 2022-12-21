@@ -1,6 +1,6 @@
 import { Fragment, useState } from 'react'
 import { Link, useLocation, NavLink, Outlet } from 'react-router-dom'
-import { Dialog, Transition, Menu } from '@headlessui/react'
+import { Dialog, Transition } from '@headlessui/react'
 import { 
   HomeIcon, 
   CreditCardIcon, 
@@ -9,18 +9,17 @@ import {
   ShieldCheckIcon, 
   BellIcon,
   ChatBubbleLeftRightIcon,
-  DocumentTextIcon,
-  BanknotesIcon,
-  Cog6ToothIcon,
   XMarkIcon,
   Bars3Icon,
   ChevronDownIcon,
-  ChevronRightIcon,
 } from '@heroicons/react/24/outline'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/Button'
 import { Avatar } from '@/components/ui/Avatar'
 import { useAuth } from '@/hooks/useAuth'
+
+function isCustomerUser(user: any): user is { customer_id: string } {
+  return user && 'customer_id' in user
+}
 
 const navigation = [
   { name: 'Dashboard', href: '/customer/dashboard', icon: HomeIcon, current: false },
