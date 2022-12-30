@@ -178,14 +178,14 @@ export function CustomerLayout() {
                 name={user?.full_name || 'Customer'} 
                 size="md" 
               />
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-navy-900 truncate">
-                  {user?.full_name || 'Customer'}
-                </p>
-                <p className="text-xs text-navy-500 truncate">
-                  {'customer_id' in user ? user.customer_id : 'Customer ID'}
-                </p>
-              </div>
+<div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-navy-900 truncate">
+                    {user?.full_name || 'Customer'}
+                  </p>
+                  <p className="text-xs text-navy-500 truncate">
+                    {isCustomerUser(user) ? user.customer_id : 'Customer ID'}
+                  </p>
+                </div>
             </div>
           </div>
         </div>
