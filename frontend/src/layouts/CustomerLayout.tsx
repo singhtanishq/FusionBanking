@@ -219,7 +219,7 @@ export function CustomerLayout() {
               <div className="hidden sm:flex items-center gap-3">
                 <div className="text-right">
                   <p className="text-xs text-navy-500">Customer ID</p>
-                  <p className="text-sm font-medium text-navy-900 font-mono">{'customer_id' in user ? user.customer_id : 'CUS1234567'}</p>
+                  <p className="text-sm font-medium text-navy-900 font-mono">{isCustomerUser(user) ? user.customer_id : 'CUS1234567'}</p>
                 </div>
                 <Avatar name={user?.full_name || 'User'} size="sm" />
               </div>
