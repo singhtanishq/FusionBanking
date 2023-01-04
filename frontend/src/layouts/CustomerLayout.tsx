@@ -9,6 +9,7 @@ import {
   ShieldCheckIcon, 
   BellIcon,
   ChatBubbleLeftRightIcon,
+  BanknotesIcon,
   XMarkIcon,
   Bars3Icon,
   ChevronDownIcon,
