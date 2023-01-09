@@ -1,7 +1,7 @@
 import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon, Bars3Icon } from '@heroicons/react/24/outline'
-import { Link } from 'react-router-dom'
+import { Link, Outlet } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { useState } from 'react'
 
