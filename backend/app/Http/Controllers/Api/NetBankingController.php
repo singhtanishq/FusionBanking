@@ -2,128 +2,115 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Enums\VerificationPurpose;
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
+use App\Models\BankAccount;
 use App\Services\VerificationTokenService;
+use App\Services\AccountService;
+use App\Enums\VerificationPurpose;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\RateLimiter;
-use App\Notifications\NetBankingActivationNotification;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class NetBankingController extends Controller
 {
-    public function activate(Request $request)
+    protected VerificationTokenService $tokenService;
+    protected AccountService $accountService;
+
+    public function __construct(VerificationTokenService $tokenService, AccountService $accountService)
     {
-        $request->validate([
-            'customer_id' => 'required|string',
+        $this->tokenService = $tokenService;
+        $this->accountService = $accountService;
+    }
+
+    public function activate(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'customer_id' => 'required|string|exists:customers,customer_id',
+            'account_number' => 'required|string|exists:bank_accounts,account_number',
+            'mobile' => 'required|string|regex:/^[6-9]\d{9}$/',
+            'date_of_birth' => 'required|date',
         ]);
 
-        $key = 'netbanking_activation:' . $request->ip();
-
-        if (RateLimiter::tooManyAttempts($key, 5)) {
+        if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Too many activation requests. Please try again later.',
-            ], 429);
+                'message' => 'Please correct the highlighted fields.',
+                'errors' => $validator->errors(),
+            ], 422);
         }
 
-        $customer = Customer::where('customer_id', $request->customer_id)->first();
+        $customer = Customer::where('customer_id', $request->customer_id)
+            ->where('mobile', $request->mobile)
+            ->where('date_of_birth', $request->date_of_birth)
+            ->first();
 
         if (!$customer) {
-            RateLimiter::hit($key, 300);
-
             return response()->json([
                 'success' => false,
-                'message' => 'Invalid customer ID.',
-            ], 404);
+                'message' => 'Invalid details provided',
+            ], 422);
         }
 
-        if (!$customer->is_active) {
+        $account = BankAccount::where('account_number', $request->account_number)
+            ->where('customer_id', $customer->id)
+            ->where('status', \App\Enums\AccountStatus::ACTIVE)
+            ->first();
+
+        if (!$account) {
             return response()->json([
                 'success' => false,
-                'message' => 'Your account is deactivated. Please contact support.',
-            ], 403);
+                'message' => 'Account not found or not active',
+            ], 422);
         }
 
-        if ($customer->netbanking_activated_at) {
-            return response()->json([
-                'success' => false,
-                'message' => 'NetBanking is already activated for this account.',
-            ], 409);
-        }
-
-        $tokenService = new VerificationTokenService();
-
-        $result = $tokenService->generateToken(
+        // Generate and send verification token
+        $tokenData = $this->tokenService->generateToken(
             $customer,
             VerificationPurpose::NETBANKING_ACTIVATION,
             Customer::class,
             $customer->id
         );
 
-        $customer->notify(
-            new NetBankingActivationNotification(
-                $customer,
-                $result['token']
-            )
-        );
-
-        RateLimiter::clear($key);
-
-        \App\Models\SecurityEvent::log(
-            'netbanking_activation_requested',
-            'NetBanking activation token generated',
-            ['ip' => $request->ip()],
-            'info',
-            $customer->id
-        );
+        $customer->notify(new \App\Notifications\NetBankingActivationNotification($customer, $tokenData['token']));
 
         return response()->json([
             'success' => true,
-            'message' => 'NetBanking activation token sent to your registered email.',
+            'message' => 'Verification token sent to your registered email',
             'data' => [
-                'customer_id' => $customer->customer_id,
-                'expires_at' => $result['expires_at'],
+                'requires_token' => true,
             ],
         ]);
     }
 
-    public function verifyActivation(Request $request)
+    public function verifyActivation(Request $request): JsonResponse
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'customer_id' => 'required|string',
             'token' => 'required|string|size:16',
             'password' => 'required|string|min:10|confirmed',
         ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Please correct the highlighted fields.',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
 
         $customer = Customer::where('customer_id', $request->customer_id)->first();
 
         if (!$customer) {
             return response()->json([
                 'success' => false,
-                'message' => 'Invalid activation details.',
-            ], 401);
-        }
-
-        if (!$customer->is_active) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Your account is deactivated. Please contact support.',
-            ], 403);
-        }
-
-        if ($customer->netbanking_activated_at) {
-            return response()->json([
-                'success' => false,
-                'message' => 'NetBanking is already activated for this account.',
-            ], 409);
+                'message' => 'Invalid customer ID',
+            ], 422);
         }
 
         try {
-            $tokenService = new VerificationTokenService();
-
-            $verificationToken = $tokenService->verifyToken(
+            $this->tokenService->verifyToken(
                 $request->token,
                 VerificationPurpose::NETBANKING_ACTIVATION,
                 Customer::class,
@@ -131,46 +118,24 @@ class NetBankingController extends Controller
                 $customer
             );
 
-            DB::transaction(function () use ($customer, $request, $verificationToken) {
-                /*
-                 * Customer::$casts defines password as 'hashed',
-                 * so we intentionally pass the plain password here.
-                 */
-                $customer->update([
-                    'password' => $request->password,
-                    'netbanking_activated_at' => now(),
-                    'password_changed_at' => now(),
-                ]);
+            $customer->update([
+                'password' => Hash::make($request->password),
+                'password_changed_at' => now(),
+                'netbanking_activated_at' => now(),
+            ]);
 
-                \App\Models\SecurityEvent::log(
-                    'netbanking_activated',
-                    'NetBanking activation completed successfully',
-                    [],
-                    'info',
-                    $customer->id
-                );
-            });
+            // Revoke all existing tokens
+            $customer->tokens()->delete();
 
             return response()->json([
                 'success' => true,
                 'message' => 'NetBanking activated successfully. You can now login.',
-                'data' => [
-                    'customer_id' => $customer->customer_id,
-                ],
             ]);
         } catch (\Exception $e) {
-            \App\Models\SecurityEvent::log(
-                'netbanking_activation_failed',
-                'NetBanking activation verification failed',
-                ['error' => $e->getMessage()],
-                'warning',
-                $customer->id
-            );
-
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
-            ], 401);
+            ], 422);
         }
     }
 }
