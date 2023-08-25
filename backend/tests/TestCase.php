@@ -6,11 +6,10 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-use Tests\CreatesApplication;
 
-class TestCase
+class TestCase extends \PHPUnit\Framework\TestCase
 {
-    use CreatesApplication, RefreshDatabase, WithFaker;
+    use RefreshDatabase, WithFaker;
 
     public function setUp(): void
     {
@@ -29,5 +28,12 @@ class TestCase
         
         // Run migrations
         $this->artisan('migrate', ['--database' => 'testing', '--force' => true]);
+    }
+    
+    protected function artisan($command, array $parameters = [])
+    {
+        $app = require_once __DIR__.'/../bootstrap/app.php';
+        $kernel = $app->make(\Illuminate\Contracts\Console\Kernel::class);
+        return $kernel->call($command, $parameters);
     }
 }
