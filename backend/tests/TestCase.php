@@ -2,25 +2,26 @@
 
 namespace Tests;
 
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
-class TestCase extends \PHPUnit\Framework\TestCase
+abstract class TestCase extends BaseTestCase
 {
+    use \Illuminate\Foundation\Testing\RefreshDatabase, \Illuminate\Foundation\Testing\WithFaker;
+
     public function setUp(): void
     {
         parent::setUp();
         
         // Set up testing database connection
-        Config::set('database.connections.testing', [
+        config(['database.connections.testing' => [
             'driver' => 'sqlite',
             'database' => ':memory:',
             'prefix' => '',
-        ]);
+        ]]);
         
         // Purge and reconnect
-        DB::purge('testing');
-        DB::reconnect('testing');
+        \Illuminate\Support\Facades\DB::purge('testing');
+        \Illuminate\Support\Facades\DB::reconnect('testing');
         
         // Run migrations
         $this->artisan('migrate', ['--database' => 'testing', '--force' => true]);
@@ -28,8 +29,14 @@ class TestCase extends \PHPUnit\Framework\TestCase
     
     protected function artisan($command, array $parameters = [])
     {
-        $app = require_once __DIR__.'/../bootstrap/app.php';
-        $kernel = $app->make(\Illuminate\Contracts\Console\Kernel::class);
+        $kernel = $this->app->make(\Illuminate\Contracts\Console\Kernel::class);
         return $kernel->call($command, $parameters);
+    }
+
+    public function createApplication()
+    {
+        $app = require __DIR__.'/../bootstrap/app.php';
+        $app->make('Illuminate\Contracts\Console\Kernel')->bootstrap();
+        return $app;
     }
 }
