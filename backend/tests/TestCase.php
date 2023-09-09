@@ -27,7 +27,7 @@ abstract class TestCase extends BaseTestCase
         $this->artisan('migrate', ['--database' => 'testing', '--force' => true]);
     }
     
-    protected function artisan($command, array $parameters = [])
+    public function artisan($command, array $parameters = [])
     {
         $kernel = $this->app->make(\Illuminate\Contracts\Console\Kernel::class);
         return $kernel->call($command, $parameters);
