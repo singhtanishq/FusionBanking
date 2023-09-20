@@ -3,13 +3,9 @@
 namespace Tests;
 
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 
 class TestCase extends BaseTestCase
 {
-    use RefreshDatabase, WithFaker;
-
     public function setUp(): void
     {
         parent::setUp();
