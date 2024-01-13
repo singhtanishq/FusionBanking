@@ -1,115 +1,111 @@
 <?php
 
+namespace Tests\Unit;
+
+use Tests\TestCase;
 use App\Services\AccountService;
 use App\Models\Customer;
 use App\Models\BankAccount;
 use App\Models\Transaction;
 use App\Enums\AccountStatus;
 use App\Enums\TransactionType;
-use Illuminate\Support\Facades\DB;
-use function Pest\Laravel\seed;
 
-uses(\Tests\TestCase::class);
+class AccountServiceTest extends TestCase
+{
+    public function test_account_number_generation_produces_unique_numbers()
+    {
+        $service = new AccountService();
+        
+        $numbers = [];
+        for ($i = 0; $i < 100; $i++) {
+            $numbers[] = $service->generateAccountNumber();
+        }
+        
+        $this->assertCount(100, $numbers);
+        $this->assertCount(100, array_unique($numbers));
+        
+        foreach ($numbers as $number) {
+            $this->assertMatchesRegularExpression('/^50\d{10}$/', $number);
+        }
+    }
 
-beforeEach(function () {
-    // Set up database connection for testing
-    DB::purge('testing');
-    Config::set('database.connections.testing.database', ':memory:');
-    DB::reconnect('testing');
-});
+    public function test_customer_id_generation_produces_unique_ids()
+    {
+        $service = new AccountService();
+        
+        $ids = [];
+        for ($i = 0; $i < 100; $i++) {
+            $ids[] = $service->generateCustomerId();
+        }
+        
+        $this->assertCount(100, $ids);
+        $this->assertCount(100, array_unique($ids));
+        
+        foreach ($ids as $id) {
+            $this->assertMatchesRegularExpression('/^CUS\d{7}$/', $id);
+        }
+    }
 
-test('account number generation produces unique numbers', function () {
-    $service = new AccountService();
-    
-    $numbers = [];
-    for ($i = 0; $i < 100; $i++) {
-        $numbers[] = $service->generateAccountNumber();
+    public function test_acknowledgement_number_generation_produces_unique_numbers()
+    {
+        $service = new AccountService();
+        
+        $numbers = [];
+        for ($i = 0; $i < 100; $i++) {
+            $numbers[] = $service->generateAcknowledgementNumber();
+        }
+        
+        $this->assertCount(100, $numbers);
+        $this->assertCount(100, array_unique($numbers));
+        
+        foreach ($numbers as $number) {
+            $this->assertMatchesRegularExpression('/^FBK-\d{4}-[A-Z0-9]{8}$/', $number);
+        }
     }
-    
-    expect($numbers)->toHaveCount(100);
-    expect(array_unique($numbers))->toHaveCount(100);
-    
-    // Check format: 50 + 10 digits = 12 digits
-    foreach ($numbers as $number) {
-        expect($number)->toMatch('/^50\d{10}$/');
-    }
-});
 
-test('customer id generation produces unique ids', function () {
-    $service = new AccountService();
-    
-    $ids = [];
-    for ($i = 0; $i < 100; $i++) {
-        $ids[] = $service->generateCustomerId();
+    public function test_initial_deposit_creates_proper_transaction_and_updates_balance()
+    {
+        $customer = Customer::factory()->create([
+            'customer_id' => 'CUS' . rand(1000000, 9999999),
+        ]);
+        
+        $account = BankAccount::factory()->create([
+            'customer_id' => $customer->id,
+            'balance' => 0,
+            'available_balance' => 0,
+            'status' => AccountStatus::ACTIVE,
+        ]);
+        
+        $service = new AccountService();
+        $transaction = $service->createInitialDeposit($account, 100000);
+        
+        $this->assertNotNull($transaction);
+        $this->assertEquals(TransactionType::CASH_DEPOSIT, $transaction->type);
+        $this->assertEquals('credit', $transaction->direction);
+        $this->assertEquals(100000, $transaction->amount);
+        $this->assertEquals(0, $transaction->opening_balance);
+        $this->assertEquals(100000, $transaction->closing_balance);
+        $this->assertEquals('completed', $transaction->status);
+        
+        $account->refresh();
+        $this->assertEquals(100000, $account->balance);
+        $this->assertEquals(100000, $account->available_balance);
     }
-    
-    expect($ids)->toHaveCount(100);
-    expect(array_unique($ids))->toHaveCount(100);
-    
-    // Check format: CUS + 7 digits
-    foreach ($ids as $id) {
-        expect($id)->toMatch('/^CUS\d{7}$/');
-    }
-});
 
-test('acknowledgement number generation produces unique numbers', function () {
-    $service = new AccountService();
-    
-    $numbers = [];
-    for ($i = 0; $i < 100; $i++) {
-        $numbers[] = $service->generateAcknowledgementNumber();
+    public function test_transaction_reference_generation_produces_unique_references()
+    {
+        $service = new AccountService();
+        
+        $refs = [];
+        for ($i = 0; $i < 100; $i++) {
+            $refs[] = $service->generateTransactionReference('TXN');
+        }
+        
+        $this->assertCount(100, $refs);
+        $this->assertCount(100, array_unique($refs));
+        
+        foreach ($refs as $ref) {
+            $this->assertMatchesRegularExpression('/^TXN\d{8}[A-Z0-9]{7}$/', $ref);
+        }
     }
-    
-    expect($numbers)->toHaveCount(100);
-    expect(array_unique($numbers))->toHaveCount(100);
-    
-    // Check format: FBK-YEAR-8CHAR
-    foreach ($numbers as $number) {
-        expect($number)->toMatch('/^FBK-\d{4}-[A-Z0-9]{8}$/');
-    }
-});
-
-test('initial deposit creates proper transaction and updates balance', function () {
-    $customer = Customer::factory()->create([
-        'customer_id' => 'CUS' . rand(1000000, 9999999),
-    ]);
-    
-    $account = BankAccount::factory()->create([
-        'customer_id' => $customer->id,
-        'balance' => 0,
-        'available_balance' => 0,
-        'status' => AccountStatus::ACTIVE,
-    ]);
-    
-    $service = new AccountService();
-    $transaction = $service->createInitialDeposit($account, 100000);
-    
-    expect($transaction)->not->toBeNull();
-    expect($transaction->type)->toBe(TransactionType::CASH_DEPOSIT);
-    expect($transaction->direction)->toBe('credit');
-    expect($transaction->amount)->toBe(100000);
-    expect($transaction->opening_balance)->toBe(0);
-    expect($transaction->closing_balance)->toBe(100000);
-    expect($transaction->status)->toBe('completed');
-    
-    $account->refresh();
-    expect($account->balance)->toBe(100000);
-    expect($account->available_balance)->toBe(100000);
-});
-
-test('transaction reference generation produces unique references', function () {
-    $service = new AccountService();
-    
-    $refs = [];
-    for ($i = 0; $i < 100; $i++) {
-        $refs[] = $service->generateTransactionReference('TXN');
-    }
-    
-    expect($refs)->toHaveCount(100);
-    expect(array_unique($refs))->toHaveCount(100);
-    
-    // Check format: TXN + YMD + 7 chars
-    foreach ($refs as $ref) {
-        expect($ref)->toMatch('/^TXN\d{8}[A-Z0-9]{7}$/');
-    }
-});
+}
