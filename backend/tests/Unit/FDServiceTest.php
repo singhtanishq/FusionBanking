@@ -11,8 +11,8 @@ test('maturity amount calculation for 1 year FD', function () {
     
     // Simple interest: 100000 * 0.065 * 1 = 6500
     // Maturity: 106500
-    expect($interest)->toBe(6500);
-    expect($maturity)->toBe(106500);
+    expect($interest)->toBe(6500.0);
+    expect($maturity)->toBe(106500.0);
 });
 
 test('maturity amount calculation for 5 year FD', function () {
@@ -24,8 +24,8 @@ test('maturity amount calculation for 5 year FD', function () {
     
     // Simple interest: 100000 * 0.0725 * 5 = 36250
     // Maturity: 136250
-    expect($interest)->toBe(36250);
-    expect($maturity)->toBe(136250);
+    expect($interest)->toBe(36250.0);
+    expect($maturity)->toBe(136250.0);
 });
 
 test('maturity amount calculation for partial year', function () {
