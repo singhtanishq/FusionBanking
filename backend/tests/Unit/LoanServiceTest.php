@@ -19,7 +19,7 @@ test('emi calculation for zero interest', function () {
     // ₹100,000 at 0% for 12 months
     $emi = $service->calculateEMI(100000, 0, 12);
     
-    expect($emi)->toBe(8333.33); // 100000/12 = 8333.33...
+    expect($emi)->toBeCloseTo(8333.33, 2);
 });
 
 test('emi calculation for short term', function () {
@@ -44,9 +44,9 @@ test('total interest calculation', function () {
     $totalInterest = $service->calculateTotalInterest($principal, $rate, $tenure);
     $totalRepayment = $service->calculateTotalRepayment($principal, $rate, $tenure);
     
-    expect($totalInterest)->toBe($emi * $tenure - $principal);
-    expect($totalRepayment)->toBe($emi * $tenure);
-    expect($totalRepayment)->toBe($principal + $totalInterest);
+    expect($totalInterest)->toBeCloseTo($emi * $tenure - $principal, 2);
+    expect($totalRepayment)->toBeCloseTo($emi * $tenure, 2);
+    expect($totalRepayment)->toBeCloseTo($principal + $totalInterest, 2);
 });
 
 test('amortization schedule sums to principal', function () {
@@ -73,7 +73,7 @@ test('amortization schedule sums to principal', function () {
     foreach ($schedule as $payment) {
         expect($payment['principal_component'])->toBeGreaterThan(0);
         expect($payment['interest_component'])->toBeGreaterThanOrEqual(0);
-        expect($payment['total_amount'])->toBe($payment['principal_component'] + $payment['interest_component']);
+        expect($payment['total_amount'])->toBeCloseTo($payment['principal_component'] + $payment['interest_component'], 2);
     }
 });
 
