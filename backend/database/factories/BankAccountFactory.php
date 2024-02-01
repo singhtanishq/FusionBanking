@@ -13,7 +13,7 @@ class BankAccountFactory extends Factory
     public function definition(): array
     {
         return [
-            'account_number' => '50' . $this->faker->unique()->numerify('##########'),
+            'account_number' => '50' . $this->faker->unique()->numberBetween(1000000000, 9999999999),
             'ifsc_code' => 'FUSB0001001',
             'account_type' => $this->faker->randomElement(['savings', 'current']),
             'status' => AccountStatus::ACTIVE,
