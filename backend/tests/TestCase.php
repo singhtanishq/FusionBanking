@@ -3,26 +3,28 @@
 namespace Tests;
 
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 
-class TestCase extends BaseTestCase
+class TestCase extends \Illuminate\Foundation\Testing\TestCase
 {
     use \Illuminate\Foundation\Testing\RefreshDatabase, \Illuminate\Foundation\Testing\WithFaker;
 
     public function setUp(): void
     {
-        // Set up testing database connection as default before parent setUp
-        config(['database.default' => 'testing']);
-        config(['database.connections.testing' => [
+        parent::setUp();
+        
+        // Set up testing database connection
+        Config::set('database.connections.testing', [
             'driver' => 'sqlite',
             'database' => ':memory:',
             'prefix' => '',
-        ]]);
-        
-        parent::setUp();
+        ]);
+        Config::set('database.default', 'testing');
         
         // Purge and reconnect
-        \Illuminate\Support\Facades\DB::purge('testing');
-        \Illuminate\Support\Facades\DB::reconnect('testing');
+        DB::purge('testing');
+        DB::reconnect('testing');
         
         // Run migrations
         $this->artisan('migrate', ['--database' => 'testing', '--force' => true]);
