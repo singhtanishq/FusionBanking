@@ -10,7 +10,26 @@ class TestCase extends BaseTestCase
 
     public function setUp(): void
     {
+        // Set the default database connection to testing BEFORE parent setUp
+        putenv('DB_CONNECTION=sqlite');
+        putenv('DB_DATABASE=:memory:');
+        
         parent::setUp();
+        
+        // Force the default database connection to sqlite in-memory
+        $this->app['config']->set('database.default', 'testing');
+        $this->app['config']->set('database.connections.testing', [
+            'driver' => 'sqlite',
+            'database' => ':memory:',
+            'prefix' => '',
+        ]);
+        
+        // Purge and reconnect
+        \Illuminate\Support\Facades\DB::purge('testing');
+        \Illuminate\Support\Facades\DB::reconnect('testing');
+        
+        // Run migrations
+        $this->artisan('migrate', ['--database' => 'testing', '--force' => true]);
     }
     
     public function artisan($command, $parameters = [])
