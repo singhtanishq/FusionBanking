@@ -3,13 +3,16 @@
 use App\Models\Customer;
 use App\Models\BankAccount;
 use App\Models\Transfer;
+use App\Models\Transaction;
 use App\Services\TransferService;
 use Illuminate\Support\Facades\DB;
 use function Pest\Laravel\seed;
 
+uses(\Tests\TestCase::class)->group('feature');
+
 test('transfer between two accounts works correctly', function () {
-    seed('DatabaseSeeder');
-    seed('DemoDataSeeder');
+    $this->seed('DatabaseSeeder');
+    $this->seed('DemoDataSeeder');
 
     $sender = Customer::where('customer_id', 'CUS1000001')->first();
     $receiver = Customer::where('customer_id', 'CUS1000002')->first();
@@ -98,8 +101,8 @@ test('transfer between two accounts works correctly', function () {
 });
 
 test('transfer with insufficient balance fails', function () {
-    seed('DatabaseSeeder');
-    seed('DemoDataSeeder');
+    $this->seed('DatabaseSeeder');
+    $this->seed('DemoDataSeeder');
 
     $sender = Customer::where('customer_id', 'CUS1000001')->first();
     $receiver = Customer::where('customer_id', 'CUS1000002')->first();
@@ -121,8 +124,8 @@ test('transfer with insufficient balance fails', function () {
 })->throws(\Exception::class, 'Insufficient balance');
 
 test('transfer to non-existent account fails', function () {
-    seed('DatabaseSeeder');
-    seed('DemoDataSeeder');
+    $this->seed('DatabaseSeeder');
+    $this->seed('DemoDataSeeder');
 
     $sender = Customer::where('customer_id', 'CUS1000001')->first();
     $senderAccount = $sender->primaryAccount;
@@ -140,8 +143,8 @@ test('transfer to non-existent account fails', function () {
 })->throws(\Exception::class, 'Recipient account not found or not eligible to receive transfers');
 
 test('transfer to self fails', function () {
-    seed('DatabaseSeeder');
-    seed('DemoDataSeeder');
+    $this->seed('DatabaseSeeder');
+    $this->seed('DemoDataSeeder');
 
     $sender = Customer::where('customer_id', 'CUS1000001')->first();
     $senderAccount = $sender->primaryAccount;
@@ -159,8 +162,8 @@ test('transfer to self fails', function () {
 })->throws(\Exception::class, 'Cannot transfer to your own account');
 
 test('concurrent transfers from same account are handled correctly', function () {
-    seed('DatabaseSeeder');
-    seed('DemoDataSeeder');
+    $this->seed('DatabaseSeeder');
+    $this->seed('DemoDataSeeder');
 
     $sender = Customer::where('customer_id', 'CUS1000001')->first();
     $receiver1 = Customer::where('customer_id', 'CUS1000002')->first();
