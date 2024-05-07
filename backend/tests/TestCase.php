@@ -10,7 +10,7 @@ class TestCase extends BaseTestCase
 
     public function setUp(): void
     {
-        // Set the default database connection to testing BEFORE parent setUp
+        // Set up testing database connection BEFORE parent setUp
         putenv('DB_CONNECTION=sqlite');
         putenv('DB_DATABASE=:memory:');
         
