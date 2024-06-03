@@ -12,6 +12,8 @@ class TestCase extends BaseTestCase
         putenv('DB_CONNECTION=sqlite');
         putenv('DB_DATABASE=:memory:');
         
+        parent::setUp();
+        
         // Force the default database connection to sqlite in-memory
         $this->app['config']->set('database.default', 'testing');
         $this->app['config']->set('database.connections.testing', [
