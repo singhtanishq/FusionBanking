@@ -1,6 +1,6 @@
 <?php
 
-use Illuminate\Support\Facades\Facades;
+use Illuminate\Support\Facades\Facade;
 
 require __DIR__.'/vendor/autoload.php';
 
@@ -9,8 +9,8 @@ $kernel = $app->make(\Illuminate\Contracts\Console\Kernel::class);
 $kernel->bootstrap();
 
 // Set up facade root
-Facades::clearResolvedInstances();
-Facades::setFacadeApplication($app);
+Facade::clearResolvedInstances();
+Facade::setFacadeApplication($app);
 
 // Run migrations for testing
 $app->make('Illuminate\Contracts\Console\Kernel')->call('migrate', ['--force' => true, '--database' => 'testing']);
