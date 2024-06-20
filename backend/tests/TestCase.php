@@ -6,9 +6,9 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 class TestCase extends BaseTestCase
 {
-    use \Illuminate\Foundation\Testing\RefreshDatabase, \Illuminate\Foundation\Testing\WithFaker;
+    use \Illuminate\Foundation\Testing\WithFaker;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         
