@@ -11,8 +11,8 @@ use function Pest\Laravel\seed;
 uses(\Tests\TestCase::class)->group('feature');
 
 test('transfer between two accounts works correctly', function () {
-    $this->seed('DatabaseSeeder');
-    $this->seed('DemoDataSeeder');
+    seed('DatabaseSeeder');
+    seed('DemoDataSeeder');
 
     $sender = Customer::where('customer_id', 'CUS1000001')->first();
     $receiver = Customer::where('customer_id', 'CUS1000002')->first();
