@@ -6,15 +6,23 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 class TestCase extends BaseTestCase
 {
-    use \Illuminate\Foundation\Testing\WithFaker;
+    use \Illuminate\Foundation\Testing\RefreshDatabase, \Illuminate\Foundation\Testing\WithFaker;
 
     protected function setUp(): void
     {
-        parent::setUp();
-        
         // Set up testing database connection BEFORE parent setUp
         putenv('DB_CONNECTION=sqlite');
         putenv('DB_DATABASE=:memory:');
+        
+        // Force the default database connection to sqlite in-memory
+        $this->app['config']->set('database.default', 'testing');
+        $this->app['config']->set('database.connections.testing', [
+            'driver' => 'sqlite',
+            'database' => ':memory:',
+            'prefix' => '',
+        ]);
+        
+        parent::setUp();
         
         // Force the default database connection to sqlite in-memory
         $this->app['config']->set('database.default', 'testing');
