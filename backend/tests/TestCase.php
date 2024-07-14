@@ -10,18 +10,6 @@ class TestCase extends BaseTestCase
 
     protected function setUp(): void
     {
-        // Set up testing database connection BEFORE parent setUp
-        putenv('DB_CONNECTION=sqlite');
-        putenv('DB_DATABASE=:memory:');
-        
-        // Force the default database connection to sqlite in-memory
-        $this->app['config']->set('database.default', 'testing');
-        $this->app['config']->set('database.connections.testing', [
-            'driver' => 'sqlite',
-            'database' => ':memory:',
-            'prefix' => '',
-        ]);
-        
         parent::setUp();
         
         // Force the default database connection to sqlite in-memory
