@@ -19,13 +19,6 @@ class TestCase extends BaseTestCase
             'database' => ':memory:',
             'prefix' => '',
         ]);
-        
-        // Purge and reconnect
-        \Illuminate\Support\Facades\DB::purge('testing');
-        \Illuminate\Support\Facades\DB::reconnect('testing');
-        
-        // Run migrations
-        $this->artisan('migrate', ['--database' => 'testing', '--force' => true]);
     }
     
     public function artisan($command, $parameters = [])
