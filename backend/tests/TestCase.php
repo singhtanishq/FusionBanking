@@ -6,7 +6,7 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 class TestCase extends BaseTestCase
 {
-    use \Illuminate\Foundation\Testing\RefreshDatabase, \Illuminate\Foundation\Testing\WithFaker;
+    use \Illuminate\Foundation\Testing\WithFaker;
 
     protected function setUp(): void
     {
@@ -20,7 +20,7 @@ class TestCase extends BaseTestCase
             'prefix' => '',
         ]);
         
-        // Disable RefreshDatabase's VACUUM for SQLite
+        // Disable migrations in RefreshDatabase
         $this->app['config']->set('database.connections.testing.sqlite_auto_vacuum', false);
     }
     
