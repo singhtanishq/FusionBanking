@@ -16,7 +16,7 @@ class CustomerFactory extends Factory
         
         return [
             'customer_id' => 'CUS' . $this->faker->unique()->numberBetween(1000000, 9999999),
-            'email' => 'user_' . ++$emailCounter . '@example.com',
+            'email' => 'user_' . ++$emailCounter . '_' . uniqid() . '@example.com',
             'mobile' => '9' . $this->faker->unique()->numberBetween(100000000, 999999999),
             'alternate_mobile' => '8' . $this->faker->numberBetween(100000000, 999999999),
             'full_name' => $this->faker->name(),
