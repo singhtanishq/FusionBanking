@@ -12,11 +12,9 @@ class CustomerFactory extends Factory
 
     public function definition(): array
     {
-        static $emailCounter = 0;
-        
         return [
             'customer_id' => 'CUS' . $this->faker->unique()->numberBetween(1000000, 9999999),
-            'email' => 'user_' . ++$emailCounter . '@example.com',
+            'email' => 'user_' . uniqid('usr_', true) . '@example.com',
             'mobile' => '9' . $this->faker->unique()->numberBetween(100000000, 999999999),
             'alternate_mobile' => '8' . $this->faker->numberBetween(100000000, 999999999),
             'full_name' => $this->faker->name(),
