@@ -7,17 +7,16 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 class TestCase extends BaseTestCase
 {
     use \Illuminate\Foundation\Testing\WithFaker;
-    use \Illuminate\Foundation\Testing\RefreshDatabase;
 
     protected function setUp(): void
     {
         parent::setUp();
         
-        // Force the default database connection to sqlite in-memory
+        // Force the default database connection to sqlite file-based
         $this->app['config']->set('database.default', 'testing');
         $this->app['config']->set('database.connections.testing', [
             'driver' => 'sqlite',
-            'database' => ':memory:',
+            'database' => __DIR__ . '/../storage/testing.sqlite',
             'prefix' => '',
         ]);
     }
@@ -32,10 +31,6 @@ class TestCase extends BaseTestCase
     {
         $app = require __DIR__.'/../bootstrap/app.php';
         $app->make('Illuminate\Contracts\Console\Kernel')->bootstrap();
-        
-        // Run migrations for the in-memory database
-        $app->make('Illuminate\Contracts\Console\Kernel')->call('migrate', ['--force' => true, '--database' => 'testing']);
-        
         return $app;
     }
 }
