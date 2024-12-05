@@ -7,10 +7,17 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 class TestCase extends BaseTestCase
 {
     use \Illuminate\Foundation\Testing\WithFaker;
+    use \Illuminate\Foundation\Testing\RefreshDatabase;
 
     protected function setUp(): void
     {
         parent::setUp();
+        
+        // Ensure the storage directory exists
+        $storagePath = __DIR__ . '/../storage';
+        if (!is_dir($storagePath)) {
+            mkdir($storagePath, 0755, true);
+        }
         
         // Force the default database connection to sqlite file-based
         $this->app['config']->set('database.default', 'testing');
@@ -19,6 +26,12 @@ class TestCase extends BaseTestCase
             'database' => __DIR__ . '/../storage/testing.sqlite',
             'prefix' => '',
         ]);
+        
+        // Ensure the sqlite file exists
+        $dbPath = __DIR__ . '/../storage/testing.sqlite';
+        if (!file_exists($dbPath)) {
+            touch($dbPath);
+        }
     }
     
     public function artisan($command, $parameters = [])
@@ -31,6 +44,10 @@ class TestCase extends BaseTestCase
     {
         $app = require __DIR__.'/../bootstrap/app.php';
         $app->make('Illuminate\Contracts\Console\Kernel')->bootstrap();
+        
+        // Run migrations for the file-based database
+        $app->make('Illuminate\Contracts\Console\Kernel')->call('migrate', ['--force' => true, '--database' => 'testing']);
+        
         return $app;
     }
 }
