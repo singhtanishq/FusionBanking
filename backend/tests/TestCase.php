@@ -7,7 +7,6 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 class TestCase extends BaseTestCase
 {
     use \Illuminate\Foundation\Testing\WithFaker;
-    use \Illuminate\Foundation\Testing\RefreshDatabase;
 
     protected function setUp(): void
     {
@@ -32,6 +31,18 @@ class TestCase extends BaseTestCase
         if (!file_exists($dbPath)) {
             touch($dbPath);
         }
+    }
+    
+    protected function tearDown(): void
+    {
+        // Clear the database after each test
+        if (config('database.default') === 'testing') {
+            $tables = \Illuminate\Support\Facades\DB::select("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name != 'migrations'");
+            foreach ($tables as $table) {
+                \Illuminate\Support\Facades\DB::statement("DELETE FROM {$table->name}");
+            }
+        }
+        parent::tearDown();
     }
     
     public function artisan($command, $parameters = [])
