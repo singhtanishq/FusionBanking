@@ -20,8 +20,8 @@ test('transfer between two accounts works correctly', function () {
     $senderAccount = $sender->primaryAccount;
     $receiverAccount = $receiver->primaryAccount;
 
-    $initialSenderBalance = $senderAccount->balance;
-    $initialReceiverBalance = $receiverAccount->balance;
+    $initialSenderBalance = (float)$senderAccount->balance;
+    $initialReceiverBalance = (float)$receiverAccount->balance;
     $transferAmount = 10000.00;
 
     $transferService = new TransferService();
@@ -38,7 +38,7 @@ test('transfer between two accounts works correctly', function () {
 
     expect($transfer)->toBeInstanceOf(Transfer::class);
     expect($transfer->status)->toBe(\App\Enums\TransferStatus::PENDING_VERIFICATION);
-    expect((float)$transfer->amount)->toBe((float)$transferAmount);
+    expect((float)$transfer->amount)->toBe($transferAmount);
 
     // Get the verification token
     $verificationToken = \App\Models\VerificationToken::where('resource_type', Transfer::class)
@@ -69,9 +69,9 @@ test('transfer between two accounts works correctly', function () {
     $senderAccount->refresh();
     $receiverAccount->refresh();
 
-    // Verify balances
-    expect($senderAccount->balance)->toBe($initialSenderBalance - $transferAmount);
-    expect($receiverAccount->balance)->toBe($initialReceiverBalance + $transferAmount);
+    // Verify balances (use float comparison)
+    expect((float)$senderAccount->balance)->toBe($initialSenderBalance - $transferAmount);
+    expect((float)$receiverAccount->balance)->toBe($initialReceiverBalance + $transferAmount);
 
     // Verify transfer status
     $transfer->refresh();
@@ -93,11 +93,11 @@ test('transfer between two accounts works correctly', function () {
 
     expect($senderTxn->type)->toBe(\App\Enums\TransactionType::MONEY_SENT);
     expect($senderTxn->direction)->toBe('debit');
-    expect($senderTxn->amount)->toBe($transferAmount);
+    expect((float)$senderTxn->amount)->toBe($transferAmount);
 
     expect($receiverTxn->type)->toBe(\App\Enums\TransactionType::MONEY_RECEIVED);
     expect($receiverTxn->direction)->toBe('credit');
-    expect($receiverTxn->amount)->toBe($transferAmount);
+    expect((float)$receiverTxn->amount)->toBe($transferAmount);
 });
 
 test('transfer with insufficient balance fails', function () {
