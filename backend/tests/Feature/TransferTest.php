@@ -173,8 +173,8 @@ test('concurrent transfers from same account are handled correctly', function ()
     $receiverAccount1 = $receiver1->primaryAccount;
     $receiverAccount2 = $receiver2->primaryAccount;
 
-    $initialBalance = $senderAccount->balance;
-    $transferAmount = 1000.00; // Smaller amount to avoid daily limit
+    $initialBalance = (float)$senderAccount->balance;
+    $transferAmount = 80000.00; // Large amount to test insufficient balance on second transfer
 
     $transferService = new TransferService();
 
@@ -233,5 +233,5 @@ test('concurrent transfers from same account are handled correctly', function ()
     if ($transfer2->fresh()->status === \App\Enums\TransferStatus::COMPLETED) $successfulTransfers++;
 
     expect($successfulTransfers)->toBe(1);
-    expect($senderAccount->balance)->toBeGreaterThanOrEqual(0);
+    expect((float)$senderAccount->balance)->toBeGreaterThanOrEqual(0);
 });
