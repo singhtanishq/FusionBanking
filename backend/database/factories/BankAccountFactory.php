@@ -17,11 +17,11 @@ class BankAccountFactory extends Factory
         return [
             'account_number' => '50' . $this->faker->unique()->numberBetween(1000000000, 9999999999),
             'ifsc_code' => 'FUSB0001001',
-            'account_type' => $this->faker->randomElement($accountTypes),
+            'account_type' => $this->faker->format('randomElement', $accountTypes),
             'status' => AccountStatus::ACTIVE,
             'balance' => $this->faker->randomFloat(2, 0, 1000000),
             'available_balance' => $this->faker->randomFloat(2, 0, 1000000),
-            'opening_date' => $this->faker->dateTimeBetween('-2 years', 'now'),
+            'opening_date' => $this->faker->format('dateTimeBetween', '-2 years', 'now'),
             'is_primary' => true,
         ];
     }
