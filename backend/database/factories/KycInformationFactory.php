@@ -11,8 +11,8 @@ class KycInformationFactory extends Factory
 
     public function definition(): array
     {
-        // Generate PAN using bothify format
-        $pan = strtoupper($this->faker->format('bothify', ['?????####?']));
+        // Generate PAN using bothify method call
+        $pan = strtoupper($this->faker->bothify('?????####?'));
         
         return [
             'pan_number' => $pan,
