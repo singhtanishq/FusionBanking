@@ -6,8 +6,6 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 class TestCase extends BaseTestCase
 {
-    use \Illuminate\Foundation\Testing\WithFaker;
-
     protected function setUp(): void
     {
         parent::setUp();
