@@ -44,18 +44,20 @@ class AuditLog extends Model
         string $action,
         string $resourceType,
         $resourceId,
-        $actor,
+        $actor = null,
         array $oldValues = [],
         array $newValues = [],
         array $metadata = []
     ): void {
         self::create([
-            'actor_type' => get_class($actor),
-            'actor_id' => $actor->getKey(),
+            // System-triggered events (no authenticated actor, e.g. public
+            // application flows) are recorded under the reserved "system" actor.
+            'actor_type' => $actor !== null ? get_class($actor) : 'system',
+            'actor_id' => $actor !== null ? $actor->getKey() : 0,
             'action' => $action,
             'resource_type' => $resourceType,
             'resource_id' => $resourceId,
-            'ip_address' => request()->ip(),
+            'ip_address' => request()->ip() ?? '0.0.0.0',
             'user_agent' => request()->userAgent(),
             'old_values' => $oldValues,
             'new_values' => $newValues,
