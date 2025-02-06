@@ -30,7 +30,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        $exceptions->render(function (Throwable $e, Request $request) {
+        $exceptions->render(function (\Throwable $e, \Illuminate\Http\Request $request) {
             if ($request->expectsJson()) {
                 $status = $e instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface
                     ? $e->getStatusCode()
