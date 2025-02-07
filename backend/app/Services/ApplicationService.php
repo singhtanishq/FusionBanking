@@ -268,7 +268,7 @@ class ApplicationService
             throw new Exception('Invalid or expired correction token');
         }
 
-        return DB::transaction(function () use ($application, $step, $data, $verificationToken) {
+        return DB::transaction(function () use ($application, $step, $data, $verificationToken, $stepKey) {
             $correction = ApplicationCorrection::create([
                 'application_id' => $application->id,
                 'application_step_id' => $step->id,
