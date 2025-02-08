@@ -96,7 +96,7 @@ const statusConfig: Record<string, { variant: BadgeProps['variant']; label: stri
   premature_closed: { variant: 'warning', label: 'Prematurely Closed' },
 }
 
-export function StatusBadge({ status, type }: StatusBadgeProps) {
+export function StatusBadge({ status }: StatusBadgeProps) {
   const config = statusConfig[status] || { variant: 'gray', label: status }
   return <Badge variant={config.variant} dot>{config.label}</Badge>
 }
