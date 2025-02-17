@@ -35,8 +35,8 @@ api.interceptors.response.use(
       const currentPath = window.location.pathname
       clearAuth()
       const loginPath = userType === 'admin' ? '/admin/login' : '/netbanking/login'
-      const isAlreadyOnLogin = currentPath === loginPath || currentPath === '/admin/login' || currentPath === '/netbanking/login'
-      if (!isAlreadyOnLogin && currentPath.startsWith('/customer') || currentPath.startsWith('/admin')) {
+      const onLoginAlready = currentPath === '/admin/login' || currentPath === '/netbanking/login'
+      if (!onLoginAlready) {
         window.location.href = loginPath
       }
     }
