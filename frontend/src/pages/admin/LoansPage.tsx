@@ -65,7 +65,8 @@ export function AdminLoansPage() {
       return response.data
     },
     onSuccess: (_d, vars) => {
-      toast.success(`Loan ${vars.action}${vars.action === 'approve' ? 'd' : vars.action === 'disburse' ? 'd' : 'ed'} successfully`)
+      const messages = { approve: 'Loan approved', reject: 'Loan rejected', disburse: 'Loan disbursed' } as const
+      toast.success(messages[vars.action])
       setActionTarget(null)
       setReason('')
       queryClient.invalidateQueries({ queryKey: ['admin-loans'] })
