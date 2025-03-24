@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { api, handleApiError } from '@/services/api'
+import { useAuth } from '@/hooks/useAuth'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Modal } from '@/components/ui/Modal'
@@ -38,6 +39,7 @@ const priorityVariant: Record<string, 'success' | 'warning' | 'danger' | 'gray' 
 
 export function AdminSupportPage() {
   const queryClient = useQueryClient()
+  const { user } = useAuth()
   const [status, setStatus] = useState('')
   const [selectedId, setSelectedId] = useState<number | null>(null)
   const [reply, setReply] = useState('')
@@ -76,7 +78,7 @@ export function AdminSupportPage() {
 
   const assignMutation = useMutation({
     mutationFn: async (id: number) => {
-      const response = await api.put(`/admin/support/tickets/${id}/assign`, { admin_id: 1 })
+      const response = await api.put(`/admin/support/tickets/${id}/assign`, { admin_id: user && 'id' in user ? user.id : undefined })
       if (!response.data.success) throw new Error(response.data.message)
       return response.data
     },
@@ -196,7 +198,7 @@ export function AdminSupportPage() {
                 </Button>
               ))}
             </div>
-            {!detailQuery.data.assigned_admin && (
+            {!detailQuery.data.assigned_admin && user && 'id' in user && (
               <Button size="sm" variant="ghost" onClick={() => assignMutation.mutate(detailQuery.data.id)}>
                 Assign to me
               </Button>
