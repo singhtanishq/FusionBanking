@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Modal, ConfirmDialog } from '@/components/ui/Modal'
 import { StatusBadge } from '@/components/ui/Badge'
-import { formatCurrency, formatDate } from '@/lib/utils'
+import { formatCurrency } from '@/lib/utils'
 import { toast } from 'react-hot-toast'
 
 interface AdminLoan {
