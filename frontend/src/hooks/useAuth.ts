@@ -1,17 +1,14 @@
 import { useState, useEffect, useCallback } from 'react'
 import { api, ApiResponse } from '@/services/api'
-import { 
-  getAuthToken, 
-  setAuthToken, 
-  clearAuthToken, 
-  getUserData, 
-  setUserData, 
+import {
+  getAuthToken,
+  setAuthToken,
+  clearAuthToken,
+  setUserData,
   clearUserData,
   getUserType,
   setUserType,
   clearUserType,
-  User,
-  AdminUser,
   AuthUser
 } from '@/services/auth'
 
