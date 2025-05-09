@@ -3,13 +3,13 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Link, useNavigate } from 'react-router-dom'
-import { LockClosedIcon, EnvelopeIcon, UserCircleIcon } from '@heroicons/react/24/outline'
+import { LockClosedIcon, UserCircleIcon } from '@heroicons/react/24/outline'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Card, CardContent, CardHeader } from '@/components/ui/Card'
 import { Alert } from '@/components/ui/Alert'
-import { api } from '@/services/api'
-import { login, setUserType } from '@/services/auth'
+import { api, handleApiError } from '@/services/api'
+import { login } from '@/services/auth'
 import { toast } from 'react-hot-toast'
 
 const loginSchema = z.object({
@@ -24,7 +24,9 @@ export function NetBankingLoginPage() {
   const [loading, setLoading] = useState(false)
   const [otpSent, setOtpSent] = useState(false)
   const [verifyingOtp, setVerifyingOtp] = useState(false)
+  const [resending, setResending] = useState(false)
   const [otp, setOtp] = useState('')
+  const [credentials, setCredentials] = useState<LoginForm | null>(null)
 
   const {
     register,
@@ -39,21 +41,21 @@ export function NetBankingLoginPage() {
     setLoading(true)
     try {
       const response = await api.post('/auth/customer/login', data)
-      
+
       if (response.data.success) {
         if (response.data.data.requires_otp) {
+          setCredentials(data)
           setOtpSent(true)
           toast.success('Verification code sent to your registered email')
         } else {
           login(response.data.data.token, response.data.data.user, 'customer')
-          setUserType('customer')
           navigate('/customer/dashboard')
         }
       } else {
         toast.error(response.data.message || 'Invalid credentials')
       }
     } catch (error) {
-      toast.error('Invalid credentials. Please try again.')
+      toast.error(handleApiError(error as never) || 'Invalid credentials. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -68,16 +70,15 @@ export function NetBankingLoginPage() {
     setVerifyingOtp(true)
     try {
       const response = await api.post('/auth/customer/verify-otp', { otp })
-      
+
       if (response.data.success) {
         login(response.data.data.token, response.data.data.user, 'customer')
-        setUserType('customer')
         navigate('/customer/dashboard')
       } else {
         toast.error(response.data.message || 'Invalid verification code')
       }
     } catch (error) {
-      toast.error('Invalid verification code. Please try again.')
+      toast.error(handleApiError(error as never) || 'Invalid verification code. Please try again.')
     } finally {
       setVerifyingOtp(false)
     }
@@ -145,18 +146,21 @@ export function NetBankingLoginPage() {
                       type="text"
                       maxLength={1}
                       value={otp[index] || ''}
+                      aria-label={`Digit ${index + 1}`}
                       onChange={(e) => {
                         const value = e.target.value.replace(/[^0-9]/g, '')
                         const newOtp = otp.split('')
                         newOtp[index] = value
                         setOtp(newOtp.join(''))
                         if (value && index < 5) {
-                          e.target.nextElementSibling?.focus()
+                          const next = e.target.nextElementSibling as HTMLInputElement | null
+                          next?.focus()
                         }
                       }}
                       onKeyDown={(e) => {
                         if (e.key === 'Backspace' && !otp[index] && index > 0) {
-                          e.target.previousElementSibling?.focus()
+                          const prev = e.target.previousElementSibling as HTMLInputElement | null
+                          prev?.focus()
                         }
                       }}
                       className="w-12 h-12 text-center text-lg font-semibold rounded-lg border border-navy-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
@@ -177,8 +181,26 @@ export function NetBankingLoginPage() {
 
               <p className="text-center text-sm text-navy-500">
                 Didn't receive the code?{' '}
-                <button className="text-primary-600 hover:underline" onClick={() => toast('Verification code resent')}>
-                  Resend
+                <button
+                  type="button"
+                  className="text-primary-600 hover:underline disabled:opacity-50"
+                  disabled={resending || !credentials}
+                  onClick={async () => {
+                    if (!credentials) return
+                    setResending(true)
+                    try {
+                      const response = await api.post('/auth/customer/login', credentials)
+                      if (response.data.data?.requires_otp) {
+                        toast.success('Verification code resent')
+                      }
+                    } catch {
+                      toast.error('Could not resend the code. Please try logging in again.')
+                    } finally {
+                      setResending(false)
+                    }
+                  }}
+                >
+                  {resending ? 'Resending…' : 'Resend'}
                 </button>
               </p>
             </div>
