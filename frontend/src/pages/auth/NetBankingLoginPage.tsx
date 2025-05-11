@@ -157,7 +157,7 @@ export function NetBankingLoginPage() {
                           next?.focus()
                         }
                       }}
-                      onKeyDown={(e) => {
+                      onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                         if (e.key === 'Backspace' && !otp[index] && index > 0) {
                           const prev = e.target.previousElementSibling as HTMLInputElement | null
                           prev?.focus()
