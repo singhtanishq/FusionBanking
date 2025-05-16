@@ -2,14 +2,14 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Link, useNavigate } from 'react-router-dom'
-import { LockClosedIcon, EnvelopeIcon, UserCircleIcon, BuildingOfficeIcon, KeyIcon } from '@heroicons/react/24/outline'
+import { useNavigate } from 'react-router-dom'
+import { LockClosedIcon, UserCircleIcon, BuildingOfficeIcon, KeyIcon } from '@heroicons/react/24/outline'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Card, CardContent, CardHeader } from '@/components/ui/Card'
 import { Alert } from '@/components/ui/Alert'
-import { api } from '@/services/api'
-import { login, setUserType } from '@/services/auth'
+import { api, handleApiError } from '@/services/api'
+import { login } from '@/services/auth'
 import { toast } from 'react-hot-toast'
 
 const adminLoginSchema = z.object({
@@ -25,7 +25,9 @@ export function AdminLoginPage() {
   const [loading, setLoading] = useState(false)
   const [otpSent, setOtpSent] = useState(false)
   const [verifyingOtp, setVerifyingOtp] = useState(false)
+  const [resending, setResending] = useState(false)
   const [otp, setOtp] = useState('')
+  const [credentials, setCredentials] = useState<AdminLoginForm | null>(null)
 
   const {
     register,
@@ -43,18 +45,18 @@ export function AdminLoginPage() {
       
       if (response.data.success) {
         if (response.data.data.requires_otp) {
+          setCredentials(data)
           setOtpSent(true)
           toast.success('Verification code sent to your registered email')
         } else {
           login(response.data.data.token, response.data.data.user, 'admin')
-          setUserType('admin')
           navigate('/admin')
         }
       } else {
         toast.error(response.data.message || 'Invalid credentials')
       }
     } catch (error) {
-      toast.error('Invalid credentials. Please try again.')
+      toast.error(handleApiError(error as never) || 'Invalid credentials. Please try again.')
     } finally {
       setLoading(false)
     }
@@ -72,7 +74,6 @@ export function AdminLoginPage() {
       
       if (response.data.success) {
         login(response.data.data.token, response.data.data.user, 'admin')
-        setUserType('admin')
         navigate('/admin')
       } else {
         toast.error(response.data.message || 'Invalid verification token')
@@ -156,8 +157,26 @@ export function AdminLoginPage() {
 
               <p className="text-center text-sm text-navy-500">
                 Didn't receive the token?{' '}
-                <button className="text-primary-600 hover:underline" onClick={() => toast('Verification token resent')}>
-                  Resend
+                <button
+                  type="button"
+                  className="text-primary-600 hover:underline disabled:opacity-50"
+                  disabled={resending || !credentials}
+                  onClick={async () => {
+                    if (!credentials) return
+                    setResending(true)
+                    try {
+                      const response = await api.post('/auth/admin/login', credentials)
+                      if (response.data.data?.requires_otp) {
+                        toast.success('Verification token resent')
+                      }
+                    } catch {
+                      toast.error('Could not resend the token. Please try logging in again.')
+                    } finally {
+                      setResending(false)
+                    }
+                  }}
+                >
+                  {resending ? 'Resending…' : 'Resend'}
                 </button>
               </p>
             </div>
