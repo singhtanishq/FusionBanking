@@ -9,10 +9,10 @@ import {
   EyeIcon,
   DocumentTextIcon,
 } from '@heroicons/react/24/outline'
-import { Card, CardContent, CardHeader, CardFooter } from '@/components/ui/Card'
+import { Card, CardContent, CardHeader } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
-import { cn, formatCurrency, formatDate } from '@/lib/utils'
+import { cn, formatCurrency, formatDate, formatDateTime } from '@/lib/utils'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '@/services/api'
 import { useAuth } from '@/hooks/useAuth'
@@ -87,7 +87,7 @@ export function CustomerDashboardPage() {
               {user?.full_name?.split(' ')[0] || 'Customer'}
             </span>
           </h1>
-          <p className="text-navy-600 mt-1">Customer ID: <span className="font-mono font-medium text-navy-900">{user?.customer_id}</span></p>
+          <p className="text-navy-600 mt-1">Customer ID: <span className="font-mono font-medium text-navy-900">{user && 'customer_id' in user ? user.customer_id : ''}</span></p>
         </div>
         <div className="flex gap-3">
           <Link to="/customer/payments/send">
