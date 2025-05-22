@@ -2,15 +2,12 @@ import { Link } from 'react-router-dom'
 import { 
   CreditCardIcon, 
   ArrowPathIcon, 
-  BanknotesIcon, 
-  ChartBarIcon,
   PlusIcon,
-  ArrowRightIcon,
   EyeIcon,
   DocumentTextIcon,
   CurrencyDollarIcon,
 } from '@heroicons/react/24/outline'
-import { Card, CardContent, CardHeader } from '@/components/ui/Card'
+import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import { formatCurrency, formatDate } from '@/lib/utils'
