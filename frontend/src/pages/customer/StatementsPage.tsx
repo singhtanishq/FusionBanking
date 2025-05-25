@@ -9,9 +9,10 @@ import { Input, Select } from '@/components/ui/Input'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/Table'
 import { Badge } from '@/components/ui/Badge'
-import { formatCurrency, formatDateTime, getAuthToken } from '@/lib/utils'
+import { formatCurrency, formatDateTime } from '@/lib/utils'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '@/services/api'
+import { getAuthToken } from '@/services/auth'
 
 interface Transaction {
   id: number
