@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import { 
   MagnifyingGlassIcon, 
   FunnelIcon,
+  DocumentArrowDownIcon,
   ChevronDownIcon,
   ChevronUpIcon,
 } from '@heroicons/react/24/outline'
@@ -10,21 +10,28 @@ import { Button } from '@/components/ui/Button'
 import { Input, Select } from '@/components/ui/Input'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/Table'
-import { Badge, StatusBadge } from '@/components/ui/Badge'
+import { Badge } from '@/components/ui/Badge'
 import { formatCurrency, formatDateTime } from '@/lib/utils'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '@/services/api'
+import { getAuthToken } from '@/services/auth'
 
 interface Transaction {
-  id: string
+  id: number
   reference_number: string
   type: string
   direction: string
-  amount: number
+  amount: string
   description: string
   created_at: string
-  closing_balance: number
+  closing_balance: string
   status: string
+}
+
+interface TransactionsResponse {
+  success: boolean
+  data: Transaction[]
+  pagination: { current_page: number; last_page: number; total: number }
 }
 
 export function TransactionsPage() {
@@ -37,6 +44,44 @@ export function TransactionsPage() {
   const [sortColumn, setSortColumn] = useState('created_at')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
   const [page, setPage] = useState(1)
+
+  const [exporting, setExporting] = useState(false)
+
+  const exportCsv = async () => {
+    setExporting(true)
+    try {
+      const params = new URLSearchParams()
+      if (dateFrom) params.append('date_from', dateFrom)
+      if (dateTo) params.append('date_to', dateTo)
+
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL || '/api'}/customer/statements/download?${params}`,
+        { headers: { Authorization: `Bearer ${getAuthToken()}`, Accept: 'text/csv' } }
+      )
+      if (!response.ok) throw new Error('Download failed')
+
+      const blob = await response.blob()
+      const disposition = response.headers.get('Content-Disposition') ?? ''
+      const match = disposition.match(/filename="?([^";]+)"?/)
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = match?.[1] ?? 'transactions.csv'
+      a.click()
+      URL.revokeObjectURL(url)
+    } catch {
+      try {
+        const params = new URLSearchParams()
+        if (dateFrom) params.append('date_from', dateFrom)
+        if (dateTo) params.append('date_to', dateTo)
+        window.open(`/api/customer/statements/download?${params}`, '_blank')
+      } finally {
+        // no-op
+      }
+    } finally {
+      setExporting(false)
+    }
+  }
 
   const { data, isLoading } = useQuery({
     queryKey: ['transactions', page, search, typeFilter, directionFilter, dateFrom, dateTo, sortColumn, sortDirection],
@@ -54,7 +99,7 @@ export function TransactionsPage() {
       if (dateTo) params.append('date_to', dateTo)
 
       const response = await api.get(`/customer/transactions?${params}`)
-      return response.data as { data: Transaction[]; current_page: number; last_page: number; total: number }
+      return response.data as TransactionsResponse
     },
   })
 
@@ -93,13 +138,9 @@ export function TransactionsPage() {
           <p className="text-navy-600">View and manage your transaction records</p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline">
-            <MagnifyingGlassIcon className="h-5 w-5" />
+          <Button variant="outline" onClick={exportCsv} loading={exporting}>
+            <DocumentArrowDownIcon className="h-5 w-5" />
             Export CSV
-          </Button>
-          <Button variant="outline">
-            <DocumentTextIcon className="h-5 w-5" />
-            Download PDF
           </Button>
         </div>
       </div>
@@ -201,22 +242,31 @@ export function TransactionsPage() {
                 </TableHeader>
                 <TableBody>
                   {data?.data.map((txn) => (
-                    <TableRow key={txn.id} clickable onClick={() => window.open(`/customer/payments/transactions/${txn.id}`, '_blank')}>
+                    <TableRow key={txn.id}>
                       <TableCell className="whitespace-nowrap">
                         <p className="font-medium text-navy-900">{formatDateTime(txn.created_at).split(',')[0]}</p>
                         <p className="text-sm text-navy-500">{formatDateTime(txn.created_at).split(',')[1]?.trim()}</p>
                       </TableCell>
                       <TableCell>
-                        <StatusBadge status={txn.type} />
+                        <Badge variant={
+                          txn.type === 'cash_deposit' ? 'success' :
+                          txn.type === 'money_received' ? 'success' :
+                          txn.type === 'money_sent' ? 'info' :
+                          txn.type === 'loan_disbursement' ? 'success' :
+                          txn.type === 'fd_maturity' ? 'success' :
+                          txn.type === 'interest_credit' ? 'success' : 'gray'
+                        }>
+                          {txn.type.replace(/_/g, ' ')}
+                        </Badge>
                       </TableCell>
                       <TableCell>
                         <p className="font-medium text-navy-900">{txn.description}</p>
                       </TableCell>
-                      <TableCell className="text-right font-mono" style={{ color: txn.direction === 'credit' ? '#059669' : '#dc2626' }}>
-                        {txn.direction === 'credit' ? '+' : '-'}{formatCurrency(txn.amount)}
+                      <TableCell align="right" className={`font-mono ${txn.direction === 'credit' ? 'text-emerald-600' : 'text-red-600'}`}>
+                        {txn.direction === 'credit' ? '+' : '-'}{formatCurrency(Number(txn.amount))}
                       </TableCell>
                       <TableCell className="text-right font-mono text-navy-900">
-                        {formatCurrency(txn.closing_balance)}
+                        {formatCurrency(Number(txn.closing_balance))}
                       </TableCell>
                       <TableCell>
                         <Badge variant={txn.status === 'completed' ? 'success' : txn.status === 'pending' ? 'warning' : 'danger'}>
