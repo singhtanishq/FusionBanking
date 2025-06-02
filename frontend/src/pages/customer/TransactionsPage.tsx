@@ -282,16 +282,16 @@ export function TransactionsPage() {
               </Table>
 
               {/* Pagination */}
-              {data && data.last_page > 1 && (
+              {data && data.pagination.last_page > 1 && (
                 <div className="px-6 py-4 border-t border-navy-100 flex items-center justify-between">
                   <p className="text-sm text-navy-500">
-                    Showing page {data.current_page} of {data.last_page} ({data.total} transactions)
+                    Showing page {data.pagination.current_page} of {data.pagination.last_page} ({data.pagination.total} transactions)
                   </p>
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={data.current_page === 1}>
+                    <Button variant="outline" size="sm" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={data.pagination.current_page === 1}>
                       Previous
                     </Button>
-                    <Button variant="outline" size="sm" onClick={() => setPage(p => Math.min(data.last_page, p + 1))} disabled={data.current_page === data.last_page}>
+                    <Button variant="outline" size="sm" onClick={() => setPage(p => Math.min(data.pagination.last_page, p + 1))} disabled={data.pagination.current_page === data.pagination.last_page}>
                       Next
                     </Button>
                   </div>
