@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom'
 import {
   CreditCardIcon,
   ArrowPathIcon,
-  ArrowRightIcon,
   DocumentTextIcon,
   UserCircleIcon,
   ChartBarIcon,
