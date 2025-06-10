@@ -1,21 +1,16 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { 
-  PlusIcon, 
-  BanknotesIcon, 
+import {
+  PlusIcon,
   ChartBarIcon,
-  DocumentTextIcon,
-  ClockIcon,
-  CheckCircleIcon,
-  ExclamationTriangleIcon,
-  XCircleIcon,
   CurrencyDollarIcon,
 } from '@heroicons/react/24/outline'
 import { Button } from '@/components/ui/Button'
 import { Input, Select } from '@/components/ui/Input'
 import { Card, CardContent, CardHeader } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
-import { Modal, ConfirmDialog } from '@/components/ui/Modal'
+import { Modal } from '@/components/ui/Modal'
+import { Alert } from '@/components/ui/Alert'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/services/api'
@@ -117,7 +112,10 @@ export function FDPage() {
     createMutation.mutate(data)
   }
 
-  const selectedProduct = products?.find(p => p.id.toString() === form.getValues('fd_product_id'))
+  const watchProductId = form.watch('fd_product_id')
+  const watchPrincipal = form.watch('principal_amount')
+  const watchTenure = form.watch('tenure_months')
+  const selectedProduct = products?.find(p => p.id.toString() === watchProductId)
 
   return (
     <div className="space-y-6">
@@ -196,7 +194,7 @@ export function FDPage() {
       {/* FDs List */}
       <Card>
         <CardContent className="pt-0">
-          {activeTab === 'active' && activeFDs.length === 0 && activeTab === 'matured' && maturedFDs.length === 0 ? (
+          {(activeTab === 'active' ? activeFDs : maturedFDs).length === 0 ? (
             <div className="pt-12 pb-12 text-center">
               <CurrencyDollarIcon className="h-16 w-16 text-navy-300 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-navy-900 mb-2">No Fixed Deposits</h3>
@@ -209,29 +207,33 @@ export function FDPage() {
           ) : (
             <div className="space-y-4">
               {(activeTab === 'active' ? activeFDs : maturedFDs).map((fd) => (
-                <Link key={fd.id} to={`/customer/fd/${fd.id}`} className="flex items-center justify-between p-4 rounded-lg border border-navy-100 hover:bg-navy-50 transition-colors">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center">
+                <div key={fd.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-lg border border-navy-100 hover:bg-navy-50 transition-colors">
+                  <div className="flex items-center gap-4 min-w-0">
+                    <div className="w-12 h-12 rounded-xl bg-emerald-100 flex items-center justify-center flex-shrink-0">
                       <CurrencyDollarIcon className="h-6 w-6 text-emerald-600" />
                     </div>
-                    <div>
-                      <p className="font-medium text-navy-900">{fd.fd_number}</p>
-                      <p className="text-sm text-navy-500">{fd.tenure_months} months • {fd.interest_rate}% p.a.</p>
+                    <div className="min-w-0">
+                      <p className="font-medium text-navy-900 font-mono text-sm">{fd.fd_number}</p>
+                      <p className="text-sm text-navy-500">{fd.tenure_months} months • {fd.interest_rate}% p.a. • {formatCurrency(fd.principal_amount)}</p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-4 flex-wrap">
                     <Badge variant={
                       fd.status === 'active' ? 'success' :
                       fd.status === 'matured' ? 'info' :
                       fd.status === 'premature_closed' ? 'warning' : 'gray'
                     }>
-                      {fd.status.replace('_', ' ')}
+                      {fd.status.replace(/_/g, ' ')}
                     </Badge>
-                    <span className="font-semibold text-navy-900 tabular-nums">{formatCurrency(fd.principal_amount)}</span>
                     <span className="text-sm text-navy-500">Matures: {formatDate(fd.maturity_date)}</span>
                     <span className="font-semibold text-emerald-600 tabular-nums">{formatCurrency(fd.maturity_amount)}</span>
+                    {fd.status === 'active' && (
+                      <Button size="sm" variant="ghost" className="text-red-600" onClick={() => setCloseTarget(fd.id)}>
+                        Close early
+                      </Button>
+                    )}
                   </div>
-                </Link>
+                </div>
               ))}
             </div>
           )}
