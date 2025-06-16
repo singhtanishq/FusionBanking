@@ -320,12 +320,12 @@ export function FDPage() {
             </label>
           </div>
 
-          {selectedProduct && form.getValues('principal_amount') && form.getValues('tenure_months') && (
+          {selectedProduct && Number(watchPrincipal) > 0 && Number(watchTenure) > 0 && (
             <Alert variant="info" className="text-sm">
               <p className="font-medium">Estimated Maturity:</p>
-              <p>Principal: {formatCurrency(form.getValues('principal_amount'))}</p>
-              <p>Estimated Interest: {formatCurrency(form.getValues('principal_amount') * (selectedProduct.interest_rate / 100) * (form.getValues('tenure_months') / 12))}</p>
-              <p className="font-medium">Estimated Maturity: {formatCurrency(form.getValues('principal_amount') + (form.getValues('principal_amount') * (selectedProduct.interest_rate / 100) * (form.getValues('tenure_months') / 12)))}</p>
+              <p>Principal: {formatCurrency(Number(watchPrincipal))}</p>
+              <p>Estimated Interest: {formatCurrency(Number(watchPrincipal) * (selectedProduct.interest_rate / 100) * (Number(watchTenure) / 12))}</p>
+              <p className="font-medium">Estimated Maturity: {formatCurrency(Number(watchPrincipal) * (1 + (selectedProduct.interest_rate / 100) * (Number(watchTenure) / 12)))}</p>
             </Alert>
           )}
 
@@ -343,13 +343,23 @@ export function FDPage() {
             <Button type="button" variant="outline" onClick={() => { setShowCreateModal(false); form.reset(); }}>
               Cancel
             </Button>
-            <Button type="submit" loading={createMutation.isPending} disabled={!selectedProduct || form.getValues('principal_amount') < (selectedProduct?.min_amount || 0) || form.getValues('tenure_months') < (selectedProduct?.min_tenure_months || 0) || form.getValues('tenure_months') > (selectedProduct?.max_tenure_months || 0)}>
+            <Button type="submit" loading={createMutation.isPending} disabled={!selectedProduct || Number(watchPrincipal) < (selectedProduct?.min_amount || 0) || Number(watchTenure) < (selectedProduct?.min_tenure_months || 0) || Number(watchTenure) > (selectedProduct?.max_tenure_months || 0)}>
               Create Fixed Deposit
               <PlusIcon className="h-5 w-5" />
             </Button>
           </div>
         </form>
       </Modal>
+
+      <ConfirmDialog
+        isOpen={closeTarget !== null}
+        onClose={() => setCloseTarget(null)}
+        onConfirm={() => closeTarget && prematureCloseMutation.mutate(closeTarget)}
+        title="Close Fixed Deposit prematurely"
+        message="A premature closure penalty (typically 1%) may apply and interest will be recalculated at the savings rate for the completed period. Proceed?"
+        confirmText="Close FD"
+        loading={prematureCloseMutation.isPending}
+      />
     </div>
   )
 }
