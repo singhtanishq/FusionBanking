@@ -1,21 +1,16 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { 
-  PlusIcon, 
-  BanknotesIcon, 
-  ChartBarIcon,
-  DocumentTextIcon,
-  ClockIcon,
-  CheckCircleIcon,
-  ExclamationTriangleIcon,
-  XCircleIcon,
+import {
+  PlusIcon,
+  BanknotesIcon,
 } from '@heroicons/react/24/outline'
 import { Button } from '@/components/ui/Button'
 import { Input, Select } from '@/components/ui/Input'
-import { Card, CardContent, CardHeader } from '@/components/ui/Card'
+import { Card, CardContent } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { Modal } from '@/components/ui/Modal'
-import { formatCurrency, formatDate, formatDateTime } from '@/lib/utils'
+import { Alert } from '@/components/ui/Alert'
+import { formatCurrency, formatDate } from '@/lib/utils'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { api } from '@/services/api'
 import { useForm } from 'react-hook-form'
@@ -194,7 +189,7 @@ export function LoansPage() {
       {/* Loans List */}
       <Card>
         <CardContent className="pt-0">
-          {activeTab === 'active' && activeLoans.length === 0 && activeTab === 'history' && historyLoans.length === 0 ? (
+          {(activeTab === 'active' ? activeLoans : historyLoans).length === 0 ? (
             <div className="pt-12 pb-12 text-center">
               <BanknotesIcon className="h-16 w-16 text-navy-300 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-navy-900 mb-2">No Loans Found</h3>
@@ -207,7 +202,7 @@ export function LoansPage() {
           ) : (
             <div className="space-y-4">
               {(activeTab === 'active' ? activeLoans : historyLoans).map((loan) => (
-                <Link key={loan.id} to={`/customer/loans/${loan.id}`} className="flex items-center justify-between p-4 rounded-lg border border-navy-100 hover:bg-navy-50 transition-colors">
+                <div key={loan.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-lg border border-navy-100 hover:bg-navy-50 transition-colors">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-xl bg-primary-100 flex items-center justify-center">
                       <BanknotesIcon className="h-6 w-6 text-primary-600" />
@@ -231,7 +226,7 @@ export function LoansPage() {
                     </span>
                     {loan.emi && <span className="text-sm text-navy-500">EMI: {formatCurrency(loan.emi)}</span>}
                   </div>
-                </Link>
+                </div>
               ))}
             </div>
           )}
