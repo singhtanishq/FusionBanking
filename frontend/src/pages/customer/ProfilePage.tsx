@@ -1,24 +1,17 @@
-import { useState } from 'react'
-import { 
-  UserCircleIcon, 
-  EnvelopeIcon, 
-  PhoneIcon,
+import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
+import {
   MapPinIcon,
-  LockClosedIcon,
   PencilIcon,
-  EyeIcon,
-  EyeSlashIcon,
-  CheckCircleIcon,
-  XCircleIcon,
 } from '@heroicons/react/24/outline'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Card, CardContent, CardHeader } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
-import { Modal, Alert } from '@/components/ui/Modal'
-import { formatDate, maskPan, maskAadhaar } from '@/lib/utils'
+import { Modal } from '@/components/ui/Modal'
+import { formatDate, formatCurrency, maskPan, maskAadhaar } from '@/lib/utils'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { api } from '@/services/api'
+import { api, handleApiError } from '@/services/api'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -46,6 +39,7 @@ interface Customer {
   netbanking_activated_at: string | null
   last_login_at: string | null
   created_at: string
+  email_verified_at?: string | null
 }
 
 interface Address {
@@ -74,7 +68,6 @@ type ProfileForm = z.infer<typeof profileSchema>
 export function ProfilePage() {
   const queryClient = useQueryClient()
   const [editing, setEditing] = useState(false)
-  const [showPasswordModal, setShowPasswordModal] = useState(false)
 
   const { data: customer } = useQuery({
     queryKey: ['customer-profile'],
@@ -109,10 +102,21 @@ export function ProfilePage() {
       setEditing(false)
       queryClient.invalidateQueries({ queryKey: ['customer-profile'] })
     },
-    onError: () => {
-      toast.error('Failed to update profile')
+    onError: (e) => {
+      toast.error(handleApiError(e as never) || 'Failed to update profile')
     },
   })
+
+  // Populate the edit form when entering edit mode (side effect, not render)
+  useEffect(() => {
+    if (editing && customer) {
+      form.setValue('email', customer.email)
+      form.setValue('alternate_mobile', customer.alternate_mobile || '')
+      form.setValue('occupation', customer.occupation)
+      form.setValue('annual_income', customer.annual_income)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editing, customer])
 
   if (!customer) {
     return (
@@ -125,13 +129,6 @@ export function ProfilePage() {
         </Card>
       </div>
     )
-  }
-
-  if (editing) {
-    form.setValue('email', customer.email)
-    form.setValue('alternate_mobile', customer.alternate_mobile || '')
-    form.setValue('occupation', customer.occupation)
-    form.setValue('annual_income', customer.annual_income)
   }
 
   const handleSubmit = (data: ProfileForm) => {
@@ -362,91 +359,16 @@ export function ProfilePage() {
                 {customer.email_verified_at ? 'Yes' : 'No'}
               </Badge>
             </div>
+            <div>
+              <label className="block text-sm text-navy-500 mb-1">Password</label>
+              <Link to="/customer/security" className="text-sm text-primary-600 hover:underline">
+                Change password in Security Center →
+              </Link>
+            </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* Change Password Modal */}
-      <Modal
-        isOpen={showPasswordModal}
-        onClose={() => setShowPasswordModal(false)}
-        title="Change Password"
-        size="md"
-      >
-        <ChangePasswordForm onClose={() => setShowPasswordModal(false)} />
-      </Modal>
     </div>
-  )
-}
-
-function ChangePasswordForm({ onClose }: { onClose: () => void }) {
-  const [loading, setLoading] = useState(false)
-  const [password, setPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (password !== confirmPassword) {
-      toast.error('Passwords do not match')
-      return
-    }
-    if (password.length < 10) {
-      toast.error('Password must be at least 10 characters')
-      return
-    }
-
-    setLoading(true)
-    try {
-      const response = await api.put('/customer/password', { current_password: '', new_password: password, new_password_confirmation: confirmPassword })
-      if (response.data.success) {
-        toast.success('Password changed successfully')
-        onClose()
-      } else {
-        toast.error(response.data.message || 'Failed to change password')
-      }
-    } catch (error) {
-      toast.error('Failed to change password')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="relative">
-        <Input
-          type={showPassword ? 'text' : 'password'}
-          label="New Password"
-          placeholder="Enter new password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <button
-          type="button"
-          className="absolute right-3 top-[38px] text-navy-400 hover:text-navy-600"
-          onClick={() => setShowPassword(!showPassword)}
-        >
-          {showPassword ? <EyeSlashIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
-        </button>
-      </div>
-      <Input
-        type={showPassword ? 'text' : 'password'}
-        label="Confirm New Password"
-        placeholder="Confirm new password"
-        value={confirmPassword}
-        onChange={(e) => setConfirmPassword(e.target.value)}
-        required
-      />
-      <div className="flex justify-end gap-3 pt-4 border-t border-navy-100">
-        <Button type="button" variant="outline" onClick={onClose}>
-          Cancel
-        </Button>
-        <Button type="submit" loading={loading}>
-          Change Password
-        </Button>
-      </div>
-    </form>
   )
 }
