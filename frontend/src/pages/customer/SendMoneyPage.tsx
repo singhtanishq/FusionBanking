@@ -292,10 +292,11 @@ export function SendMoneyPage() {
                       newOtp[index] = value
                       setOtp(newOtp.join(''))
                       if (value && index < 5) {
-                        e.target.nextElementSibling?.focus()
+                        const next = e.currentTarget.nextElementSibling as HTMLInputElement | null
+                        next?.focus()
                       }
                     }}
-                    onKeyDown={(e) => {
+                    onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                       if (e.key === 'Backspace' && !otp[index] && index > 0) {
                         e.target.previousElementSibling?.focus()
                       }
