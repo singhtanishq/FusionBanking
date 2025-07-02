@@ -108,7 +108,7 @@ export function SendMoneyPage() {
         toast.error(response.data.message || 'Failed to initiate transfer')
       }
     } catch (error) {
-      toast.error('Failed to initiate transfer')
+      toast.error(handleApiError(error as never) || 'Failed to initiate transfer')
     }
   }
 
@@ -130,7 +130,7 @@ export function SendMoneyPage() {
         toast.error(response.data.message || 'Invalid verification code')
       }
     } catch (error) {
-      toast.error('Invalid verification code')
+      toast.error(handleApiError(error as never) || 'Invalid verification code')
     } finally {
       setVerifying(false)
     }
@@ -298,7 +298,7 @@ export function SendMoneyPage() {
                     }}
                     onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                       if (e.key === 'Backspace' && !otp[index] && index > 0) {
-                        e.target.previousElementSibling?.focus()
+                        (e.currentTarget.previousElementSibling as HTMLInputElement | null)?.focus()
                       }
                     }}
                     className="w-12 h-12 text-center text-lg font-semibold rounded-lg border border-navy-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 focus:outline-none"
