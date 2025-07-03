@@ -230,8 +230,8 @@ export function SupportPage() {
           <div>
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-bold text-navy-900">{selectedTicket.ticket_number}</h1>
-              <Badge variant={getStatusColor(selectedTicket.status)}>{selectedTicket.status.replace('_', ' ')}</Badge>
-              <Badge variant={getPriorityColor(selectedTicket.priority)}>{selectedTicket.priority}</Badge>
+              <Badge variant={getStatusVariant(selectedTicket.status)}>{selectedTicket.status.replace('_', ' ')}</Badge>
+              <Badge variant={getPriorityVariant(selectedTicket.priority)}>{selectedTicket.priority}</Badge>
             </div>
             <p className="text-navy-600 mt-1">{selectedTicket.subject}</p>
           </div>
@@ -344,8 +344,8 @@ export function SupportPage() {
                     <div>
                       <div className="flex items-center gap-2">
                         <p className="font-medium text-navy-900">{ticket.ticket_number}</p>
-                        <Badge variant={getPriorityColor(ticket.priority)}>{ticket.priority}</Badge>
-                        <Badge variant={getStatusColor(ticket.status)}>{ticket.status.replace('_', ' ')}</Badge>
+                        <Badge variant={getPriorityVariant(ticket.priority)}>{ticket.priority}</Badge>
+                        <Badge variant={getStatusVariant(ticket.status)}>{ticket.status.replace('_', ' ')}</Badge>
                       </div>
                       <p className="text-sm text-navy-600 mt-1 truncate max-w-md">{ticket.subject}</p>
                       <p className="text-xs text-navy-500 mt-1">{formatDateTime(ticket.created_at)}</p>
