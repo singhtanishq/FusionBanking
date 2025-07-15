@@ -261,10 +261,7 @@ export function SupportPage() {
         <Card>
           <CardHeader title="Messages" />
           <CardContent>
-            <TicketMessages 
-              ticketId={selectedTicket.id} 
-              onClose={() => setSelectedTicket(null)}
-            />
+            <TicketMessages ticketId={selectedTicket.id} />
           </CardContent>
         </Card>
       </div>
