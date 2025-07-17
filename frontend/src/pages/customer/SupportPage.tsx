@@ -91,27 +91,11 @@ export function SupportPage() {
     },
   })
 
-  const addMessageMutation = useMutation({
-    mutationFn: ({ ticketId, message }: { ticketId: string; message: string }) => 
-      api.post(`/customer/support/tickets/${ticketId}/messages`, { message }),
-    onSuccess: () => {
-      toast.success('Message sent')
-      queryClient.invalidateQueries({ queryKey: ['ticket-messages', selectedTicket?.id] })
-    },
-    onError: () => {
-      toast.error('Failed to send message')
-    },
-  })
-
   const form = useForm<TicketForm>({
     resolver: zodResolver(ticketSchema),
     defaultValues: {
       priority: 'normal',
     },
-  })
-
-  const messageForm = useForm<MessageForm>({
-    resolver: zodResolver(messageSchema),
   })
 
   const handleSubmit = (data: TicketForm) => {
