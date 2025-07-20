@@ -82,7 +82,6 @@ export function SupportPage() {
     mutationFn: (data: TicketForm) => api.post('/customer/support/tickets', data),
     onSuccess: () => {
       toast.success('Support ticket created successfully')
-      setShowCreateModal(false)
       setActiveTab('list')
       queryClient.invalidateQueries({ queryKey: ['support-tickets'] })
     },
