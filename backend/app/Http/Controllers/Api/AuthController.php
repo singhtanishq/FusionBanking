@@ -75,7 +75,11 @@ class AuthController extends Controller
             $customer,
             VerificationPurpose::LOGIN_OTP,
             Customer::class,
-            $customer->id
+            $customer->id,
+            null,
+            null,
+            6,
+            true
         );
 
         $customer->notify(new \App\Notifications\LoginOtpNotification($customer, $result['token'], $request->ip()));
@@ -143,7 +147,7 @@ class AuthController extends Controller
                 'user_agent' => $request->userAgent(),
                 'device_info' => $this->parseUserAgent($request->userAgent()),
                 'last_activity_at' => now(),
-                'expires_at' => now()->addMinutes(config('sanctum.expiration', 1440)),
+                'expires_at' => now()->addMinutes((int) config('sanctum.expiration', 1440)),
             ]);
 
             // Log successful login
