@@ -27,6 +27,7 @@ class CustomerSession extends Model
         'last_activity_at' => 'datetime',
         'expires_at' => 'datetime',
         'is_revoked' => 'boolean',
+        'device_info' => 'array',
     ];
 
     public function customer(): BelongsTo
