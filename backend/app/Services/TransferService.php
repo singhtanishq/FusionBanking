@@ -242,7 +242,7 @@ class TransferService
 
     private function createTransferVerificationToken(Transfer $transfer): void
     {
-        $token = VerificationToken::generateToken(16);
+        $token = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
         $tokenHash = VerificationToken::hashToken($token);
         $expiryMinutes = (int) \App\Models\SystemSetting::get('otp_expiry_minutes', self::OTP_EXPIRY_MINUTES);
         $maxAttempts = (int) \App\Models\SystemSetting::get('max_otp_attempts', 3);
