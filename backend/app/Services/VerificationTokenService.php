@@ -21,9 +21,14 @@ class VerificationTokenService
         string $resourceType = null,
         int $resourceId = null,
         int $expiryMinutes = null,
-        int $maxAttempts = null
+        int $maxAttempts = null,
+        int $tokenLength = null,
+        bool $numeric = false
     ): array {
-        $token = VerificationToken::generateToken(self::TOKEN_LENGTH);
+        $length = $tokenLength ?? self::TOKEN_LENGTH;
+        $token = $numeric
+            ? str_pad((string) random_int(0, (10 ** $length) - 1), $length, '0', STR_PAD_LEFT)
+            : VerificationToken::generateToken($length);
         $tokenHash = VerificationToken::hashToken($token);
 
         $expiryMinutes = $expiryMinutes ?? \App\Models\SystemSetting::get('otp_expiry_minutes', self::DEFAULT_EXPIRY_MINUTES);
