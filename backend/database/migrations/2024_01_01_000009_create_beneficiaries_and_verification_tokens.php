@@ -17,7 +17,8 @@ return new class extends Migration
             $table->string('nickname')->nullable();
             $table->boolean('is_verified')->default(false);
             $table->timestamp('verified_at')->nullable();
-            $table->foreignId('verification_token_id')->nullable()->constrained()->nullOnDelete();
+            // FK to verification_tokens added below (table created first)
+            $table->unsignedBigInteger('verification_token_id')->nullable()->index();
             $table->timestamp('cooling_period_ends_at')->nullable();
             $table->json('metadata')->nullable();
             $table->timestamps();
@@ -50,10 +51,34 @@ return new class extends Migration
             $table->index(['customer_id', 'purpose', 'is_used']);
             $table->index(['token_hash']);
         });
+
+        // Deferred FKs: application_corrections (migration 3) and transfers
+        // (migration 6) carry verification_token_id columns but are created
+        // before this table exists.
+        Schema::table('application_corrections', function (Blueprint $table) {
+            $table->foreign('verification_token_id')->references('id')->on('verification_tokens')->nullOnDelete();
+        });
+
+        Schema::table('transfers', function (Blueprint $table) {
+            $table->foreign('verification_token_id')->references('id')->on('verification_tokens')->nullOnDelete();
+        });
+
+        Schema::table('beneficiaries', function (Blueprint $table) {
+            $table->foreign('verification_token_id')->references('id')->on('verification_tokens')->nullOnDelete();
+        });
     }
 
     public function down(): void
     {
+        Schema::table('application_corrections', function (Blueprint $table) {
+            $table->dropForeign(['verification_token_id']);
+        });
+        Schema::table('transfers', function (Blueprint $table) {
+            $table->dropForeign(['verification_token_id']);
+        });
+        Schema::table('beneficiaries', function (Blueprint $table) {
+            $table->dropForeign(['verification_token_id']);
+        });
         Schema::dropIfExists('verification_tokens');
         Schema::dropIfExists('beneficiaries');
     }
