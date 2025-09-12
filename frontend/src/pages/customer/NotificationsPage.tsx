@@ -19,7 +19,7 @@ interface Notification {
   type: string
   title: string
   message: string
-  data: Record<string, any> | null
+  data: Record<string, unknown> | null
   read_at: string | null
   action_url: string | null
   priority: string
