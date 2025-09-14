@@ -37,7 +37,7 @@ interface Session {
   id: string
   ip_address: string
   user_agent: string
-  device_info: Record<string, any> | null
+  device_info: { browser?: string; os?: string } | null
   last_activity_at: string
   expires_at: string
   is_revoked: boolean
