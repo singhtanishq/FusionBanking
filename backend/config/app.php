@@ -11,6 +11,8 @@ return [
     'url' => env('APP_URL', 'http://localhost'),
 
     'frontend_url' => env('APP_FRONTEND_URL', 'http://localhost:5173'),
+    'demo_admin_password' => env('DEMO_ADMIN_PASSWORD', 'admin123'),
+    'demo_master_password' => env('DEMO_MASTER_PASSWORD', 'master123'),
 
     'timezone' => 'Asia/Kolkata',
 
