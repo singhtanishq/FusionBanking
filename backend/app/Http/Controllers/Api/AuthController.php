@@ -8,6 +8,7 @@ use App\Models\Admin;
 use App\Models\VerificationToken;
 use App\Services\VerificationTokenService;
 use App\Enums\VerificationPurpose;
+use App\Notifications\AdminLoginOtpNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
