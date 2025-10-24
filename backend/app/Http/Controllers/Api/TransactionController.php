@@ -4,14 +4,13 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Transaction;
-use App\Models\BankAccount;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 
 class TransactionController extends Controller
 {
-    public function index(Request $request): AnonymousResourceCollection
+    public function index(Request $request): JsonResponse
     {
         $customer = $request->user();
         $accountIds = $customer->accounts()->pluck('id');
@@ -50,6 +49,14 @@ class TransactionController extends Controller
             $query->where('amount', '<=', $request->max_amount);
         }
 
+        if ($request->has('status') && $request->status) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->has('account_id') && $request->account_id) {
+            $query->where('account_id', $request->account_id);
+        }
+
         $transactions = $query->paginate($request->get('per_page', 20));
 
         return response()->json([
@@ -64,7 +71,14 @@ class TransactionController extends Controller
                     'description' => $txn->description,
                     'status' => $txn->status,
                     'created_at' => $txn->created_at?->toISOString(),
+                    'completed_at' => $txn->completed_at?->toISOString(),
+                    'opening_balance' => $txn->opening_balance,
                     'closing_balance' => $txn->closing_balance,
+                    'currency' => $txn->currency,
+                    'account' => $txn->account ? [
+                        'account_number' => $txn->account->getMaskedAccountNumber(),
+                        'customer_name' => $txn->account->customer->full_name ?? null,
+                    ] : null,
                     'related_account' => $txn->relatedAccount ? [
                         'account_number' => $txn->relatedAccount->getMaskedAccountNumber(),
                         'customer_name' => $txn->relatedAccount->customer->full_name ?? null,
@@ -80,7 +94,7 @@ class TransactionController extends Controller
         ]);
     }
 
-    public function show(Request $request, Transaction $transaction): \Illuminate\Http\JsonResponse
+    public function show(Request $request, Transaction $transaction): JsonResponse
     {
         $customer = $request->user();
         $accountIds = $customer->accounts()->pluck('id');
@@ -109,20 +123,20 @@ class TransactionController extends Controller
                 'opening_balance' => $transaction->opening_balance,
                 'closing_balance' => $transaction->closing_balance,
                 'currency' => $transaction->currency,
+                'account' => $transaction->account ? [
+                    'account_number' => $transaction->account->getMaskedAccountNumber(),
+                    'customer_name' => $transaction->account->customer->full_name ?? null,
+                ] : null,
                 'related_account' => $transaction->relatedAccount ? [
                     'account_number' => $transaction->relatedAccount->getMaskedAccountNumber(),
                     'customer_name' => $transaction->relatedAccount->customer->full_name ?? null,
                 ] : null,
-                'transfer' => $transaction->transfer ? [
-                    'reference_number' => $transaction->transfer->reference_number,
-                    'status' => $transaction->transfer->status->value,
-                ] : null,
-                'metadata' => $transaction->metadata,
+                'transfer_reference' => $transaction->transfer?->reference_number,
             ],
         ]);
     }
 
-    public function statement(Request $request): \Illuminate\Http\JsonResponse
+    public function statement(Request $request): JsonResponse
     {
         $customer = $request->user();
         $accountIds = $customer->accounts()->pluck('id');
@@ -178,7 +192,7 @@ class TransactionController extends Controller
         ]);
     }
 
-    public function downloadStatement(Request $request): \Illuminate\Http\Response
+    public function downloadStatement(Request $request): Response
     {
         $customer = $request->user();
         $accountIds = $customer->accounts()->pluck('id');
