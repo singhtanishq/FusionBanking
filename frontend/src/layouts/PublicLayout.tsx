@@ -99,8 +99,8 @@ export function PublicLayout() {
               <ul className="mt-4 space-y-2">
                 <li><Link to="/products/savings" className="text-sm hover:text-white">Savings Account</Link></li>
                 <li><Link to="/products/current" className="text-sm hover:text-white">Current Account</Link></li>
-                <li><Link to="/products/fd" className="text-sm hover:text-white">Fixed Deposits</Link></li>
-                <li><Link to="/products/loans" className="text-sm hover:text-white">Personal Loans</Link></li>
+                <li><Link to="/deposits" className="text-sm hover:text-white">Fixed Deposits</Link></li>
+                <li><Link to="/loans" className="text-sm hover:text-white">Loans</Link></li>
               </ul>
             </div>
             <div>
