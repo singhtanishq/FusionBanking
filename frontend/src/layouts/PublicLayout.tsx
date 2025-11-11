@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils'
 import { useState } from 'react'
 
 const navigation = [
-  { name: 'Personal Banking', to: '#', current: false },
+  { name: 'Personal Banking', to: '/personal-banking', current: false },
   { name: 'Products', to: '/products', current: false },
   { name: 'Loans', to: '/loans', current: false },
   { name: 'Deposits', to: '/deposits', current: false },
