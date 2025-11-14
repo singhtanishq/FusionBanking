@@ -101,11 +101,17 @@ export default function App() {
         {/* Public marketing routes */}
         <Route element={<PublicLayout />}>
           <Route path="/" element={<HomePage />} />
+          <Route path="/personal-banking" element={<PersonalBankingPage />} />
           <Route path="/products" element={<ProductsPage />} />
+          <Route path="/products/savings" element={<SavingsAccountPage />} />
+          <Route path="/products/current" element={<CurrentAccountPage />} />
           <Route path="/loans" element={<PublicLoansPage />} />
           <Route path="/deposits" element={<DepositsPage />} />
           <Route path="/security" element={<PublicSecurityPage />} />
           <Route path="/help" element={<HelpPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
 
           {/* Guest-only routes */}
           <Route element={<PublicOnlyRoute />}>
