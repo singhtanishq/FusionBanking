@@ -255,14 +255,14 @@ export function PrivacyPage() {
                 </h2>
               </div>
 
-              <dl className="space-y-6">
+              <div className="space-y-6">
                 {section.items.map((item) => (
                   <div key={item.title} className="bg-white rounded-2xl border border-navy-100 p-6">
                     <dt className="font-semibold text-navy-900 text-lg mb-2">{item.title}</dt>
                     <dd className="text-navy-600 leading-relaxed">{item.description}</dd>
-                  </dl>
+                  </div>
                 ))}
-              </dl>
+              </div>
             </section>
           ))}
 
