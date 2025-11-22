@@ -131,7 +131,7 @@ export function CurrentAccountPage() {
                 <h3 className="mt-4 text-lg font-semibold text-navy-900">{feature.title}</h3>
                 <p className="mt-2 text-sm text-navy-600">{feature.description}</p>
               </div>
-            )
+            ),
           </div>
         </div>
       </section>
