@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import { cn } from '@/lib/utils'
 import {
   CreditCardIcon,
   ShieldCheckIcon,
@@ -91,7 +92,7 @@ const stats = [
   { value: '24/7', label: 'Customer Support' },
 ]
 
-const colorMap = {
+const colorMap: Record<string, string> = {
   primary: 'bg-primary-100 text-primary-600 hover:bg-primary-200',
   emerald: 'bg-emerald-100 text-emerald-600 hover:bg-emerald-200',
   amber: 'bg-amber-100 text-amber-600 hover:bg-amber-200',
@@ -99,7 +100,7 @@ const colorMap = {
   gray: 'bg-gray-100 text-gray-600 hover:bg-gray-200',
 }
 
-const iconColorMap = {
+const iconColorMap: Record<string, string> = {
   primary: 'text-primary-600',
   emerald: 'text-emerald-600',
   amber: 'text-amber-600',
