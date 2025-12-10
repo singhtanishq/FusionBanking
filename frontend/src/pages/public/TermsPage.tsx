@@ -9,7 +9,7 @@ import {
 } from '@heroicons/react/24/outline'
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent } from '@/components/ui/Card'
-import { cn } from '@/lib/utils'
+
 
 const sections = [
   {
@@ -290,9 +290,9 @@ export function TermsPage() {
             <h2 className="text-2xl font-bold text-navy-900 mb-4">Questions about these terms?</h2>
             <p className="text-navy-600 mb-6 max-w-xl mx-auto">
               Our legal team is here to help. Contact us at
-              <Link to="mailto:legal@fusionbanking.com" className="text-primary-600 hover:underline font-medium">
+              <a href="mailto:legal@fusionbanking.com" className="text-primary-600 hover:underline font-medium">
                 legal@fusionbanking.com
-              </Link>
+              </a>
             </p>
             <Link to="/contact">
               <Button variant="outline" className="mt-4">
