@@ -1,11 +1,8 @@
 import { Link } from 'react-router-dom'
 import {
-  ShieldCheckIcon,
-  LockClosedIcon,
   DocumentTextIcon,
   ArrowRightIcon,
   ArrowLeftIcon,
-  GavelIcon,
 } from '@heroicons/react/24/outline'
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent } from '@/components/ui/Card'
