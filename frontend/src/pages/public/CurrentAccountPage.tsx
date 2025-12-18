@@ -1,18 +1,11 @@
 import { Link } from 'react-router-dom'
 import {
   CheckCircleIcon,
-  ShieldCheckIcon,
-  ArrowPathIcon,
-  LockClosedIcon,
   ArrowRightIcon,
-  SparklesIcon,
-  BuildingOfficeIcon,
-  CurrencyDollarIcon,
-  ClockIcon,
 } from '@heroicons/react/24/outline'
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent } from '@/components/ui/Card'
-
+import { cn } from '@/lib/utils'
 
 const features = [
   {
@@ -75,6 +68,28 @@ const faqs = [
   },
 ]
 
+import { Link } from 'react-router-dom'
+import {
+  CurrencyDollarIcon,
+  ShieldCheckIcon,
+  ArrowPathIcon,
+  LockClosedIcon,
+  ArrowRightIcon,
+  SparklesIcon,
+  BuildingOfficeIcon,
+  ClockIcon,
+} from '@heroicons/react/24/outline'
+import { Button } from '@/components/ui/Button'
+import { Card, CardContent } from '@/components/ui/Card'
+import { Badge } from '@/components/ui/Badge'
+import { formatCurrency, formatDate } from '@/lib/utils'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { api } from '@/services/api'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+import { toast } from 'react-hot-toast'
+
 export function CurrentAccountPage() {
   return (
     <div className="bg-white">
@@ -131,10 +146,12 @@ export function CurrentAccountPage() {
                 <h3 className="mt-4 text-lg font-semibold text-navy-900">{feature.title}</h3>
                 <p className="mt-2 text-sm text-navy-600">{feature.description}</p>
               </div>
-          ))}
-        </div>
+            ))}
+          </div>
         </div>
       </section>
+
+      {/* Requirements */}
       <section className="py-16 bg-navy-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
