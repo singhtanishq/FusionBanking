@@ -85,7 +85,7 @@ export function ContactPage() {
     resolver: zodResolver(contactSchema),
   })
 
-  const onSubmit = async (data: ContactForm) => {
+  const onSubmit = async (_data: ContactForm) => {
     setSubmitting(true)
     try {
       // Simulate API call
