@@ -1,9 +1,6 @@
 import { Link } from 'react-router-dom'
 import {
   ShieldCheckIcon,
-  LockClosedIcon,
-  UserCircleIcon,
-  GlobeAltIcon,
   ArrowRightIcon,
   ArrowLeftIcon,
 } from '@heroicons/react/24/outline'
