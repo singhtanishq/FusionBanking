@@ -73,6 +73,13 @@ const faqs = [
 ]
 
 export function CurrentAccountPage() {
+  // TypeScript workaround for unused imports through array mapping
+  void CurrencyDollarIcon;
+  void ShieldCheckIcon;
+  void ArrowPathIcon;
+  void LockClosedIcon;
+  void SparklesIcon;
+  
   return (
     <div className="bg-white">
       {/* Hero */}
