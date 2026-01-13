@@ -11,78 +11,68 @@ import {
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent } from '@/components/ui/Card'
 
-const features = [
-  {
-    title: 'Higher Transaction Limits',
-    description: 'No daily transaction limits - perfect for businesses with high transaction volumes.',
-    icon: CurrencyDollarIcon,
-  },
-  {
-    title: 'Overdraft Facility',
-    description: 'Access overdraft up to ₹50 Lakhs with competitive interest rates.',
-    icon: CurrencyDollarIcon,
-  },
-  {
-    title: 'Bulk Payments',
-    description: 'Process salary payments, vendor payments, and bulk transfers in a single click.',
-    icon: ArrowPathIcon,
-  },
-  {
-    title: 'Multi-user Access',
-    description: 'Role-based access for your finance team with customizable permissions.',
-    icon: LockClosedIcon,
-  },
-  {
-    title: 'Dedicated Relationship Manager',
-    description: 'Get personalized support from a dedicated relationship manager.',
-    icon: ShieldCheckIcon,
-  },
-  {
-    title: 'Auto-sweep Facility',
-    description: 'Automatically sweep idle funds into FDs to earn higher returns.',
-    icon: SparklesIcon,
-  },
-]
-
-// Ensure icons are recognized as used by TypeScript
-const _iconRefs = [CurrencyDollarIcon, ArrowPathIcon, LockClosedIcon, ShieldCheckIcon, SparklesIcon];
-
-const requirements = [
-  'Valid PAN Card of Business/Proprietor',
-  'Valid Aadhaar Card of Authorized Signatory',
-  'Business Registration Certificate (GST/Shop Act/Udyam)',
-  'Board Resolution / Partnership Deed / Proprietorship Declaration',
-  'Proof of Business Address',
-  'Cancelled Cheque of Existing Bank Account',
-]
-
-const faqs = [
-  {
-    q: 'What is the minimum balance requirement?',
-    a: 'Current Accounts require a minimum average quarterly balance of ₹10,000. Failure to maintain attracts charges.',
-  },
-  {
-    q: 'Can I open a Current Account for a startup?',
-    a: 'Yes, startups registered under Startup India or with valid DPIIT recognition get waived minimum balance for first year.',
-  },
-  {
-    q: 'Is there an overdraft facility?',
-    a: 'Yes, overdraft facility up to ₹50 Lakhs is available subject to credit assessment and collateral.',
-  },
-  {
-    q: 'Can I have multiple users with different permissions?',
-    a: 'Yes, role-based access control allows you to set Viewer, Maker, Checker, and Admin roles for your team.',
-  },
-]
-
 export function CurrentAccountPage() {
-  // TypeScript workaround for unused imports through array mapping
-  void CurrencyDollarIcon;
-  void ShieldCheckIcon;
-  void ArrowPathIcon;
-  void LockClosedIcon;
-  void SparklesIcon;
-  
+  const features = [
+    {
+      title: 'Higher Transaction Limits',
+      description: 'No daily transaction limits - perfect for businesses with high transaction volumes.',
+      icon: CurrencyDollarIcon,
+    },
+    {
+      title: 'Overdraft Facility',
+      description: 'Access overdraft up to ₹50 Lakhs with competitive interest rates.',
+      icon: CurrencyDollarIcon,
+    },
+    {
+      title: 'Bulk Payments',
+      description: 'Process salary payments, vendor payments, and bulk transfers in a single click.',
+      icon: ArrowPathIcon,
+    },
+    {
+      title: 'Multi-user Access',
+      description: 'Role-based access for your finance team with customizable permissions.',
+      icon: LockClosedIcon,
+    },
+    {
+      title: 'Dedicated Relationship Manager',
+      description: 'Get personalized support from a dedicated relationship manager.',
+      icon: ShieldCheckIcon,
+    },
+    {
+      title: 'Auto-sweep Facility',
+      description: 'Automatically sweep idle funds into FDs to earn higher returns.',
+      icon: SparklesIcon,
+    },
+  ]
+
+  const requirements = [
+    'Valid PAN Card of Business/Proprietor',
+    'Valid Aadhaar Card of Authorized Signatory',
+    'Business Registration Certificate (GST/Shop Act/Udyam)',
+    'Board Resolution / Partnership Deed / Proprietorship Declaration',
+    'Proof of Business Address',
+    'Cancelled Cheque of Existing Bank Account',
+  ]
+
+  const faqs = [
+    {
+      q: 'What is the minimum balance requirement?',
+      a: 'Current Accounts require a minimum average quarterly balance of ₹10,000. Failure to maintain attracts charges.',
+    },
+    {
+      q: 'Can I open a Current Account for a startup?',
+      a: 'Yes, startups registered under Startup India or with valid DPIIT recognition get waived minimum balance for first year.',
+    },
+    {
+      q: 'Is there an overdraft facility?',
+      a: 'Yes, overdraft facility up to ₹50 Lakhs is available subject to credit assessment and collateral.',
+    },
+    {
+      q: 'Can I have multiple users with different permissions?',
+      a: 'Yes, role-based access control allows you to set Viewer, Maker, Checker, and Admin roles for your team.',
+    },
+  ]
+
   return (
     <div className="bg-white">
       {/* Hero */}
