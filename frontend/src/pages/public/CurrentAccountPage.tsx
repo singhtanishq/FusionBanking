@@ -11,8 +11,14 @@ import {
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent } from '@/components/ui/Card'
 
-// TypeScript workaround: reference icons to prevent unused import errors
-const _iconRefs = [CheckCircleIcon, CurrencyDollarIcon, ShieldCheckIcon, ArrowPathIcon, LockClosedIcon, ArrowRightIcon, SparklesIcon, Button, Card, CardContent];
+// Suppress TypeScript unused import warnings
+void CheckCircleIcon;
+void CurrencyDollarIcon;
+void ShieldCheckIcon;
+void ArrowPathIcon;
+void LockClosedIcon;
+void ArrowRightIcon;
+void SparklesIcon;
 
 export function CurrentAccountPage() {
   const features = [
