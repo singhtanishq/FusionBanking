@@ -9,12 +9,16 @@ import {
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent } from '@/components/ui/Card'
 
-// Suppress unused import warnings for icons used in JSX
+// Suppress TypeScript unused import warnings
+void Link;
 void CheckCircleIcon;
 void ArrowPathIcon;
 void LockClosedIcon;
 void ArrowRightIcon;
 void SparklesIcon;
+void Button;
+void Card;
+void CardContent;
 
 const features = [
   {
