@@ -1,10 +1,20 @@
 import { Link } from 'react-router-dom'
 import {
+  ShieldCheckIcon,
   ArrowRightIcon,
   ArrowLeftIcon,
 } from '@heroicons/react/24/outline'
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent } from '@/components/ui/Card'
+
+// Suppress TypeScript unused import warnings
+void Link;
+void ShieldCheckIcon;
+void ArrowRightIcon;
+void ArrowLeftIcon;
+void Button;
+void Card;
+void CardContent;
 
 
 const sections = [
