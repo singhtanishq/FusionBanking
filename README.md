@@ -1,363 +1,324 @@
-# FusionBanking - Modern Digital Banking Platform
+# FusionBanking
 
-A complete, production-grade digital banking web application built with Laravel (backend) and React + TypeScript (frontend).
+A full-stack digital banking demo platform: a public marketing site, a multi-step account-opening flow with KYC, a two-factor customer NetBanking area, and a role-based admin portal — built with **Laravel 11** (API) and **React 18 + TypeScript** (SPA).
 
-## Features
+![FusionBanking application preview](docs/screenshots/01-public-site/home-desktop.png)
 
-### Core Banking
-- **Multi-step Account Opening** - Guided 7-step application process with progress tracking
-- **KYC Verification** - PAN, Aadhaar, document upload with secure storage
-- **Admin Review Workflow** - Granular stage-by-stage approval/rejection with correction flow
-- **Email Verification Tokens** - 16-character secure tokens for sensitive operations
-- **Account Creation** - Automatic customer ID, account number, IFSC generation
-- **Initial Deposit** - ₹1,00,000 welcome deposit with proper ledger entry
+The application is a **demo/development platform**. It implements realistic banking *workflows* (applications, transfers, fixed deposits, loan review) against a seeded local database — it is not connected to any real money movement.
 
-### Public Website
-- **Home Page** - Hero, features, stats, product showcase, security/CTA sections
-- **Products** - Savings Account, Current Account, Fixed Deposits, Personal Loans, Education Loans, Business Banking
-- **Loans Page** - Personal, Education, Business loans with EMI calculator
-- **Deposits Page** - Fixed deposit products with rate comparison
-- **Security Page** - Security features, 2FA, encryption, fraud prevention
-- **Help Page** - FAQs, contact options, support channels
-- **Track Application** - Public application tracking by acknowledgement number
-- **Open Account** - Complete 7-step account opening flow with KYC
+[Explore all 53 screenshots](docs/screenshot-index.md) · [UI audit](docs/ui-audit.md) · [Test coverage report](docs/test-coverage.md)
 
-### NetBanking
-- **Secure Authentication** - Customer ID + password + email OTP (2FA)
-- **Dashboard** - Real-time balance, recent transactions, quick actions
-- **Money Transfers** - Internal transfers with recipient validation, preview, and OTP confirmation
-- **Transaction History** - Filterable, searchable, paginated with export options
-- **Account Statements** - Date range statements with CSV/PDF download
-- **Beneficiaries** - Manage payees with validation and cooling periods
-- **Profile Management** - View/update permitted profile information
-- **Security Center** - Login history, active sessions, password management
+---
 
-### Financial Products
-- **Loans** - Personal, Education, Business loans with EMI calculator
-- **Fixed Deposits** - Multiple tenure/rate options with maturity tracking
-- **Loan Admin Review** - Income analysis, repayment ratio, approval workflow
+## Highlights
 
-### Administration
-- **Role-based Access** - Master Admin, Admin, Customer with granular permissions
-- **Application Queue** - Filterable, sortable, paginated application management
-- **Customer Management** - Full customer profiles, accounts, transactions, KYC
-- **Audit Logging** - Immutable audit trail for all critical actions
-- **System Settings** - Configurable limits, rates, security parameters
+- **Public marketing site** — 12 pages covering products, loans, deposits, security, help, contact, privacy and terms
+- **Account opening** — guided 6-step wizard (personal → contact → KYC → address → documents → review) with per-step server-side persistence and a public acknowledgement-number tracker
+- **Customer NetBanking** — 2FA login (password + email OTP), dashboard, transfers with recipient validation and OTP confirmation, beneficiaries, transaction history with server-side search/filter/pagination, statements, loans, fixed deposits, profile, security center, support tickets
+- **Admin portal** — application review workflow (per-step approve / request-correction / reject), customer and account management, bank-wide transactions, loan approval pipeline, FD book, audit logs, support ticket handling, promotions, system settings, and master-only admin user management
+- **Layered security presentation** — masked PAN/Aadhaar/account numbers, rate limiting, verification tokens, and audit logging (implemented on the backend; see [Security](#security))
 
-### Security
-- **Atomic Transactions** - Database transactions with row locking for transfers
-- **Idempotency Keys** - Prevent duplicate submissions
-- **Rate Limiting** - Login, OTP, transfer verification endpoints
-- **Input Validation** - Server-side validation with Zod/Laravel
-- **Secure File Upload** - MIME validation, size limits, private storage
-- **Data Masking** - PAN, Aadhaar, account numbers masked in UI
-- **Session Management** - Secure cookies, timeout, concurrent session control
+## Features in detail
 
-## Tech Stack
+### Public website
+Twelve routes under a shared layout with a sticky header, mobile drawer navigation, and a four-column footer. The homepage links every product card to a real page (`/products/savings`, `/products/current`, `/deposits`, `/loans`). The contact page posts to the backend's support-ticket endpoint when a customer is signed in and shows an honest error with phone/email fallbacks for guests.
+
+### Account opening (`/open-account`)
+A 6-step wizard using a `StepTracker` component. Each step validates locally with **zod** and persists to the backend:
+
+1. **Personal information** — creates a draft application on first submit (`POST /applications`)
+2. **Contact details** — mobile/email/address validation
+3. **KYC** — PAN and Aadhaar format validation
+4. **Address** — with a "permanent address is the same as residential" toggle that conditionally validates permanent fields
+5. **Documents** — identity + address proof upload (PDF/JPG/PNG ≤ 5 MB) — *currently blocked by a backend defect, see [Known limitations](#known-limitations)*
+6. **Review & submit** — issues an acknowledgement number (`FBK-YYYY-XXXXXXXX`)
+
+The acknowledgement number works on `/track-application`, which renders a live status page with a 7-stage progress tracker.
+
+### Customer NetBanking (`/customer/*`)
+Login is two-factor: customer ID + password, then a 6-digit OTP emailed to the registered address. Behind the token-protected layout:
+
+- **Dashboard** — primary account card (masked number, IFSC, available balance), quick stats (total balance, month-to-date sent/received, active products), quick actions, and recent transactions
+- **Send money** — three-step wizard (details → review → OTP verification) with recipient account validation against the bank's own accounts
+- **Transactions** — server-side search, type/direction/date/amount filters, sorting, and pagination against `GET /customer/transactions`
+- **Statements** — date-range statement generation with download
+- **Loans / Fixed deposits** — product catalogue, applications, EMI calculation, FD creation and premature closure (with confirmation dialogs)
+- **Security center** — security events and session management
+- **Profile, notifications, support** — profile editing, notification inbox, and a ticketed support center
+
+### Admin portal (`/admin/*`)
+Login requires username + password + a bank access token, then a 16-character verification token from email. Role-based access separates `admin` from `master_admin`:
+
+- **Application review** — queue with status filters; detail view with applicant data, masked KYC, per-step approve / request-correction / reject (each requiring a documented reason), and a full review timeline
+- **Customer & account management** — profiles, account freeze/unfreeze/close, restrict/unrestrict
+- **Loans & FDs** — approval pipeline (approve → disburse) and the FD book
+- **Operations** — audit logs, support tickets (assign/status/message), promotions CRUD, system settings
+- **Master-only administration** — admin user management (`/admin/administration/users`); non-master admins see an honest "Master admin access required" state
+
+## Route reference
+
+| Route | Page | Access |
+|---|---|---|
+| `/` | Home | Public |
+| `/personal-banking` | Personal banking overview | Public |
+| `/products`, `/products/savings`, `/products/current` | Product pages | Public |
+| `/loans`, `/deposits` | Loan & deposit products | Public |
+| `/security`, `/help`, `/contact`, `/privacy`, `/terms` | Informational pages | Public |
+| `/open-account` | Account-opening wizard | Guest only |
+| `/track-application` | Public application tracker | Guest only |
+| `/netbanking/login` | Customer 2FA login | Guest only |
+| `/netbanking/activate` | NetBanking activation | Guest only |
+| `/netbanking/password/reset` | Password reset | Guest only |
+| `/admin/login` | Admin portal login | Guest only |
+| `/customer/dashboard` | Customer dashboard | Customer |
+| `/customer/accounts/overview` · `/details` | Account views | Customer |
+| `/customer/payments/send` · `/beneficiaries` · `/transactions` · `/statements` | Payments area | Customer |
+| `/customer/products/loans` · `/fd` | Financial products | Customer |
+| `/customer/profile` · `/security` · `/notifications` · `/support` | Account management | Customer |
+| `/admin` | Admin dashboard | Admin |
+| `/admin/applications`, `/admin/applications/:id` | Application review | Admin |
+| `/admin/customers`, `/admin/accounts`, `/admin/transactions` | Operations | Admin |
+| `/admin/loans`, `/admin/fd`, `/admin/audit-logs`, `/admin/support`, `/admin/promotions` | Operations | Admin |
+| `/admin/administration/settings`, `/admin/administration/users` | Administration (users is master-only) | Admin / Master admin |
+| `*` | Redirects to `/` | — |
+
+Cross-portal access is handled gracefully: an admin opening a customer route lands on `/admin`, and a customer opening an admin route lands on the customer dashboard.
+
+## Technology stack
 
 ### Backend
-- **Laravel 11** - PHP 8.3+
-- **MySQL 8** - Primary database
-- **Redis** - Caching, sessions, queues
-- **Laravel Sanctum** - API authentication
-- **Spatie Laravel Permission** - RBAC
-- **Spatie Activity Log** - Audit trails
-- **Mailpit** - Local email testing
+- **Laravel 11** (PHP 8.3+) — REST API under `/api/v1`, service-layer architecture (`AccountService`, `TransferService`, `LedgerService`, …)
+- **MySQL 8** — primary datastore
+- **Laravel Sanctum** — token authentication
+- **Database queue + log mailer** — OTP and notification emails (dev defaults)
+- **Spatie Activity Log** — audit trail
 
 ### Frontend
-- **React 18** with TypeScript
-- **Vite** - Build tool
-- **Tailwind CSS** - Styling
-- **React Router v6** - Routing
-- **TanStack Query** - Server state management
-- **React Hook Form + Zod** - Form handling/validation
-- **Headless UI** - Accessible components
-- **Lucide Icons** - Icon system
-- **Framer Motion** - Animations
+- **React 18** + **TypeScript** — route-level code-split SPA
+- **Vite 5** — dev server and build tool
+- **Tailwind CSS 3** — styling with a custom `primary`/`navy` palette and shared component classes (`btn-*`, `card`, `badge-*`)
+- **React Router v6** — routing with lazy routes, protected-route wrappers, and guest-only wrappers
+- **TanStack Query** — server state (queries + mutations)
+- **React Hook Form + zod** — form state and validation
+- **Headless UI + Heroicons** — accessible dialogs/transitions and icons
+- **react-hot-toast** — user feedback
+- **Vitest** — configured, but no test files exist yet
 
-## Quick Start
-
-### Prerequisites
-- Docker & Docker Compose
-- Node.js 20+ (for local frontend development)
-- PHP 8.3+ & Composer (for local backend development)
-
-### Using Docker (Recommended)
-
-```bash
-# Clone and navigate
-cd FusionBanking
-
-# Start all services
-docker-compose up -d
-
-# Wait for services to be healthy, then run migrations
-docker-compose exec backend php artisan migrate --seed
-
-# Access the application
-# Frontend: http://localhost:5173
-# Backend API: http://localhost:8000
-# Mailpit UI: http://localhost:8025
-```
-
-### Local Development
-
-#### Backend
-```bash
-cd backend
-
-# Install dependencies
-composer install
-
-# Copy environment
-cp .env.example .env
-
-# Configure database and mail in .env
-# Generate app key
-php artisan key:generate
-
-# Run migrations with seeders
-php artisan migrate --seed
-
-# Start development server
-php artisan serve
-```
-
-#### Frontend
-```bash
-cd frontend
-
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-```
-
-## Environment Configuration
-
-### Backend (.env)
-```env
-APP_NAME="FusionBanking"
-APP_ENV=local
-APP_DEBUG=true
-APP_URL=http://localhost:8000
-APP_FRONTEND_URL=http://localhost:5173
-
-LOG_CHANNEL=stack
-LOG_DEPRECATIONS_CHANNEL=null
-LOG_LEVEL=debug
-
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=fusionbanking
-DB_USERNAME=fusionbanking
-DB_PASSWORD=secret
-
-SESSION_DRIVER=database
-SESSION_LIFETIME=120
-SESSION_ENCRYPT=false
-SESSION_PATH=/
-SESSION_DOMAIN=null
-
-BROADCAST_CONNECTION=log
-FILESYSTEM_DISK=local
-QUEUE_CONNECTION=database
-
-CACHE_STORE=database
-CACHE_PREFIX=fusionbanking_
-
-MAIL_MAILER=smtp
-MAIL_HOST=127.0.0.1
-MAIL_PORT=1025
-MAIL_USERNAME=null
-MAIL_PASSWORD=null
-MAIL_ENCRYPTION=null
-MAIL_FROM_ADDRESS="no-reply@fusionbanking.local"
-MAIL_FROM_NAME="FusionBanking"
-
-# FusionBanking Configuration
-FUSION_BANK_NAME="FusionBanking"
-FUSION_BANK_CODE="FUSION"
-FUSION_COUNTRY="India"
-FUSION_CURRENCY="INR"
-FUSION_DEMO_IFSC="FUSB0001001"
-FUSION_INITIAL_DEPOSIT=100000
-
-# Demo Credentials (development only)
-DEMO_ADMIN_EMAIL=admin@fusionbanking.local
-DEMO_ADMIN_PASSWORD=admin123
-DEMO_MASTER_PASSWORD=master123
-```
-
-### Frontend (.env)
-```env
-VITE_API_URL=http://localhost:8000/api
-```
-
-## Default Accounts (After Seeding)
-
-### Master Admin
-- **Username:** `masteradmin`
-- **Password:** `master123` (from DEMO_MASTER_PASSWORD)
-- **Bank Access Token:** `MASTER-ACCESS-TOKEN-2024`
-
-### Admin
-- **Username:** `admin`
-- **Password:** `admin123` (from DEMO_ADMIN_PASSWORD)
-- **Bank Access Token:** `ADMIN-ACCESS-TOKEN-2024`
-
-### Demo Customers
-- 3 pre-created customers with active accounts
-- Customer IDs: `CUS1000001`, `CUS1000002`, `CUS1000003`
-- Password: `customer123`
-
-## API Structure
-
-```
-/api/auth              # Authentication endpoints
-/api/applications      # Account opening applications
-/api/track             # Public application tracking
-/api/customer          # Customer banking (protected)
-  /accounts            # Account management
-  /transfers           # Money transfers
-  /transactions        # Transaction history
-  /beneficiaries       # Payee management
-  /loans               # Loan applications
-  /fixed-deposits      # FD management
-  /profile             # Profile & security
-/api/admin             # Admin operations (protected)
-  /applications        # Application review
-  /customers           # Customer management
-  /loans               # Loan review
-  /dashboard           # Statistics & reports
-/api/master            # Master admin only
-```
-
-## Key API Endpoints
-
-### Public
-- `POST /api/applications` - Create draft application
-- `POST /api/applications/{id}/personal-info` - Save personal info
-- `POST /api/applications/{id}/contact-info` - Save contact info
-- `POST /api/applications/{id}/kyc-info` - Save KYC info
-- `POST /api/applications/{id}/address-info` - Save address info
-- `POST /api/applications/{id}/documents` - Upload documents
-- `POST /api/applications/{id}/submit` - Submit application
-- `GET /api/track/{acknowledgement}` - Track application
-
-### Customer (requires auth)
-- `POST /api/auth/customer/login` - Login (returns requires_otp)
-- `POST /api/auth/customer/verify-otp` - Verify login OTP
-- `GET /api/customer/me` - Current user profile
-- `GET /api/customer/accounts` - List accounts
-- `POST /api/transfers` - Initiate transfer
-- `POST /api/transfers/verify` - Verify transfer OTP
-- `GET /api/customer/transactions` - Transaction history
-- `POST /api/customer/beneficiaries` - Add beneficiary
-
-### Admin (requires auth + admin role)
-- `GET /api/admin/applications` - List applications (filterable)
-- `GET /api/admin/applications/{id}` - Application detail
-- `POST /api/admin/applications/{id}/review` - Review step
-- `POST /api/admin/applications/{id}/approve` - Final approval
-- `GET /api/admin/dashboard/stats` - Dashboard statistics
-
-## Testing
-
-```bash
-# Backend tests
-cd backend
-./vendor/bin/pest
-./vendor/bin/pest --coverage
-
-# Frontend tests
-cd frontend
-npm run test
-npm run test:ui
-```
-
-## Project Structure
+## Architecture
 
 ```
 FusionBanking/
-├── backend/                 # Laravel API
+├── backend/                     # Laravel 11 API
 │   ├── app/
-│   │   ├── Http/Controllers/
-│   │   │   ├── Api/         # API controllers
-│   │   │   ├── Auth/        # Authentication
-│   │   │   ├── Admin/       # Admin controllers
-│   │   │   └── Customer/    # Customer controllers
-│   │   ├── Models/          # Eloquent models
-│   │   ├── Services/        # Business logic
-│   │   ├── Notifications/   # Email notifications
-│   │   ├── Enums/           # PHP enums
-│   │   └── Policies/        # Authorization policies
-│   ├── database/
-│   │   ├── migrations/      # Database migrations
-│   │   ├── seeders/         # Database seeders
-│   │   └── factories/       # Model factories
-│   ├── routes/
-│   │   ├── api.php          # API routes
-│   │   └── web.php          # Web routes
-│   └── tests/               # Pest tests
+│   │   ├── Http/Controllers/Api/   # API controllers (root, Admin/, Master/)
+│   │   ├── Http/Middleware/        # Admin / Customer / MasterAdmin / rate-limit middleware
+│   │   ├── Models/                 # 30+ Eloquent models (Customer, BankAccount, Transfer, …)
+│   │   ├── Services/               # Business logic (TransferService, LedgerService, FDService, …)
+│   │   ├── Enums/                  # AccountStatus, LoanStatus, TransactionType, …
+│   │   └── Notifications/          # OTP / welcome / transfer emails
+│   ├── database/migrations/        # Custom schema (applications, bank_accounts, transfers, …)
+│   ├── routes/api.php              # /api/v1 route groups (public, customer, admin, master)
+│   └── tests/                      # Pest tests
 │
-├── frontend/                # React application
+├── frontend/                    # React 18 + TypeScript SPA
 │   ├── src/
-│   │   ├── components/      # Reusable UI components
-│   │   │   ├── ui/          # Base components
-│   │   │   ├── forms/       # Form components
-│   │   │   ├── layout/      # Layout components
-│   │   │   └── banking/     # Banking-specific
-│   │   ├── layouts/         # Page layouts
-│   │   ├── pages/           # Page components
-│   │   ├── features/        # Feature modules
-│   │   ├── hooks/           # Custom hooks
-│   │   ├── services/        # API services
-│   │   ├── lib/             # Utilities
-│   │   ├── types/           # TypeScript types
-│   │   └── contexts/        # React contexts
-│   └── public/
+│   │   ├── components/ui/          # Button, Input, Card, Modal, Table, Badge, OTPInput, …
+│   │   ├── components/forms/       # StepTracker
+│   │   ├── layouts/                # PublicLayout, CustomerLayout, AdminLayout
+│   │   ├── pages/                  # public/ (12), auth/ (4), customer/ (13), admin/ (12), master/ (1)
+│   │   ├── services/               # axios clients (api → /api/v1, apiRoot → /api) + ApplicationService
+│   │   ├── hooks/                  # useAuth (session bootstrap, login/logout)
+│   │   ├── lib/utils.ts            # cn(), INR currency/date formatting, masking helpers
+│   │   └── assets/styles/          # Tailwind layers + component classes
+│   ├── public/                     # favicon.svg
+│   └── vite.config.ts              # /api proxy (BACKEND_URL override supported)
 │
-├── docker-compose.yml       # Docker orchestration
-└── README.md               # This file
+├── docker-compose.yml           # mysql, mailpit, redis, backend, frontend
+├── docs/                        # screenshots + audit/test documentation
+└── README.md
 ```
 
-## Development Guidelines
+```mermaid
+flowchart TD
+    A[index.html / main.tsx] --> B[React Router v6]
+    B --> C1[PublicLayout]
+    B --> C2[CustomerLayout + ProtectedRoute]
+    B --> C3[AdminLayout + ProtectedRoute]
+    C1 --> D1[Public pages]
+    C2 --> D2[Customer NetBanking pages]
+    C3 --> D3[Admin & Master pages]
+    D1 & D2 & D3 --> E[Services layer — axios + TanStack Query + RHF/zod]
+    E -->|"/api/v1 via Vite proxy"| F[Laravel 11 API]
+    F --> G[(MySQL 8)]
+    F --> H[Queue → Log/Mailpit emails]
+```
+
+## Prerequisites
+
+- **Docker & Docker Compose** (for the containerised stack) *or* **PHP 8.3+ / Composer** and **Node.js 20+** for local development
+- A running **MySQL 8** server
+- Optional: **Mailpit** for local email testing
+
+## Installation & local setup
+
+The repository is already local. From the project root:
 
 ### Backend
-- Use Service classes for business logic (AccountService, TransferService, etc.)
-- Thin controllers - delegate to services
-- Database transactions for all financial operations
-- API Resources for consistent responses
-- Policies for authorization
-- Enums for all status fields
+
+```bash
+cd backend
+composer install
+cp .env.example .env          # adjust DB_*, MAIL_* as needed
+php artisan key:generate
+php artisan migrate --seed    # creates schema + demo data
+php artisan serve             # serves http://localhost:8000 by default
+```
+
+If port 8000 is taken, serve elsewhere and point the frontend proxy at it:
+
+```bash
+php artisan serve --port=8010
+# then, for the frontend:
+BACKEND_URL=http://localhost:8010 npm run dev
+```
+
+Because `QUEUE_CONNECTION=database`, notification emails (including login OTPs) sit in the `jobs` table until a worker runs:
+
+```bash
+php artisan queue:work --stop-when-empty   # drain queued emails once
+```
 
 ### Frontend
-- Component-based architecture
-- Custom hooks for data fetching (React Query)
-- Form validation with Zod schemas
-- Tailwind utility classes
-- TypeScript for type safety
-- Responsive design (mobile-first)
 
-## Security Considerations
+```bash
+cd frontend
+npm install
+npm run dev                   # http://localhost:5173; /api proxies to the backend
+```
 
-- All financial operations use database transactions with row locking
-- Verification tokens are hashed at rest, single-use, time-limited
-- Passwords hashed with bcrypt (Laravel default)
-- CSRF protection on all forms
-- Rate limiting on sensitive endpoints
-- Input sanitization and validation
-- Secure file upload with validation
-- Audit logging for all critical actions
-- No sensitive data in logs or frontend state
+`frontend/.env` is optional — `VITE_API_URL` defaults to `/api` (the Vite proxy). Point it at a different origin when the API is not colocated.
+
+### Demo accounts (after seeding)
+
+| Role | Identifier | Password |
+|---|---|---|
+| Master admin | `masteradmin` | `master123` (bank access token: `MASTER-ACCESS-TOKEN-2024`) |
+| Admin | `admin` | `admin123` (bank access token: `ADMIN-ACCESS-TOKEN-2024`) |
+| Customer | `CUS1000001` … `CUS1000003` | `customer123` |
+
+All logins complete with an emailed verification code — with the log mailer, read it from `backend/storage/logs/laravel.log` (or Mailpit at `http://localhost:8025` if configured).
+
+### Docker alternative
+
+```bash
+docker-compose up -d
+docker-compose exec backend php artisan migrate --seed
+# frontend: http://localhost:5173 · backend: http://localhost:8000 · Mailpit: http://localhost:8025
+```
+
+## Available scripts (frontend)
+
+| Script | Purpose |
+|---|---|
+| `npm run dev` | Vite dev server with `/api` proxy |
+| `npm run build` | Type-check + production build |
+| `npm run preview` | Preview the production build |
+| `npm run lint` | ESLint over `src/**/*.{ts,tsx}` (0-warning policy) |
+| `npm run typecheck` | `tsc --noEmit` |
+| `npm test` / `npm run test:ui` | Vitest (no test files exist yet — see [Testing](#testing-and-quality-checks)) |
+
+## Configuration
+
+Backend environment (`backend/.env`) — never commit real values:
+
+| Variable | Purpose |
+|---|---|
+| `APP_URL`, `APP_FRONTEND_URL` | Canonical URLs used by the API |
+| `DB_*` | MySQL connection |
+| `SESSION_DRIVER`, `CACHE_STORE`, `QUEUE_CONNECTION` | All `database` in the default dev config |
+| `MAIL_MAILER`, `MAIL_HOST`, `MAIL_PORT` | `log`/`smtp` + Mailpit in development |
+| `FUSION_*` | Bank name/code, demo IFSC, initial deposit amount |
+| `DEMO_ADMIN_*`, `DEMO_MASTER_PASSWORD` | Seeded demo credentials (development only) |
+
+Frontend environment (`frontend/.env`):
+
+| Variable | Purpose |
+|---|---|
+| `VITE_API_URL` | API root; the client appends `/v1` for the versioned route group. Defaults to `/api` (Vite proxy) |
+
+`vite.config.ts` also honours a `BACKEND_URL` environment variable to retarget the dev proxy without editing files.
+
+## User workflows
+
+### Open an account (public)
+1. `/open-account` → fill personal info → draft application created server-side
+2. Contact → KYC → address steps persist incrementally (each validates with zod before the API call)
+3. Upload identity + address proofs *(blocked by backend defect — see limitations)*
+4. Review & submit → acknowledgement number issued
+5. Track progress any time at `/track-application`
+
+### Customer login and transfer
+1. `/netbanking/login` → customer ID + password
+2. 6-digit OTP from email completes login
+3. Dashboard → **Send Money** → validate recipient account → review → OTP verification confirms the transfer
+4. Transfer appears in the transaction history with a running balance
+
+### Admin application review
+1. `/admin/login` → username + password + bank access token → emailed 16-character token
+2. Applications queue → open an application → approve / request correction / reject **per verification step** (reason required)
+3. Timeline records every action; final approval creates the account
+
+> Transfers and destructive admin actions (freeze, close, reject, delete) were **not executed** during the documentation pass to keep the seeded dataset intact — their presentation, validation, and confirmation flows were verified up to the final confirm step. See `docs/test-coverage.md` §5.
+
+## Responsive design
+
+Tested at 1440×900 (desktop), 768×1024 (tablet), and 390×844 (mobile); no horizontal overflow on any of the 44 routes at any tested width.
+
+- Public site: hamburger drawer navigation below `md`
+- App areas: fixed desktop sidebar below `lg` becomes a slide-in drawer; tables scroll horizontally inside card wrappers; stat grids collapse to single column
+- Forms stack with full-width actions on mobile
+
+Representative captures:
+
+![Dashboard — mobile](docs/screenshots/05-responsive/customer-dashboard-mobile.png)
+
+![Transactions table — mobile](docs/screenshots/05-responsive/transactions-table-mobile.png)
+
+## Testing and quality checks
+
+- **Automated:** `npm run typecheck`, `npm run lint`, and `npm run build` all pass. Vitest is configured but the repository contains **no unit tests** yet; backend Pest tests exist under `backend/tests` (out of scope for the frontend audit that produced these docs).
+- **Manual:** every route was opened, refreshed, and exercised at three viewports with browser automation; findings and fixes are itemised in the audit report.
+- Full evidence: [docs/test-coverage.md](docs/test-coverage.md) · [docs/ui-audit.md](docs/ui-audit.md) · [docs/screenshot-index.md](docs/screenshot-index.md)
+
+## Known limitations
+
+Documented honestly rather than patched over. Details and evidence in [`docs/ui-audit.md`](docs/ui-audit.md).
+
+1. **Document upload 500s** — `POST /api/v1/applications/{id}/documents` calls a private method (`ApplicationController.php:201`), so the account-opening flow cannot pass the documents step. Backend fix required.
+2. **Notifications 500** — the `notifications` table lacks Laravel's `notifiable_type`/`notifiable_id` columns; the customer notifications endpoints fail (the UI degrades to an empty state).
+3. **Security sessions 500** — `SESSION_DRIVER=database` but no `sessions` table exists; the sessions section of the Security center fails (events work).
+4. **Guest support tickets fail** — `support_tickets.customer_id` is a required FK, so the public contact form only succeeds for signed-in customers; guests get an honest error with contact fallbacks.
+5. **No `GET /api/v1/admin/me`** — admin sessions are rehydrated client-side from the stored login payload instead of server-side revalidation.
+6. **No frontend unit tests** — Vitest is configured but unused.
+7. **Default ports collide easily** — if 5173/8000 are occupied, use `BACKEND_URL` + `--port` as shown above.
+
+## Security
+
+Implemented at the backend and reflected in the UI: Sanctum token auth, two-factor logins with hashed single-use verification tokens, rate limiting on auth endpoints, database transactions with row locking for transfers, idempotency keys, MIME/size-validated uploads, masked PAN/Aadhaar/account numbers in API responses, and activity logging. These claims describe the *code*, not a certified production posture — this is a demo platform.
+
+## Development guidelines
+
+- Keep controllers thin; business logic lives in `app/Services` (backend convention)
+- Frontend: shared UI primitives in `components/ui`, compose pages from them, validate with zod schemas colocated with pages, and use TanStack Query for all server state
+- Run `npm run typecheck && npm run lint && npm run build` before considering frontend work done
+- The API is versioned: **all** new endpoints belong under `Route::prefix('v1')` in `backend/routes/api.php`, and the frontend axios client already targets `/api/v1`
 
 ## License
 
-Proprietary - FusionBanking Demo Platform
+Proprietary — FusionBanking demo platform. No license file is present in the repository.
 
-## Support
+## Additional documentation
 
-For issues and questions, please check the documentation or create an issue in the repository.
+- [docs/screenshot-index.md](docs/screenshot-index.md) — all 53 screenshots with context
+- [docs/ui-audit.md](docs/ui-audit.md) — every frontend defect found and fixed, plus backend blockers
+- [docs/test-coverage.md](docs/test-coverage.md) — what was tested, how, and what was deliberately skipped
