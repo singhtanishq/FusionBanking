@@ -4,6 +4,7 @@ import { PublicLayout } from '@/layouts/PublicLayout'
 import { CustomerLayout } from '@/layouts/CustomerLayout'
 import { AdminLayout } from '@/layouts/AdminLayout'
 import { useRequireAuth } from '@/hooks/useAuth'
+import { getUserType } from '@/services/auth'
 
 // Route-level code splitting: each page is its own chunk.
 const HomePage = lazy(() => import('@/pages/public/HomePage').then(m => ({ default: m.HomePage })))
@@ -74,7 +75,11 @@ function ProtectedRoute({ userType = 'customer' }: { userType?: 'customer' | 'ad
   }
 
   if (!authorized) {
-    return <Navigate to={userType === 'admin' ? '/admin/login' : '/customer/dashboard'} replace />
+    // Send the user to the portal that matches their own session type so an
+    // admin hitting a customer route (or vice versa) does not loop between
+    // two redirects.
+    const sessionType = getUserType()
+    return <Navigate to={sessionType === 'admin' ? '/admin' : '/customer/dashboard'} replace />
   }
 
   return <Outlet />
@@ -88,7 +93,7 @@ function PublicOnlyRoute() {
   }
 
   if (isAuthenticated) {
-    return <Navigate to="/customer/dashboard" replace />
+    return <Navigate to={getUserType() === 'admin' ? '/admin' : '/customer/dashboard'} replace />
   }
 
   return <Outlet />
