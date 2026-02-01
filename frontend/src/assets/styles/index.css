@@ -106,7 +106,7 @@
   }
   
   .masked-account {
-    font-family: 'Monospace', monospace;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     letter-spacing: 0.5px;
   }
 }
