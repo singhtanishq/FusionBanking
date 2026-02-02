@@ -108,7 +108,9 @@ export function ConfirmDialog({ isOpen, onClose, onConfirm, title, message, conf
         <button
           type="button"
           className={variant === 'danger' ? 'btn-danger' : 'btn-primary'}
-          onClick={() => { onConfirm(); onClose(); }}
+          // The caller owns the dialog lifecycle: keep it open (with the
+          // confirm button disabled) while `loading`, and close on completion.
+          onClick={onConfirm}
           disabled={loading}
         >
           {loading ? 'Processing...' : confirmText}
