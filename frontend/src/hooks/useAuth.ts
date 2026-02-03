@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from 'react'
-import { api, ApiResponse } from '@/services/api'
+import { api, apiRoot, ApiResponse } from '@/services/api'
 import {
   getAuthToken,
   setAuthToken,
   clearAuthToken,
+  getUserData,
   setUserData,
   clearUserData,
   getUserType,
@@ -28,16 +29,30 @@ export function useAuth() {
   const fetchUser = useCallback(async () => {
     const token = getAuthToken()
     const userType = getUserType()
-    
+
     if (!token || !userType) {
       setState({ user: null, loading: false, error: null })
       return
     }
 
+    // The API only exposes GET /customer/me; there is no admin equivalent,
+    // so admin sessions are rehydrated from the stored login payload.
+    if (userType === 'admin') {
+      const stored = getUserData()
+      if (stored) {
+        setState({ user: stored, loading: false, error: null })
+      } else {
+        clearAuthToken()
+        clearUserData()
+        clearUserType()
+        setState({ user: null, loading: false, error: null })
+      }
+      return
+    }
+
     try {
-      const endpoint = userType === 'customer' ? '/customer/me' : '/admin/me'
-      const response = await api.get<ApiResponse<AuthUser>>(endpoint)
-      
+      const response = await api.get<ApiResponse<AuthUser>>('/customer/me')
+
       if (response.data.success && response.data.data) {
         setUserData(response.data.data)
         setState({ user: response.data.data, loading: false, error: null })
@@ -66,8 +81,9 @@ export function useAuth() {
   const logout = async () => {
     try {
       const userType = getUserType()
+      // POST /api/logout is registered outside the versioned route group
       if (userType) {
-        await api.post(`/${userType}/logout`)
+        await apiRoot.post('/logout')
       }
     } catch (error) {
       // Ignore logout errors
