@@ -292,11 +292,11 @@ function AdminNavSection({ item, isExpanded, onToggle }: AdminNavSectionProps) {
       <Transition
         show={isExpanded}
         enter="transition ease-out duration-200"
-        enterFrom="opacity-0 height-0"
-        enterTo="opacity-100 height-auto"
+        enterFrom="opacity-0 -translate-y-1"
+        enterTo="opacity-100 translate-y-0"
         leave="transition ease-in duration-150"
-        leaveFrom="opacity-100 height-auto"
-        leaveTo="opacity-0 height-0"
+        leaveFrom="opacity-100 translate-y-0"
+        leaveTo="opacity-0 -translate-y-1"
       >
         <div className="overflow-hidden pl-10 mt-1 space-y-1">
           {item.children?.map((child) => (
