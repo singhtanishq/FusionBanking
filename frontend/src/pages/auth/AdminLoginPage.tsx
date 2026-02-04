@@ -70,7 +70,10 @@ export function AdminLoginPage() {
 
     setVerifyingOtp(true)
     try {
-      const response = await api.post('/auth/admin/verify-otp', { otp })
+      const response = await api.post('/auth/admin/verify-otp', {
+        otp,
+        username: credentials?.username,
+      })
       
       if (response.data.success) {
         login(response.data.data.token, response.data.data.user, 'admin')
