@@ -69,7 +69,10 @@ export function NetBankingLoginPage() {
 
     setVerifyingOtp(true)
     try {
-      const response = await api.post('/auth/customer/verify-otp', { otp })
+      const response = await api.post('/auth/customer/verify-otp', {
+        otp,
+        customer_id: credentials?.customer_id,
+      })
 
       if (response.data.success) {
         login(response.data.data.token, response.data.data.user, 'customer')
