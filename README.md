@@ -6,7 +6,7 @@ A full-stack digital banking demo platform: a public marketing site, a multi-ste
 
 The application is a **demo/development platform**. It implements realistic banking *workflows* (applications, transfers, fixed deposits, loan review) against a seeded local database — it is not connected to any real money movement.
 
-[Explore all 53 screenshots](docs/screenshot-index.md) · [UI audit](docs/ui-audit.md) · [Test coverage report](docs/test-coverage.md)
+Every one of the **53 screenshots** in `docs/screenshots/` is embedded in the [Visual showcase](#visual-showcase) below. Companion reports: [UI audit](docs/ui-audit.md) · [Test coverage report](docs/test-coverage.md)
 
 ---
 
@@ -270,6 +270,338 @@ Frontend environment (`frontend/.env`):
 
 > Transfers and destructive admin actions (freeze, close, reject, delete) were **not executed** during the documentation pass to keep the seeded dataset intact — their presentation, validation, and confirmation flows were verified up to the final confirm step. See `docs/test-coverage.md` §5.
 
+## Visual showcase
+
+All 53 screenshots captured from the running local application (1440×900 desktop unless noted), grouped by module. Screenshots showing demo data use the seeded accounts (`CUS1000001` Rahul Sharma, `CUS1000002` Priya Patel, `CUS1000003` Amit Kumar) — no real personal data appears anywhere.
+
+### Public website
+
+#### 1. Home page
+
+The public landing page: hero with primary calls-to-action, key banking statistics, a six-item feature grid, product cards that link to real product pages, an expandable FAQ, and the closing call-to-action band.
+
+![Home page](docs/screenshots/01-public-site/home-desktop.png)
+
+#### 2. Personal banking overview
+
+The personal banking page with its "Banking that puts you first" hero, a trust-statistics band, and the "Banking designed for your life" feature section.
+
+![Personal banking overview](docs/screenshots/01-public-site/personal-banking-desktop.png)
+
+#### 3. Products catalogue
+
+The catalogue page: a "Banking products built around your needs" hero above six product cards — Savings, Current, Fixed Deposits, Personal Loan, Education Loan and Business Banking — each with a category tag and a Learn-more link to its detail page.
+
+![Products catalogue](docs/screenshots/01-public-site/products-desktop.png)
+
+#### 4. Savings account product page
+
+Savings product detail: the "Digital Savings Account" hero (zero balance, up to 4.5% p.a.) above a key-features grid covering minimum balance, interest rates and instant digital opening.
+
+![Savings account product page](docs/screenshots/01-public-site/savings-account-desktop.png)
+
+#### 5. Current account product page
+
+Business current account detail: the "Current Account for Business" hero plus key features covering higher transaction limits, an overdraft facility and bulk payments.
+
+![Current account product page](docs/screenshots/01-public-site/current-account-desktop.png)
+
+#### 6. Loans overview
+
+The public loans page: a "Loans designed around your goals" hero, three product cards (Personal, Education, Business) with feature lists and Apply-now links, a "Plan your repayments" EMI-planner call-to-action, and a closing security section.
+
+![Loans overview](docs/screenshots/01-public-site/loans-desktop.png)
+
+#### 7. Deposits overview
+
+The deposit options page ("Make your savings work harder") presenting Fixed, Short-Term and Growth deposit cards with tenure and maturity features.
+
+![Deposits overview](docs/screenshots/01-public-site/deposits-desktop.png)
+
+#### 8. Security page
+
+The public security centre: a "Security built into your banking experience" hero above a "Security controls that matter" card grid covering authentication, transactions and sensitive data.
+
+![Security page](docs/screenshots/01-public-site/security-desktop.png)
+
+#### 9. Help center
+
+The help centre landing: a "How can we help?" hero above four support-topic cards — Account & Login, Accounts & Cards, Payments & Transfers and Support.
+
+![Help center](docs/screenshots/01-public-site/help-center-desktop.png)
+
+#### 10. Contact page
+
+Contact channels and message form: three support cards (General Support, Business Banking, Complaints & Grievances) with published emails, phone numbers and hours, office locations, and a fully validated "Send us a message" form that posts to the support-ticket API for signed-in customers.
+
+![Contact page](docs/screenshots/01-public-site/contact-desktop.png)
+
+#### 11. Privacy policy
+
+The privacy policy page: a "Your Privacy Matters" hero with the last-updated date and a ten-section table of contents, from Information We Collect through Children's Privacy.
+
+![Privacy policy](docs/screenshots/01-public-site/privacy-policy-desktop.png)
+
+#### 12. Terms of service
+
+The terms of service page with its own ten-section table of contents beginning at Acceptance of Terms, rendered as individual content sections below.
+
+![Terms of service](docs/screenshots/01-public-site/terms-of-service-desktop.png)
+
+### Authentication & onboarding
+
+#### 13. NetBanking login
+
+The customer sign-in card: Customer ID and password fields, a remember-me toggle, forgot-password link, and a pointer to account opening for new users.
+
+![NetBanking login](docs/screenshots/02-authentication/netbanking-login-desktop.png)
+
+#### 14. NetBanking login — OTP step
+
+The second authentication factor: after correct credentials the form switches to six single-digit boxes for the emailed OTP, with Verify & Login, back-to-login and resend actions. The "Verification code sent to your registered email" toast is visible top-right.
+
+![NetBanking login OTP step](docs/screenshots/02-authentication/netbanking-login-otp-step.png)
+
+#### 15. Admin portal login
+
+The restricted admin sign-in, requiring username, password and a bank access token, with an explicit "Unauthorized access is prohibited and monitored" warning banner.
+
+![Admin portal login](docs/screenshots/02-authentication/admin-login-desktop.png)
+
+#### 16. NetBanking activation
+
+The first-time activation form verifying Customer ID, account number, registered mobile number and date of birth before NetBanking credentials can be set up.
+
+![NetBanking activation](docs/screenshots/02-authentication/netbanking-activate-desktop.png)
+
+#### 17. Password reset
+
+The reset flow accepting the customer ID plus the 16-character reset token delivered by email, with new-password and confirmation fields (minimum 10 characters) and a back-to-login link.
+
+![Password reset](docs/screenshots/02-authentication/password-reset-desktop.png)
+
+#### 18. Account opening — personal information (step 1)
+
+Step 1 of the six-step account-opening wizard: the StepTracker spanning Personal Information → Review & Submit, above the personal-details form (names, date of birth, gender, marital status, nationality, occupation, annual income, preferred account type).
+
+![Account opening step 1](docs/screenshots/02-authentication/open-account-step1-personal.png)
+
+#### 19. Account opening — document upload (step 5)
+
+Step 5 of the wizard: separate identity-proof (PAN card) and address-proof (utility bill) upload dropzones with document-type selectors. "Continue to Review" stays disabled until both files are uploaded — this is the step currently blocked by the backend upload defect.
+
+![Account opening documents step](docs/screenshots/02-authentication/open-account-step5-documents.png)
+
+#### 20. Track application
+
+The public acknowledgement-number lookup: entering an `FBK-2026-XXXX` number renders the application's live status page with a seven-stage progress tracker.
+
+![Track application](docs/screenshots/02-authentication/track-application-desktop.png)
+
+### Customer NetBanking
+
+#### 21. Customer dashboard
+
+The NetBanking dashboard for the signed-in customer: greeting and customer ID, the primary account card with available balance and masked account number, month-to-date quick stats, quick-action tiles, and the most recent transactions with running balances.
+
+![Customer dashboard](docs/screenshots/03-customer-netbanking/dashboard-desktop.png)
+
+#### 22. Accounts overview
+
+The account overview listing the customer's savings account with balance, status badge, masked number and IFSC, plus Transfer and Transactions shortcuts.
+
+![Accounts overview](docs/screenshots/03-customer-netbanking/accounts-overview-desktop.png)
+
+#### 23. Account details
+
+The full account detail view: account number, type, IFSC, status, current and available balances, opening date, and a four-tile "Account Actions" grid (Send Money, Beneficiaries, Transactions, Statements).
+
+![Account details](docs/screenshots/03-customer-netbanking/account-details-desktop.png)
+
+#### 24. Send money
+
+Step 1 of the three-step transfer wizard: recipient account validation with its Validate action, IFSC and amount fields, a remark box, and the published transfer limits (per-transaction and daily caps).
+
+![Send money](docs/screenshots/03-customer-netbanking/send-money-desktop.png)
+
+#### 25. Beneficiaries
+
+The beneficiaries manager shown in its empty state with "Add Beneficiary" actions — payees added here can be reused for faster transfers.
+
+![Beneficiaries](docs/screenshots/03-customer-netbanking/beneficiaries-desktop.png)
+
+#### 26. Transaction history
+
+The customer's transaction table: server-side search, a filter panel, Export CSV, coloured type badges, signed amounts, running balance and completion status per row.
+
+![Transaction history](docs/screenshots/03-customer-netbanking/transaction-history-desktop.png)
+
+#### 27. Account statements
+
+The statement view, which shares the transaction engine: search and filters above the table with a Download CSV action for date-range exports.
+
+![Account statements](docs/screenshots/03-customer-netbanking/account-statements-desktop.png)
+
+#### 28. Customer loans
+
+The loan overview for the signed-in customer: Active/Pending/Completed stat cards, Active Loans and History tabs, and the active loan's number, purpose, principal and EMI.
+
+![Customer loans](docs/screenshots/03-customer-netbanking/loans-desktop.png)
+
+#### 29. Customer fixed deposits
+
+The FD book with two active deposits (rate, tenure, maturity value and a "Close early" action per deposit). Note: the "Total Invested" and "Est. Maturity Value" summary cards render as ₹NaN in this capture — a value-formatting bug in the FD summary cards; the deposit list data shown below them is correct.
+
+![Customer fixed deposits](docs/screenshots/03-customer-netbanking/fixed-deposits-desktop.png)
+
+#### 30. Profile
+
+The customer profile page (personal information, KYC, contact details and addresses). This capture caught the frame before its content painted, so the image appears blank here; the page itself was verified live in the browser during testing.
+
+![Profile](docs/screenshots/03-customer-netbanking/profile-desktop.png)
+
+#### 31. Security center
+
+The security centre: status tiles (strong password, 2FA enabled, email and mobile verified), the change-password card, and a recent security-events feed with event types, IP addresses and timestamps.
+
+![Security center](docs/screenshots/03-customer-netbanking/security-center-desktop.png)
+
+#### 32. Notifications
+
+The notification inbox with All/Unread/Read tabs shown in its empty state. The backing endpoint currently returns a 500 (documented limitation), which the page handles gracefully.
+
+![Notifications](docs/screenshots/03-customer-netbanking/notifications-desktop.png)
+
+#### 33. Support center
+
+The ticketed support area: quick-help tiles (FAQs, live chat, phone, email) above the customer's ticket list with create-ticket actions.
+
+![Support center](docs/screenshots/03-customer-netbanking/support-center-desktop.png)
+
+### Admin portal
+
+#### 34. Admin dashboard
+
+The bank-wide operations overview: ten stat tiles (total customers, pending applications, pending KYC, active accounts, loans pending review, loans disbursed, total deposits, transactions and transfers today, FD portfolio value), quick-action tiles, and recent applications and activity panels.
+
+![Admin dashboard](docs/screenshots/04-admin-portal/dashboard-desktop.png)
+
+#### 35. Applications queue
+
+The account-opening application queue: acknowledgement-number search, status filter pills (Submitted → Rejected), per-application progress bars, status badges, submission dates and Review links.
+
+![Applications queue](docs/screenshots/04-admin-portal/applications-list-desktop.png)
+
+#### 36. Application detail
+
+The review workspace for a single application: applicant personal information, contact and masked KYC details, the per-step verification list (approve / request correction / reject — each requiring a documented reason), a final Approve action, and the full review timeline.
+
+![Application detail](docs/screenshots/04-admin-portal/application-detail-desktop.png)
+
+#### 37. Customers
+
+The customer management table: contact details, masked primary account with balance, KYC and status badges, and view/restrict action icons per row.
+
+![Customers](docs/screenshots/04-admin-portal/customers-desktop.png)
+
+#### 38. Accounts
+
+Account administration with status filter pills (All/Active/Frozen/Closed) and a table of accounts showing masked numbers, holder, type, balance, opening date and Freeze actions.
+
+![Accounts](docs/screenshots/04-admin-portal/accounts-desktop.png)
+
+#### 39. Bank transactions
+
+All customer transactions across the bank: reference number, masked account with holder name, transaction type, description, signed coloured amounts and timestamps.
+
+![Bank transactions](docs/screenshots/04-admin-portal/transactions-desktop.png)
+
+#### 40. Admin loans
+
+The loan review pipeline: status filter pills and a table of principal, rate/tenure, EMI and status — under-review loans expose Approve/Reject, approved loans expose Disburse.
+
+![Admin loans](docs/screenshots/04-admin-portal/loans-desktop.png)
+
+#### 41. Admin fixed deposits
+
+The admin FD book page. This capture caught the frame before its content painted, so the image appears blank here; the page itself (status filters plus the FD table) was verified to load during testing.
+
+![Admin fixed deposits](docs/screenshots/04-admin-portal/fixed-deposits-desktop.png)
+
+#### 42. Audit logs
+
+The sensitive-action audit trail: an action-name filter above a table recording the action, actor, affected resource, source IP address and timestamp — here showing the `application_step_reviewed` entry recorded during the test pass.
+
+![Audit logs](docs/screenshots/04-admin-portal/audit-logs-desktop.png)
+
+#### 43. Admin support tickets
+
+The support-ticket administration page. This capture caught the frame before its content painted, so the image appears blank here; the ticket list was verified to load (HTTP 200) during testing.
+
+![Admin support tickets](docs/screenshots/04-admin-portal/support-tickets-desktop.png)
+
+#### 44. Promotions
+
+Marketing-banner management: the four seeded promotions with active badges and position numbers, each with deactivate, edit and delete controls, plus a New promotion button.
+
+![Promotions](docs/screenshots/04-admin-portal/promotions-desktop.png)
+
+#### 45. System settings
+
+Bank-wide operational configuration grouped into Fixed Deposits, Loans and Security cards — each setting (amount limits, lockout duration, maximum failed logins) shown with its key, description, current value and an Edit action.
+
+![System settings](docs/screenshots/04-admin-portal/system-settings-desktop.png)
+
+#### 46. Admin users
+
+Master-only administrator management: the admin roster with role badges (Admin / Master Admin), status and creation dates, per-row delete for non-master accounts, and the New admin action — which is hidden entirely from non-master sign-ins.
+
+![Admin users](docs/screenshots/04-admin-portal/admin-users-desktop.png)
+
+### Responsive views
+
+#### 47. Home page — mobile (390×844)
+
+The landing page at mobile width: the hero stacks with full-width calls-to-action and the navigation collapses to a hamburger.
+
+![Home mobile](docs/screenshots/05-responsive/home-mobile.png)
+
+#### 48. Home page — mobile menu open
+
+The public navigation drawer open at mobile width, listing all site sections plus the Track Application, NetBanking Login and Open an Account actions.
+
+![Home mobile menu open](docs/screenshots/05-responsive/home-mobile-menu-open.png)
+
+#### 49. NetBanking login — mobile
+
+The login card stacked full-width at mobile size, with the same fields and actions as the desktop form.
+
+![NetBanking login mobile](docs/screenshots/05-responsive/netbanking-login-mobile.png)
+
+#### 50. Account opening form — mobile
+
+The account-opening wizard at mobile width. This capture caught the frame before its content painted, so the image appears blank here; the wizard's mobile layout was verified live in the browser during testing.
+
+![Open account form mobile](docs/screenshots/05-responsive/open-account-form-mobile.png)
+
+#### 51. Customer dashboard — mobile
+
+The customer dashboard at 390px: stat cards stack in a single column and the account card's Transfer/Statement actions wrap below the balance.
+
+![Customer dashboard mobile](docs/screenshots/05-responsive/customer-dashboard-mobile.png)
+
+#### 52. Customer dashboard — tablet (768×1024)
+
+The dashboard at tablet width: a two-column stat grid with the sidebar collapsed to the hamburger drawer.
+
+![Customer dashboard tablet](docs/screenshots/05-responsive/customer-dashboard-tablet.png)
+
+#### 53. Transactions table — mobile
+
+The customer transaction table at mobile width, scrolling horizontally inside its card wrapper so the page itself never overflows.
+
+![Transactions table mobile](docs/screenshots/05-responsive/transactions-table-mobile.png)
+
 ## Responsive design
 
 Tested at 1440×900 (desktop), 768×1024 (tablet), and 390×844 (mobile); no horizontal overflow on any of the 44 routes at any tested width.
@@ -278,11 +610,7 @@ Tested at 1440×900 (desktop), 768×1024 (tablet), and 390×844 (mobile); no hor
 - App areas: fixed desktop sidebar below `lg` becomes a slide-in drawer; tables scroll horizontally inside card wrappers; stat grids collapse to single column
 - Forms stack with full-width actions on mobile
 
-Representative captures:
-
-![Dashboard — mobile](docs/screenshots/05-responsive/customer-dashboard-mobile.png)
-
-![Transactions table — mobile](docs/screenshots/05-responsive/transactions-table-mobile.png)
+All seven responsive captures are embedded in the [Responsive views](#responsive-views) group of the visual showcase above.
 
 ## Testing and quality checks
 
@@ -319,6 +647,6 @@ Proprietary — FusionBanking demo platform. No license file is present in the r
 
 ## Additional documentation
 
-- [docs/screenshot-index.md](docs/screenshot-index.md) — all 53 screenshots with context
+- [docs/screenshot-index.md](docs/screenshot-index.md) — a compact tabular index of the same 53 screenshots (all embedded inline above)
 - [docs/ui-audit.md](docs/ui-audit.md) — every frontend defect found and fixed, plus backend blockers
 - [docs/test-coverage.md](docs/test-coverage.md) — what was tested, how, and what was deliberately skipped
