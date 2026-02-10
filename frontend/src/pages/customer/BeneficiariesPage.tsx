@@ -94,7 +94,7 @@ export function BeneficiariesPage() {
 
     setValidating(true)
     try {
-      const response = await api.post('/transfers/validate-recipient', { 
+      const response = await api.post('/customer/transfers/validate-recipient', { 
         account_number: accountNumber, 
         ifsc: ifsc.toUpperCase() 
       })
