@@ -28,6 +28,11 @@ interface Account {
   opening_date: string
 }
 
+interface MonthActivity {
+  sent_this_month: number
+  received_this_month: number
+}
+
 interface Transaction {
   id: string
   reference_number: string
@@ -66,15 +71,49 @@ export function CustomerDashboardPage() {
     },
   })
 
-  const { data: stats } = useQuery({
-    queryKey: ['customer-stats'],
-    queryFn: async () => {
-      const response = await api.get('/customer/stats')
-      return response.data.data as CustomerStats
+  // The API has no dedicated stats endpoint, so the month activity and active
+  // product counts are derived from the list endpoints the customer already has.
+  const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().split('T')[0]
+  const { data: monthActivity } = useQuery({
+    queryKey: ['month-activity', startOfMonth],
+    queryFn: async (): Promise<MonthActivity> => {
+      const response = await api.get('/customer/transactions', {
+        params: { per_page: 100, date_from: startOfMonth, status: 'completed' },
+      })
+      const txns = response.data.data as Array<{ direction: string; amount: number }>
+      return {
+        sent_this_month: txns.filter(t => t.direction === 'debit').reduce((sum, t) => sum + Number(t.amount), 0),
+        received_this_month: txns.filter(t => t.direction === 'credit').reduce((sum, t) => sum + Number(t.amount), 0),
+      }
+    },
+  })
+
+  const { data: activeProducts } = useQuery({
+    queryKey: ['active-products'],
+    queryFn: async (): Promise<{ active_loans: number; active_fds: number }> => {
+      const [loans, fds] = await Promise.all([
+        api.get('/customer/loans', { params: { per_page: 100 } }),
+        api.get('/customer/fixed-deposits', { params: { per_page: 100 } }),
+      ])
+      const loansData = loans.data.data as Array<{ status?: string }>
+      const fdsData = fds.data.data as Array<{ status?: string }>
+      return {
+        active_loans: Array.isArray(loansData) ? loansData.filter(l => !['closed', 'rejected', 'completed'].includes((l.status || '').toLowerCase())).length : 0,
+        active_fds: Array.isArray(fdsData) ? fdsData.filter(fd => !['closed', 'matured', 'premature_closed'].includes((fd.status || '').toLowerCase())).length : 0,
+      }
     },
   })
 
   const primaryAccount = accounts?.[0]
+  const stats: CustomerStats | undefined = monthActivity && activeProducts
+    ? {
+        total_balance: primaryAccount?.balance ?? 0,
+        sent_this_month: monthActivity.sent_this_month,
+        received_this_month: monthActivity.received_this_month,
+        active_loans: activeProducts.active_loans,
+        active_fds: activeProducts.active_fds,
+      }
+    : undefined
 
   return (
     <div className="space-y-6">
