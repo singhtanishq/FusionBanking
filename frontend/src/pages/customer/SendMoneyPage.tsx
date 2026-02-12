@@ -65,7 +65,7 @@ export function SendMoneyPage() {
 
     setValidating(true)
     try {
-      const response = await api.post('/transfers/validate-recipient', { account_number: accountNumber, ifsc: ifsc.toUpperCase() })
+      const response = await api.post('/customer/transfers/validate-recipient', { account_number: accountNumber, ifsc: ifsc.toUpperCase() })
       
       if (response.data.success && response.data.data) {
         setRecipient({
@@ -93,7 +93,7 @@ export function SendMoneyPage() {
     }
 
     try {
-      const response = await api.post('/transfers', {
+      const response = await api.post('/customer/transfers', {
         recipient_account_number: data.recipient_account_number,
         recipient_ifsc: data.recipient_ifsc.toUpperCase(),
         amount: data.amount,
@@ -117,7 +117,7 @@ export function SendMoneyPage() {
 
     setVerifying(true)
     try {
-      const response = await api.post('/transfers/verify', { transfer_id: transferId, otp })
+      const response = await api.post('/customer/transfers/verify', { transfer_id: transferId, otp })
       
       if (response.data.success) {
         toast.success('Transfer completed successfully!')
