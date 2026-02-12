@@ -67,6 +67,7 @@ export function MasterAdminsPage() {
 
   const admins = data?.data ?? []
   const formValid = form.username.trim() && form.email.trim() && form.full_name.trim() && form.password.length >= 10
+  const isMaster = !!currentUser && 'is_master' in currentUser && currentUser.is_master
 
   return (
     <div className="space-y-6">
@@ -75,9 +76,11 @@ export function MasterAdminsPage() {
           <h1 className="text-2xl font-bold text-navy-900">Admin Users</h1>
           <p className="text-navy-600">Master-only management of bank administrators</p>
         </div>
-        <Button onClick={() => setCreating(true)}>
-          <PlusIcon className="h-5 w-5" /> New admin
-        </Button>
+        {isMaster && (
+          <Button onClick={() => setCreating(true)}>
+            <PlusIcon className="h-5 w-5" /> New admin
+          </Button>
+        )}
       </div>
 
       <Card>
