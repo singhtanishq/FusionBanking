@@ -16,6 +16,7 @@ import { Input, Textarea } from '@/components/ui/Input'
 import { Card, CardContent, CardHeader } from '@/components/ui/Card'
 import { Alert } from '@/components/ui/Alert'
 import { toast } from 'react-hot-toast'
+import { api, handleApiError } from '@/services/api'
 
 const contactSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -75,6 +76,7 @@ const offices = [
 export function ContactPage() {
   const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
   const {
     register,
@@ -85,16 +87,28 @@ export function ContactPage() {
     resolver: zodResolver(contactSchema),
   })
 
-  const onSubmit = async (_data: ContactForm) => {
+  const onSubmit = async (data: ContactForm) => {
     setSubmitting(true)
+    setSubmitError(null)
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      toast.success('Thank you for contacting us! We\'ll get back to you within 24 hours.')
+      // The support ticket endpoint stores the message in a single description
+      // field, so sender contact details are included alongside the message.
+      const senderLine = `Contact details: ${data.name} <${data.email}>${data.phone ? `, phone ${data.phone}` : ''}`
+      const response = await api.post('/support/tickets', {
+        subject: data.subject,
+        description: `${data.message}\n\n${senderLine}`,
+        category: 'general',
+      })
+      if (!response.data.success) {
+        throw new Error(response.data.message || 'Failed to send message')
+      }
+      toast.success("Thank you for contacting us! We'll get back to you within 24 hours.")
       setSubmitted(true)
       reset()
-    } catch {
-      toast.error('Failed to submit. Please try again.')
+    } catch (error) {
+      const message = handleApiError(error as never) || 'Failed to send your message'
+      setSubmitError(message)
+      toast.error(message)
     } finally {
       setSubmitting(false)
     }
@@ -187,6 +201,17 @@ export function ContactPage() {
             </p>
           </div>
 
+          {submitError && (
+            <Alert variant="danger" className="mb-6">
+              <div>
+                <p className="font-medium text-red-800">Your message could not be sent.</p>
+                <p className="text-sm text-red-700">
+                  {submitError} Please try calling 1800-123-4567 or emailing support@fusionbanking.com instead.
+                </p>
+              </div>
+            </Alert>
+          )}
+
           {submitted && (
             <Alert variant="success" className="mb-6">
               <CheckCircleIcon className="h-5 w-5 text-emerald-600" aria-hidden="true" />
@@ -198,7 +223,7 @@ export function ContactPage() {
           )}
 
           <Card>
-            <CardHeader title="Send us a message" description="All fields marked with * are required" />
+            <CardHeader title="Message details" description="All fields marked with * are required" />
             <CardContent>
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 <div className="grid sm:grid-cols-2 gap-6">
