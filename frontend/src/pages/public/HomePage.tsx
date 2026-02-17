@@ -57,10 +57,10 @@ const securityFeatures = [
 const products = [
   { name: 'Savings Account', description: 'Earn interest on your daily balance with easy access to funds', icon: CreditCardIcon, href: '/products/savings' },
   { name: 'Current Account', description: 'Designed for businesses with higher transaction limits', icon: BuildingOfficeIcon, href: '/products/current' },
-  { name: 'Fixed Deposit', description: 'Guaranteed returns with flexible tenure from 7 days to 10 years', icon: BanknotesIcon, href: '/products/fd' },
-  { name: 'Personal Loan', description: 'Quick approval with minimal documentation and competitive rates', icon: ChartBarIcon, href: '/products/loans' },
-  { name: 'Education Loan', description: 'Fund your dreams with special rates for students', icon: ChartBarIcon, href: '/products/education-loan' },
-  { name: 'Business Banking', description: 'Complete banking solutions for your growing business', icon: BuildingOfficeIcon, href: '/products/business' },
+  { name: 'Fixed Deposit', description: 'Guaranteed returns with flexible tenure from 7 days to 10 years', icon: BanknotesIcon, href: '/deposits' },
+  { name: 'Personal Loan', description: 'Quick approval with minimal documentation and competitive rates', icon: ChartBarIcon, href: '/loans' },
+  { name: 'Education Loan', description: 'Fund your dreams with special rates for students', icon: ChartBarIcon, href: '/loans' },
+  { name: 'Business Banking', description: 'Complete banking solutions for your growing business', icon: BuildingOfficeIcon, href: '/products/current' },
 ]
 
 const stats = [
