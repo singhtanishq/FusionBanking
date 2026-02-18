@@ -59,14 +59,28 @@ const addressSchema = z.object({
   residential_postal_code: z.string().regex(/^\d{6}$/, 'Enter a valid 6-digit PIN code'),
   residential_country: z.string().default('India'),
   residential_landmark: z.string().optional(),
-  permanent_address_line_1: z.string().min(5, 'Address is required'),
+  permanent_address_line_1: z.string().optional(),
   permanent_address_line_2: z.string().optional(),
-  permanent_city: z.string().min(2, 'City is required'),
-  permanent_state: z.string().min(2, 'State is required'),
-  permanent_postal_code: z.string().regex(/^\d{6}$/, 'Enter a valid 6-digit PIN code'),
-  permanent_country: z.string().default('India'),
+  permanent_city: z.string().optional(),
+  permanent_state: z.string().optional(),
+  permanent_postal_code: z.string().optional(),
+  permanent_country: z.string().optional(),
   permanent_landmark: z.string().optional(),
   same_as_residential: z.boolean(),
+}).superRefine((data, ctx) => {
+  // The permanent-address inputs are only rendered when the checkbox is
+  // unchecked, so validate them only in that case.
+  if (data.same_as_residential) return
+  const required = (field: 'permanent_address_line_1' | 'permanent_city' | 'permanent_state' | 'permanent_postal_code', message: string, invalid?: boolean) => {
+    const value = data[field] ?? ''
+    if (invalid || value.length === 0) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, path: [field], message })
+    }
+  }
+  required('permanent_address_line_1', 'Address is required', data.permanent_address_line_1 !== undefined && data.permanent_address_line_1.length < 5)
+  required('permanent_city', 'City is required', data.permanent_city !== undefined && data.permanent_city.length < 2)
+  required('permanent_state', 'State is required', data.permanent_state !== undefined && data.permanent_state.length < 2)
+  required('permanent_postal_code', 'Enter a valid 6-digit PIN code', data.permanent_postal_code !== undefined && !/^\d{6}$/.test(data.permanent_postal_code))
 })
 
 type PersonalInfoForm = z.infer<typeof personalInfoSchema>
