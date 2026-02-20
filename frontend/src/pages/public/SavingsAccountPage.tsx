@@ -115,7 +115,7 @@ void SparklesIcon;
                   <ArrowRightIcon className="h-5 w-5" />
                 </Button>
               </Link>
-              <Link to="/products" className="btn-outline inline-flex items-center justify-center px-6 py-3">
+              <Link to="/products" className="btn-outline inline-flex items-center justify-center px-6 py-3 border-white text-white hover:bg-navy-800">
                 View All Products
               </Link>
             </div>
