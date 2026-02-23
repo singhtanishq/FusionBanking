@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader } from '@/components/ui/Card'
 import { StatusBadge } from '@/components/ui/Badge'
 import { ApplicationService, type Application } from '@/services/application'
 import { formatDateTime, cn } from '@/lib/utils'
+import { handleApiError } from '@/services/api'
 import { toast } from 'react-hot-toast'
 
 const trackSchema = z.object({
@@ -48,7 +49,7 @@ export function TrackApplicationPage() {
       setApplication(result)
       setShowDetails(true)
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Application not found')
+      toast.error(handleApiError(error as never) || 'Application not found')
       setApplication(null)
       setShowDetails(false)
     } finally {
