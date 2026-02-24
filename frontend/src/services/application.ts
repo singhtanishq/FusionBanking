@@ -20,17 +20,22 @@ export interface ApplicationStep {
   rejection_reason: string | null
 }
 
-export interface ApplicationCreateResponse {
-  application: Application
-}
-
 export class ApplicationService {
   static async createDraft(): Promise<Application> {
-    const response = await api.post<ApiResponse<ApplicationCreateResponse>>('/applications')
-    if (!response.data.success) {
+    // The store endpoint returns only the identifiers of the new draft.
+    const response = await api.post<ApiResponse<{ application_id: string; acknowledgement_number: string }>>('/applications')
+    if (!response.data.success || !response.data.data) {
       throw new Error(response.data.message || 'Failed to create application')
     }
-    return response.data.data!.application
+    return {
+      id: response.data.data.application_id,
+      acknowledgement_number: response.data.data.acknowledgement_number,
+      status: 'draft',
+      preferred_account_type: '',
+      submitted_at: null,
+      approved_at: null,
+      steps: [],
+    }
   }
 
   static async savePersonalInfo(applicationId: string, data: Record<string, unknown>): Promise<void> {
