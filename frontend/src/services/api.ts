@@ -1,10 +1,45 @@
-import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios'
+import axios, { AxiosError, AxiosInstance, InternalAxiosRequestConfig } from 'axios'
 import { getAuthToken, clearAuth } from './auth'
 
-const API_URL = import.meta.env.VITE_API_URL || '/api'
+// The Laravel API groups every endpoint under a versioned prefix
+// (routes/api.php → Route::prefix('v1')). VITE_API_URL is the API root,
+// e.g. "/api" in development through the Vite proxy.
+const API_ROOT = (import.meta.env.VITE_API_URL || '/api').replace(/\/+$/, '')
+
+const attachInterceptors = (client: AxiosInstance) => {
+  client.interceptors.request.use(
+    (config: InternalAxiosRequestConfig) => {
+      const token = getAuthToken()
+      if (token && config.headers) {
+        config.headers.Authorization = `Bearer ${token}`
+      }
+      return config
+    },
+    (error) => Promise.reject(error)
+  )
+
+  client.interceptors.response.use(
+    (response) => response,
+    (error: AxiosError) => {
+      if (error.response?.status === 401) {
+        // Token expired or invalid — send the user to the login portal that
+        // matches their stored user type (admins must not land on customer login).
+        const userType = localStorage.getItem('fusionbanking_user_type')
+        const currentPath = window.location.pathname
+        clearAuth()
+        const loginPath = userType === 'admin' ? '/admin/login' : '/netbanking/login'
+        const onLoginAlready = currentPath === '/admin/login' || currentPath === '/netbanking/login'
+        if (!onLoginAlready) {
+          window.location.href = loginPath
+        }
+      }
+      return Promise.reject(error)
+    }
+  )
+}
 
 export const api = axios.create({
-  baseURL: API_URL,
+  baseURL: `${API_ROOT}/v1`,
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',
@@ -12,37 +47,18 @@ export const api = axios.create({
   withCredentials: true,
 })
 
-// Request interceptor to add auth token
-api.interceptors.request.use(
-  (config: InternalAxiosRequestConfig) => {
-    const token = getAuthToken()
-    if (token && config.headers) {
-      config.headers.Authorization = `Bearer ${token}`
-    }
-    return config
+// Client for endpoints registered outside the versioned group (POST /api/logout).
+export const apiRoot = axios.create({
+  baseURL: API_ROOT,
+  headers: {
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
   },
-  (error) => Promise.reject(error)
-)
+  withCredentials: true,
+})
 
-// Response interceptor for error handling
-api.interceptors.response.use(
-  (response) => response,
-  (error: AxiosError) => {
-    if (error.response?.status === 401) {
-      // Token expired or invalid — send the user to the login portal that
-      // matches their stored user type (admins must not land on customer login).
-      const userType = localStorage.getItem('fusionbanking_user_type')
-      const currentPath = window.location.pathname
-      clearAuth()
-      const loginPath = userType === 'admin' ? '/admin/login' : '/netbanking/login'
-      const onLoginAlready = currentPath === '/admin/login' || currentPath === '/netbanking/login'
-      if (!onLoginAlready) {
-        window.location.href = loginPath
-      }
-    }
-    return Promise.reject(error)
-  }
-)
+attachInterceptors(api)
+attachInterceptors(apiRoot)
 
 export interface ApiResponse<T = unknown> {
   success: boolean
