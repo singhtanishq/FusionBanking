@@ -10,14 +10,15 @@ class TestCase extends BaseTestCase
 
     public function setUp(): void
     {
-        parent::setUp();
-        
-        // Set up testing database connection
+        // Set up testing database connection as default before parent setUp
+        config(['database.default' => 'testing']);
         config(['database.connections.testing' => [
             'driver' => 'sqlite',
             'database' => ':memory:',
             'prefix' => '',
         ]]);
+        
+        parent::setUp();
         
         // Purge and reconnect
         \Illuminate\Support\Facades\DB::purge('testing');
