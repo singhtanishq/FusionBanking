@@ -79,7 +79,7 @@ export default function App() {
         <Route path="/security" element={<PublicSecurityPage />} />
         <Route path="/help" element={<HelpPage />} />
         
-        {/* Public auth routes */}
+        {/* Public auth routes - these don't use layout but need protection */}
         <Route element={<PublicOnlyRoute />}>
           <Route path="/open-account" element={<OpenAccountPage />} />
           <Route path="/track-application" element={<TrackApplicationPage />} />
