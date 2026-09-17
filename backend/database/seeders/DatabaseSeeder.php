@@ -22,6 +22,9 @@ class DatabaseSeeder extends Seeder
         $this->createLoanProducts();
         $this->createFDProducts();
         $this->createPromotions();
+        
+        // Create demo data (customers, accounts, transactions, etc.)
+        $this->call(DemoDataSeeder::class);
     }
 
     private function createRolesAndPermissions(): void
