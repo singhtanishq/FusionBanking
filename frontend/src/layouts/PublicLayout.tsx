@@ -1,18 +1,18 @@
 import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import { Menu, XIcon, Bars3Icon } from '@heroicons/react/24/outline'
+import { XIcon, Bars3Icon } from '@heroicons/react/24/outline'
 import { Link } from 'react-router-dom'
 import { cn } from '@/lib/utils'
-import { Button } from './Button'
+import { Button } from '@/components/ui/Button'
 import { useState } from 'react'
 
 const navigation = [
-  { name: 'Personal Banking', href: '#', current: false },
-  { name: 'Products', href: '/products', current: false },
-  { name: 'Loans', href: '/loans', current: false },
-  { name: 'Deposits', href: '/deposits', current: false },
-  { name: 'Security', href: '/security', current: false },
-  { name: 'Help', href: '/help', current: false },
+  { name: 'Personal Banking', to: '#', current: false },
+  { name: 'Products', to: '/products', current: false },
+  { name: 'Loans', to: '/loans', current: false },
+  { name: 'Deposits', to: '/deposits', current: false },
+  { name: 'Security', to: '/security', current: false },
+  { name: 'Help', to: '/help', current: false },
 ]
 
 export function PublicLayout({ children }: { children: React.ReactNode }) {
