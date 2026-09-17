@@ -6,19 +6,17 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 class TestCase extends BaseTestCase
 {
-    use \Illuminate\Foundation\Testing\RefreshDatabase, \Illuminate\Foundation\Testing\WithFaker;
-
     public function setUp(): void
     {
-        // Set up testing database connection BEFORE parent setUp
-        config(['database.default' => 'testing']);
-        config(['database.connections.testing' => [
+        parent::setUp();
+        
+        // Set up testing database connection using Config facade
+        \Illuminate\Support\Facades\Config::set('database.connections.testing', [
             'driver' => 'sqlite',
             'database' => ':memory:',
             'prefix' => '',
-        ]]);
-        
-        parent::setUp();
+        ]);
+        \Illuminate\Support\Facades\Config::set('database.default', 'testing');
     }
     
     public function artisan($command, $parameters = [])
