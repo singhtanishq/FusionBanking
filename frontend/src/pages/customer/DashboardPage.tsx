@@ -298,5 +298,3 @@ export function CustomerDashboardPage() {
     </div>
   )
 }
-
-import { cn } from '@/lib/utils'
