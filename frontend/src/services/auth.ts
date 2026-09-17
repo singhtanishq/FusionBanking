@@ -4,11 +4,27 @@ const USER_TYPE_KEY = 'fusionbanking_user_type' // 'customer' | 'admin'
 
 export interface User {
   id: number
-  customer_id?: string
+  customer_id: string
   email: string
   full_name: string
   mobile: string
+  alternate_mobile?: string
   is_active: boolean
+  date_of_birth?: string
+  gender?: string
+  marital_status?: string
+  nationality?: string
+  occupation?: string
+  annual_income?: number
+  pan_number?: string
+  aadhaar_number?: string
+  kyc_type?: string
+  kyc_verified_at?: string
+  netbanking_activated_at?: string
+  last_login_at?: string
+  created_at?: string
+  email_verified_at?: string
+  mobile_verified_at?: string
 }
 
 export interface AdminUser {
@@ -18,6 +34,7 @@ export interface AdminUser {
   full_name: string
   is_master: boolean
   is_active: boolean
+  last_login_at?: string
 }
 
 export type AuthUser = User | AdminUser
