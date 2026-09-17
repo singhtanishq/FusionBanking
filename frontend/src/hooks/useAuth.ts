@@ -108,16 +108,16 @@ export function useRequireAuth(userType?: 'customer' | 'admin') {
   const currentUserType = getUserType()
 
   if (loading) {
-    return { user: null, loading: true, authorized: false }
+    return { user: null, loading: true, authorized: false, isAuthenticated: false }
   }
 
   if (!isAuthenticated) {
-    return { user: null, loading: false, authorized: false }
+    return { user: null, loading: false, authorized: false, isAuthenticated: false }
   }
 
   if (userType && currentUserType !== userType) {
-    return { user: null, loading: false, authorized: false }
+    return { user: null, loading: false, authorized: false, isAuthenticated: true }
   }
 
-  return { user, loading: false, authorized: true }
+  return { user, loading: false, authorized: true, isAuthenticated: true }
 }
