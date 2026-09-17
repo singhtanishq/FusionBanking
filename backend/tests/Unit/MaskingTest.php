@@ -1,7 +1,9 @@
 <?php
 
 use App\Models\Customer;
+use App\Models\BankAccount;
 use App\Models\KycInformation;
+use App\Models\Beneficiary;
 
 test('pan masking works correctly', function () {
     $customer = Customer::factory()->make(['pan_number' => 'ABCDE1234F']);
@@ -28,13 +30,13 @@ test('kyc information aadhaar masking', function () {
 });
 
 test('bank account number masking', function () {
-    $account = \App\Models\BankAccount::factory()->make(['account_number' => '501234567891']);
+    $account = BankAccount::factory()->make(['account_number' => '501234567891']);
     
     expect($account->getMaskedAccountNumber())->toBe('XXXXXX7891');
 });
 
 test('beneficiary account number masking', function () {
-    $beneficiary = \App\Models\Beneficiary::factory()->make(['account_number' => '509876543210']);
+    $beneficiary = Beneficiary::factory()->make(['account_number' => '509876543210']);
     
     expect($beneficiary->getMaskedAccountNumber())->toBe('XXXXXX3210');
 });
