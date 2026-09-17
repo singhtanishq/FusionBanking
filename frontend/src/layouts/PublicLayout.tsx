@@ -140,7 +140,7 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-black/30" />
+            <div className="fixed inset-0 bg-black/30" onClick={() => setMobileMenuOpen(false)} />
           </Transition.Child>
 
           <div className="fixed inset-0 flex">
@@ -155,7 +155,7 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
             >
               <Dialog.Panel className="relative w-full max-w-xs flex-1 bg-white shadow-xl">
                 <div className="flex items-center justify-between p-4 border-b border-navy-100">
-                  <Link href="/" className="flex items-center gap-2">
+                  <Link to="/" className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-lg bg-primary-600 flex items-center justify-center">
                       <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
@@ -176,7 +176,7 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
                   {navigation.map((item) => (
                     <Link
                       key={item.name}
-                      href={item.href}
+                      to={item.to}
                       className={cn(
                         'block px-3 py-2 rounded-lg text-base font-medium',
                         item.current
@@ -189,13 +189,13 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
                     </Link>
                   ))}
                   <div className="pt-4 border-t border-navy-100 space-y-3">
-                    <Link href="/track-application" className="btn-secondary w-full" onClick={() => setMobileMenuOpen(false)}>
+                    <Link to="/track-application" className="btn-secondary w-full" onClick={() => setMobileMenuOpen(false)}>
                       Track Application
                     </Link>
-                    <Link href="/netbanking/login" className="btn-outline w-full" onClick={() => setMobileMenuOpen(false)}>
+                    <Link to="/netbanking/login" className="btn-outline w-full" onClick={() => setMobileMenuOpen(false)}>
                       NetBanking Login
                     </Link>
-                    <Link href="/open-account" className="btn-primary w-full" onClick={() => setMobileMenuOpen(false)}>
+                    <Link to="/open-account" className="btn-primary w-full" onClick={() => setMobileMenuOpen(false)}>
                       Open an Account
                     </Link>
                   </div>
