@@ -3,8 +3,20 @@
 use App\Services\AccountService;
 use App\Models\Customer;
 use App\Models\BankAccount;
+use App\Models\Transaction;
 use App\Enums\AccountStatus;
+use App\Enums\TransactionType;
+use Illuminate\Support\Facades\DB;
 use function Pest\Laravel\seed;
+
+uses(\Tests\TestCase::class);
+
+beforeEach(function () {
+    // Set up database connection for testing
+    DB::purge('testing');
+    Config::set('database.connections.testing.database', ':memory:');
+    DB::reconnect('testing');
+});
 
 test('account number generation produces unique numbers', function () {
     $service = new AccountService();
@@ -58,8 +70,6 @@ test('acknowledgement number generation produces unique numbers', function () {
 });
 
 test('initial deposit creates proper transaction and updates balance', function () {
-    seed('DatabaseSeeder');
-    
     $customer = Customer::factory()->create([
         'customer_id' => 'CUS' . rand(1000000, 9999999),
     ]);
@@ -75,7 +85,7 @@ test('initial deposit creates proper transaction and updates balance', function 
     $transaction = $service->createInitialDeposit($account, 100000);
     
     expect($transaction)->not->toBeNull();
-    expect($transaction->type)->toBe(\App\Enums\TransactionType::CASH_DEPOSIT);
+    expect($transaction->type)->toBe(TransactionType::CASH_DEPOSIT);
     expect($transaction->direction)->toBe('credit');
     expect($transaction->amount)->toBe(100000);
     expect($transaction->opening_balance)->toBe(0);
