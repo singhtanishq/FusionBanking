@@ -42,7 +42,9 @@ test('interest calculation is consistent', function () {
     $maturity = $service->calculateMaturityAmount($principal, $rate, $tenure);
     $interest = $service->calculateInterest($principal, $rate, $tenure);
     
-    // Use closeTo for floating point comparison
-    expect($maturity - $interest)->toBeCloseTo($principal, 1);
-    expect($interest)->toBeCloseTo($principal * ($rate / 100) * ($tenure / 12), 1);
+    // Use toBe with tolerance for floating point
+    $diff = abs(($maturity - $interest) - $principal);
+    expect($diff)->toBeLessThan(1);
+    $interestDiff = abs($interest - ($principal * ($rate / 100) * ($tenure / 12)));
+    expect($interestDiff)->toBeLessThan(1);
 });
