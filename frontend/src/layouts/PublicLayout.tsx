@@ -168,7 +168,7 @@ export function PublicLayout() {
                     onClick={() => setMobileMenuOpen(false)}
                     aria-label="Close menu"
                   >
-                    <XIcon className="h-6 w-6" />
+                    <XMarkIcon className="h-6 w-6" />
                   </button>
                 </div>
                 <nav className="p-4 space-y-1">
