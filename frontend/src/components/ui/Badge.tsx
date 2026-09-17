@@ -82,7 +82,7 @@ const statusConfig: Record<string, { variant: BadgeProps['variant']; label: stri
   // Transfer statuses
   pending_verification: { variant: 'warning', label: 'Pending Verification' },
   processing: { variant: 'info', label: 'Processing' },
-  completed: { variant: 'success', label: 'Completed' },
+  transfer_completed: { variant: 'success', label: 'Completed' },
   failed: { variant: 'danger', label: 'Failed' },
   expired: { variant: 'gray', label: 'Expired' },
   cancelled: { variant: 'gray', label: 'Cancelled' },
