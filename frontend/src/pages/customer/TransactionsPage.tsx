@@ -188,7 +188,7 @@ export function TransactionsPage() {
                       {sortColumn === 'type' && (sortDirection === 'asc' ? <ChevronUpIcon className="h-4 w-4 ml-1" /> : <ChevronDownIcon className="h-4 w-4 ml-1" />)}
                     </TableHead>
                     <TableHead>Description</TableHead>
-                    <TableHead className="text-right" onClick={() => handleSort('amount')} className="cursor-pointer select-none">
+                    <TableHead onClick={() => handleSort('amount')} className="text-right cursor-pointer select-none">
                       Amount
                       {sortColumn === 'amount' && (sortDirection === 'asc' ? <ChevronUpIcon className="h-4 w-4 ml-1" /> : <ChevronDownIcon className="h-4 w-4 ml-1" />)}
                     </TableHead>
