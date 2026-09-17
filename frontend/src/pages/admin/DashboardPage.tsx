@@ -10,6 +10,7 @@ import {
   ClockIcon,
   ArrowRightIcon,
   ChevronRightIcon,
+  ShieldCheckIcon,
 } from '@heroicons/react/24/outline'
 import { Card, CardContent, CardHeader } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
@@ -17,6 +18,7 @@ import { Badge } from '@/components/ui/Badge'
 import { formatCurrency, formatNumber } from '@/lib/utils'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '@/services/api'
+import { cn } from '@/lib/utils'
 
 interface DashboardStats {
   total_customers: number
@@ -188,7 +190,7 @@ export function AdminDashboardPage() {
               </CardContent>
             </Card>
           </Link>
-        })}
+        ))}
       </div>
 
       {/* Quick Actions */}
