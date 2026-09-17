@@ -52,13 +52,13 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
             </div>
 
             <div className="hidden md:flex md:items-center md:gap-3">
-              <Link href="/track-application" className="btn-ghost text-sm">
+              <Link to="/track-application" className="btn-ghost text-sm">
                 Track Application
               </Link>
-              <Link href="/netbanking/login" className="btn-outline text-sm">
+              <Link to="/netbanking/login" className="btn-outline text-sm">
                 NetBanking Login
               </Link>
-              <Link href="/open-account" className="btn-primary text-sm">
+              <Link to="/open-account" className="btn-primary text-sm">
                 Open an Account
               </Link>
             </div>
