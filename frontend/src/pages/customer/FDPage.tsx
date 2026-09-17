@@ -227,9 +227,9 @@ export function FDPage() {
                     }>
                       {fd.status.replace('_', ' ')}
                     </Badge>
-                    <span className="font-semibold text-navy-900 tabular-nums">{formatCurrency(fd.principal_amount)}</Badge>
-                    <span className="text-sm text-navy-500">Matures: {formatDate(fd.maturity_date)}</Badge>
-                    <span className="font-semibold text-emerald-600 tabular-nums">{formatCurrency(fd.maturity_amount)}</Badge>
+                    <span className="font-semibold text-navy-900 tabular-nums">{formatCurrency(fd.principal_amount)}</span>
+                    <span className="text-sm text-navy-500">Matures: {formatDate(fd.maturity_date)}</span>
+                    <span className="font-semibold text-emerald-600 tabular-nums">{formatCurrency(fd.maturity_amount)}</span>
                   </div>
                 </Link>
               ))}
