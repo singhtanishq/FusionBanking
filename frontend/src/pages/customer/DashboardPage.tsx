@@ -12,7 +12,7 @@ import {
 import { Card, CardContent, CardHeader, CardFooter } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
-import { formatCurrency, formatDate } from '@/lib/utils'
+import { cn, formatCurrency, formatDate } from '@/lib/utils'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '@/services/api'
 import { useAuth } from '@/hooks/useAuth'
