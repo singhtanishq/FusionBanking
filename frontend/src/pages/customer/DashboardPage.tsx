@@ -82,11 +82,11 @@ export function CustomerDashboardPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-navy-900">
-  Good {new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 17 ? 'afternoon' : 'evening'},{' '}
-  <span className="text-primary-600">
-    {user?.full_name?.split(' ')[0] || 'Customer'}
-  </span>
-</h1>
+            Good {new Date().getHours() < 12 ? 'morning' : new Date().getHours() < 17 ? 'afternoon' : 'evening'},{' '}
+            <span className="text-primary-600">
+              {user?.full_name?.split(' ')[0] || 'Customer'}
+            </span>
+          </h1>
           <p className="text-navy-600 mt-1">Customer ID: <span className="font-mono font-medium text-navy-900">{user?.customer_id}</span></p>
         </div>
         <div className="flex gap-3">
