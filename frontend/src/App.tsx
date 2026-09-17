@@ -99,10 +99,10 @@ export default function App() {
           <Route path="/customer/payments/beneficiaries" element={<BeneficiariesPage />} />
           <Route path="/customer/payments/transactions" element={<TransactionsPage />} />
           <Route path="/customer/payments/statements" element={<StatementsPage />} />
-          <Route path="/customer/products/loans" element={<LoansCustomerPage />} />
-          <Route path="/customer/products/fd" element={<FDCustomerPage />} />
+          <Route path="/customer/products/loans" element={<LoansPage />} />
+          <Route path="/customer/products/fd" element={<FDPage />} />
           <Route path="/customer/profile" element={<ProfilePage />} />
-          <Route path="/customer/security" element={<SecurityCustomerPage />} />
+          <Route path="/customer/security" element={<SecurityPage />} />
           <Route path="/customer/notifications" element={<NotificationsPage />} />
           <Route path="/customer/support" element={<SupportPage />} />
         </Route>
