@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Admin;
 use App\Models\Role;
-use App\Models\Permission;
+use Spatie\Permission\Models\Permission;
 use App\Models\SystemSetting;
 use App\Models\LoanProduct;
 use App\Models\FDProduct;
