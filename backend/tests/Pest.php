@@ -1,5 +1,3 @@
 <?php
 
-uses(\Tests\TestCase::class)
-    ->in('Unit')
-    ->in('Feature');
+uses(\Tests\TestCase::class)->in('Unit', 'Feature');
