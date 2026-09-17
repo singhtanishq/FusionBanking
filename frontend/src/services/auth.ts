@@ -51,6 +51,16 @@ export function setUserType(type: 'customer' | 'admin'): void {
   localStorage.setItem(USER_TYPE_KEY, type)
 }
 
+export function login(
+  token: string,
+  user: AuthUser,
+  type: 'customer' | 'admin'
+): void {
+  setAuthToken(token)
+  setUserData(user)
+  setUserType(type)
+}
+
 export function getUserType(): 'customer' | 'admin' | null {
   return localStorage.getItem(USER_TYPE_KEY) as 'customer' | 'admin' | null
 }
