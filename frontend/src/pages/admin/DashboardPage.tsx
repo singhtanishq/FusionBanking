@@ -188,7 +188,7 @@ export function AdminDashboardPage() {
               </CardContent>
             </Card>
           </Link>
-        )}
+        })}
       </div>
 
       {/* Quick Actions */}
