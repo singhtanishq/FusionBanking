@@ -183,20 +183,20 @@ export function AdminLayout() {
           </nav>
 
           <div className="p-4 border-t border-navy-100">
-<div className="flex items-center gap-3">
-                <Avatar 
-                  name={user?.full_name || 'Admin'} 
-                  size="md" 
-                />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-navy-900 truncate">
-                    {user?.full_name || 'Administrator'}
-                  </p>
-                  <p className="text-xs text-navy-500 truncate">
-                    {user && 'isAdmin' in user && user.is_master ? 'Master Admin' : 'Admin'}
-                  </p>
-                </div>
+            <div className="flex items-center gap-3">
+              <Avatar 
+                name={user?.full_name || 'Admin'} 
+                size="md" 
+              />
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-navy-900 truncate">
+                  {user?.full_name || 'Administrator'}
+                </p>
+                <p className="text-xs text-navy-500 truncate">
+                  {isAdminUser(user) && user.is_master ? 'Master Admin' : 'Admin'}
+                </p>
               </div>
+            </div>
           </div>
         </div>
       </aside>
@@ -227,8 +227,8 @@ export function AdminLayout() {
               
               <div className="hidden sm:flex items-center gap-3">
                 <div className="text-right">
-                  <p className="text-xs text-navy-500">{user && 'isAdmin' in user && user.is_master ? 'Master Admin' : 'Administrator'}</p>
-                  <p className="text-sm font-medium text-navy-900">{user && 'isAdmin' in user ? user.username : 'admin'}</p>
+                  <p className="text-xs text-navy-500">{isAdminUser(user) && user.is_master ? 'Master Admin' : 'Administrator'}</p>
+                  <p className="text-sm font-medium text-navy-900">{isAdminUser(user) ? user.username : 'admin'}</p>
                 </div>
                 <Avatar name={user?.full_name || 'Admin'} size="sm" />
               </div>
