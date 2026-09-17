@@ -2,15 +2,11 @@
 
 namespace Tests;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
 class TestCase extends \PHPUnit\Framework\TestCase
 {
-    use RefreshDatabase, WithFaker;
-
     public function setUp(): void
     {
         parent::setUp();
