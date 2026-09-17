@@ -91,7 +91,7 @@ export function TrackApplicationPage() {
               />
               <Button type="submit" className="w-full" loading={searching}>
                 Track Application
-                <SearchIcon className="h-5 w-5" />
+                <MagnifyingGlassIcon className="h-5 w-5" />
               </Button>
             </form>
             <p className="mt-4 text-center text-sm text-navy-500">
