@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { ChevronLeftIcon, ChevronRightIcon, MagnifyingGlassIcon, NoSymbolIcon, PlayIcon, EyeIcon, XMarkIcon } from '@heroicons/react/24/outline'
+import { ChevronLeftIcon, ChevronRightIcon, MagnifyingGlassIcon, NoSymbolIcon, PlayIcon, EyeIcon } from '@heroicons/react/24/outline'
 import { api, handleApiError } from '@/services/api'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
@@ -252,11 +252,6 @@ export function AdminCustomersPage() {
         confirmText="Restrict"
         loading={restrictMutation.isPending}
       />
-
-      {/* Close button for a11y */}
-      <button type="button" className="sr-only" onClick={() => setDetailId(null)} aria-label="Close details">
-        <XMarkIcon className="h-4 w-4" />
-      </button>
     </div>
   )
 }
