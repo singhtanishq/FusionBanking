@@ -32,10 +32,33 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (Throwable $e, Request $request) {
             if ($request->expectsJson()) {
-                return response()->json([
+                $status = $e instanceof \Illuminate\Http\Exceptions\HttpResponseException
+                    ? $e->getStatusCode()
+                    : (method_exists($e, 'getStatusCode') && $e instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface
+                        ? $e->getStatusCode()
+                        : 500);
+
+                // Never leak internal exception details (SQL, paths, stack traces)
+                // to clients. Show the real message only for safe, user-facing
+                // HTTP exceptions or when debug mode is explicitly enabled.
+                $debug = (bool) config('app.debug');
+                $safeMessage = $e instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface
+                    || $e instanceof \Illuminate\Auth\AuthenticationException
+                    || $e instanceof \Illuminate\Validation\ValidationException
+                    || $e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException
+                    ? $e->getMessage()
+                    : ($status === 500 ? 'An unexpected error occurred. Please try again later.' : $e->getMessage());
+
+                $payload = [
                     'success' => false,
-                    'message' => $e->getMessage(),
-                ], $e instanceof \Illuminate\Http\Exceptions\HttpResponseException ? $e->getStatusCode() : 500);
+                    'message' => $status === 500 && !$debug ? $safeMessage : ($status === 500 ? $e->getMessage() : $safeMessage),
+                ];
+
+                if ($e instanceof \Illuminate\Validation\ValidationException) {
+                    $payload['errors'] = $e->errors();
+                }
+
+                return response()->json($payload, $status);
             }
         });
     })->create();
