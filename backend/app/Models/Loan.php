@@ -71,7 +71,7 @@ class Loan extends Model
 
     public function account(): BelongsTo
     {
-        return $this->belongsTo(BankAccount::class);
+        return $this->belongsTo(BankAccount::class, 'account_id');
     }
 
     public function product(): BelongsTo
