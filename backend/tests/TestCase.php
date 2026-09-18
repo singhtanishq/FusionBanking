@@ -6,7 +6,7 @@ use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 
 class TestCase extends BaseTestCase
 {
-    use \Illuminate\Foundation\Testing\WithFaker;
+    use \Illuminate\Foundation\Testing\RefreshDatabase, \Illuminate\Foundation\Testing\WithFaker;
 
     protected function setUp(): void
     {
@@ -19,15 +19,6 @@ class TestCase extends BaseTestCase
             'database' => __DIR__ . '/../storage/testing.sqlite',
             'prefix' => '',
         ]);
-        
-        // Ensure database file exists
-        $dbPath = __DIR__ . '/../storage/testing.sqlite';
-        if (!file_exists($dbPath)) {
-            touch($dbPath);
-        }
-        
-        // Run migrations
-        $this->artisan('migrate', ['--database' => 'testing', '--force' => true]);
     }
     
     public function artisan($command, $parameters = [])
