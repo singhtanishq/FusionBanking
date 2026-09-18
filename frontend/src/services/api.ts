@@ -29,10 +29,15 @@ api.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
     if (error.response?.status === 401) {
-      // Token expired or invalid
+      // Token expired or invalid — send the user to the login portal that
+      // matches their stored user type (admins must not land on customer login).
+      const userType = localStorage.getItem('fusionbanking_user_type')
+      const currentPath = window.location.pathname
       clearAuth()
-      if (window.location.pathname !== '/login' && window.location.pathname !== '/netbanking/login') {
-        window.location.href = '/netbanking/login'
+      const loginPath = userType === 'admin' ? '/admin/login' : '/netbanking/login'
+      const isAlreadyOnLogin = currentPath === loginPath || currentPath === '/admin/login' || currentPath === '/netbanking/login'
+      if (!isAlreadyOnLogin && currentPath.startsWith('/customer') || currentPath.startsWith('/admin')) {
+        window.location.href = loginPath
       }
     }
     return Promise.reject(error)
