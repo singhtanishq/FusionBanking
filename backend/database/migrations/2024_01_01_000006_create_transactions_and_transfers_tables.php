@@ -25,7 +25,8 @@ return new class extends Migration
                 'pending_verification', 'verified', 'processing',
                 'completed', 'failed', 'expired', 'cancelled'
             ])->default('pending_verification');
-            $table->foreignId('verification_token_id')->nullable()->constrained()->nullOnDelete();
+            // FK to verification_tokens added in a later migration
+            $table->unsignedBigInteger('verification_token_id')->nullable()->index();
             $table->timestamp('verified_at')->nullable();
             $table->timestamp('processed_at')->nullable();
             $table->timestamp('failed_at')->nullable();
