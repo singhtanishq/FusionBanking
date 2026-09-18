@@ -2,11 +2,8 @@
 
 use App\Models\Customer;
 use App\Models\BankAccount;
-use App\Models\Transaction;
 use App\Models\Transfer;
 use App\Services\TransferService;
-use App\Enums\TransferStatus;
-use App\Enums\TransactionType;
 use Illuminate\Support\Facades\DB;
 use function Pest\Laravel\seed;
 
@@ -16,7 +13,7 @@ test('transfer between two accounts works correctly', function () {
 
     $sender = Customer::where('customer_id', 'CUS1000001')->first();
     $receiver = Customer::where('customer_id', 'CUS1000002')->first();
-    
+
     $senderAccount = $sender->primaryAccount;
     $receiverAccount = $receiver->primaryAccount;
 
@@ -37,7 +34,7 @@ test('transfer between two accounts works correctly', function () {
     );
 
     expect($transfer)->toBeInstanceOf(Transfer::class);
-    expect($transfer->status)->toBe(TransferStatus::PENDING_VERIFICATION);
+    expect($transfer->status)->toBe(\App\Enums\TransferStatus::PENDING_VERIFICATION);
     expect($transfer->amount)->toBe($transferAmount);
 
     // Get the verification token
@@ -75,7 +72,7 @@ test('transfer between two accounts works correctly', function () {
 
     // Verify transfer status
     $transfer->refresh();
-    expect($transfer->status)->toBe(TransferStatus::COMPLETED);
+    expect($transfer->status)->toBe(\App\Enums\TransferStatus::COMPLETED);
 
     // Verify transactions created
     $senderTransactions = Transaction::where('account_id', $senderAccount->id)
@@ -91,11 +88,11 @@ test('transfer between two accounts works correctly', function () {
     $senderTxn = $senderTransactions->first();
     $receiverTxn = $receiverTransactions->first();
 
-    expect($senderTxn->type)->toBe(TransactionType::MONEY_SENT);
+    expect($senderTxn->type)->toBe(\App\Enums\TransactionType::MONEY_SENT);
     expect($senderTxn->direction)->toBe('debit');
     expect($senderTxn->amount)->toBe($transferAmount);
 
-    expect($receiverTxn->type)->toBe(TransactionType::MONEY_RECEIVED);
+    expect($receiverTxn->type)->toBe(\App\Enums\TransactionType::MONEY_RECEIVED);
     expect($receiverTxn->direction)->toBe('credit');
     expect($receiverTxn->amount)->toBe($transferAmount);
 });
@@ -229,8 +226,8 @@ test('concurrent transfers from same account are handled correctly', function ()
 
     // Only one transfer should succeed
     $successfulTransfers = 0;
-    if ($transfer1->fresh()->status === TransferStatus::COMPLETED) $successfulTransfers++;
-    if ($transfer2->fresh()->status === TransferStatus::COMPLETED) $successfulTransfers++;
+    if ($transfer1->fresh()->status === \App\Enums\TransferStatus::COMPLETED) $successfulTransfers++;
+    if ($transfer2->fresh()->status === \App\Enums\TransferStatus::COMPLETED) $successfulTransfers++;
 
     expect($successfulTransfers)->toBe(1);
     expect($senderAccount->balance)->toBeGreaterThanOrEqual(0);
