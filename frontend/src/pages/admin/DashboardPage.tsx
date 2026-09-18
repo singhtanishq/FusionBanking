@@ -3,12 +3,9 @@ import {
   DocumentTextIcon, 
   UserCircleIcon, 
   CreditCardIcon, 
-  ArrowPathIcon,
   BanknotesIcon,
   ChartBarIcon,
   ExclamationTriangleIcon,
-  ClockIcon,
-  ArrowRightIcon,
   ChevronRightIcon,
   ShieldCheckIcon,
 } from '@heroicons/react/24/outline'
@@ -17,8 +14,10 @@ import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import { formatCurrency, formatNumber } from '@/lib/utils'
 import { useQuery } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
 import { api } from '@/services/api'
 import { cn } from '@/lib/utils'
+import { toast } from 'react-hot-toast'
 
 interface DashboardStats {
   total_customers: number
@@ -132,7 +131,8 @@ const iconColors = {
 }
 
 export function AdminDashboardPage() {
-  const { data: stats, isLoading } = useQuery({
+  const queryClient = useQueryClient()
+  const { data: stats, isLoading, refetch, isFetching } = useQuery({
     queryKey: ['admin-dashboard-stats'],
     queryFn: async () => {
       const response = await api.get('/admin/dashboard/stats')
@@ -149,13 +149,8 @@ export function AdminDashboardPage() {
           <p className="text-navy-600">Overview of FusionBanking operations</p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline">
-            <ClockIcon className="h-5 w-5" />
+          <Button variant="outline" onClick={() => refetch()} loading={isFetching}>
             Refresh
-          </Button>
-          <Button>
-            <ArrowPathIcon className="h-5 w-5" />
-            Export Report
           </Button>
         </div>
       </div>
