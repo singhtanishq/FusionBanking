@@ -11,8 +11,7 @@ import {
   ChevronDownIcon,
 } from '@heroicons/react/24/outline'
 import { Button } from '@/components/ui/Button'
-import { Card, CardContent } from '@/components/ui/Card'
-import { formatCurrency } from '@/lib/utils'
+import { Card } from '@/components/ui/Card'
 
 const features = [
   {
@@ -295,6 +294,3 @@ export function HomePage() {
     </div>
   )
 }
-
-// Need to import ChevronDownIcon
-import { ChevronDownIcon } from '@heroicons/react/24/outline'
