@@ -85,13 +85,12 @@ export function NotificationsPage() {
     }
   }
 
-  const getPriorityColor = (priority: string) => {
+  const getPriorityVariant = (priority: string): 'danger' | 'warning' | 'info' | 'gray' => {
     switch (priority) {
-      case 'urgent': return 'bg-red-100 text-red-800'
-      case 'high': return 'bg-amber-100 text-amber-800'
-      case 'normal': return 'bg-primary-100 text-primary-800'
-      case 'low': return 'bg-navy-100 text-navy-800'
-      default: return 'bg-navy-100 text-navy-800'
+      case 'urgent': return 'danger'
+      case 'high': return 'warning'
+      case 'normal': return 'info'
+      default: return 'gray'
     }
   }
 
@@ -113,7 +112,7 @@ export function NotificationsPage() {
       {/* Filter Tabs */}
       <div className="border-b border-navy-200 mb-6">
         <nav className="flex gap-8" aria-label="Notification filters">
-          {['all', 'unread', 'read'].map((f) => (
+          {(['all', 'unread', 'read'] as const).map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
@@ -166,7 +165,7 @@ export function NotificationsPage() {
                         <p className="text-sm text-navy-600 mt-1">{notification.message}</p>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Badge variant={notification.priority as any} className={getPriorityColor(notification.priority)}>
+                        <Badge variant={getPriorityVariant(notification.priority)}>
                           {notification.priority}
                         </Badge>
                         <span className="text-xs text-navy-500 whitespace-nowrap">
