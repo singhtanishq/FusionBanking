@@ -10,8 +10,16 @@ interface TableProps {
 
 export function Table({ className, children, striped = true, hoverable = true, bordered = true }: TableProps) {
   return (
-    <div className="overflow-x-auto">
-      <table className={cn('w-full text-sm', className)}>
+    <div className="overflow-x-auto -mx-6 px-6">
+      <table
+        className={cn(
+          'w-full text-sm min-w-[640px]',
+          bordered && 'border border-navy-200 rounded-lg overflow-hidden',
+          striped && '[&_tbody>tr:nth-child(even)]:bg-navy-50/50',
+          hoverable && '[&_tbody>tr]:transition-colors [&_tbody>tr:hover]:bg-navy-50',
+          className
+        )}
+      >
         {children}
       </table>
     </div>
@@ -72,9 +80,10 @@ interface TableHeadProps {
   scope?: 'col' | 'row'
   width?: string
   align?: 'left' | 'center' | 'right'
+  onClick?: () => void
 }
 
-export function TableHead({ className, children, scope = 'col', width, align = 'left' }: TableHeadProps) {
+export function TableHead({ className, children, scope = 'col', width, align = 'left', onClick }: TableHeadProps) {
   return (
     <th
       scope={scope}
@@ -82,9 +91,11 @@ export function TableHead({ className, children, scope = 'col', width, align = '
         'px-4 py-3 text-left font-semibold text-navy-700 uppercase tracking-wider text-xs',
         align === 'center' && 'text-center',
         align === 'right' && 'text-right',
+        onClick && 'cursor-pointer select-none hover:text-navy-900',
         className
       )}
       style={width ? { width } : undefined}
+      onClick={onClick}
     >
       {children}
     </th>
@@ -96,9 +107,10 @@ interface TableCellProps {
   children: React.ReactNode
   align?: 'left' | 'center' | 'right'
   width?: string
+  style?: React.CSSProperties
 }
 
-export function TableCell({ className, children, align = 'left', width }: TableCellProps) {
+export function TableCell({ className, children, align = 'left', width, style }: TableCellProps) {
   return (
     <td
       className={cn(
@@ -107,7 +119,7 @@ export function TableCell({ className, children, align = 'left', width }: TableC
         align === 'right' && 'text-right',
         className
       )}
-      style={width ? { width } : undefined}
+      style={width ? { width, ...style } : style}
     >
       {children}
     </td>
