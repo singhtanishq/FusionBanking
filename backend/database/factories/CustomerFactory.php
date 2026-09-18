@@ -14,6 +14,10 @@ class CustomerFactory extends Factory
     {
         static $emailCounter = 0;
         
+        // Generate a unique name using firstName and lastName
+        $firstName = $this->faker->firstName();
+        $lastName = $this->faker->lastName();
+        
         // Use a combination of counter, random string, and microtime to ensure uniqueness
         $uniqueSuffix = ++$emailCounter . '_' . uniqid('', true);
         
@@ -22,9 +26,9 @@ class CustomerFactory extends Factory
             'email' => 'user_' . $uniqueSuffix . '@example.com',
             'mobile' => '9' . $this->faker->unique()->numberBetween(100000000, 999999999),
             'alternate_mobile' => '8' . $this->faker->numberBetween(100000000, 999999999),
-            'full_name' => $this->faker->firstName() . ' ' . $this->faker->lastName(),
-            'father_name' => $this->faker->firstName('male') . ' ' . $this->faker->lastName(),
-            'mother_name' => $this->faker->firstName('female') . ' ' . $this->faker->lastName(),
+            'full_name' => $this->faker->name(),
+            'father_name' => $this->faker->name(),
+            'mother_name' => $this->faker->name(),
             'date_of_birth' => $this->faker->dateTimeBetween('-60 years', '-18 years'),
             'gender' => $this->faker->randomElement(['male', 'female', 'other']),
             'marital_status' => $this->faker->randomElement(['single', 'married', 'divorced', 'widowed']),
