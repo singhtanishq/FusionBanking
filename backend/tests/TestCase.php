@@ -19,6 +19,9 @@ class TestCase extends BaseTestCase
             'database' => __DIR__ . '/../storage/testing.sqlite',
             'prefix' => '',
         ]);
+        
+        // Disable RefreshDatabase's VACUUM for SQLite
+        $this->app['config']->set('database.connections.testing.sqlite_auto_vacuum', false);
     }
     
     public function artisan($command, $parameters = [])
