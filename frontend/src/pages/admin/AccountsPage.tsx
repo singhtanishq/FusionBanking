@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { ChevronLeftIcon, ChevronRightIcon, SnowflakeIcon, FireIcon } from '@heroicons/react/24/outline'
+import { ChevronLeftIcon, ChevronRightIcon, LockClosedIcon, LockOpenIcon } from '@heroicons/react/24/outline'
 import { api, handleApiError } from '@/services/api'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
@@ -161,12 +161,12 @@ export function AdminAccountsPage() {
                       <td className="px-4 py-3 text-right whitespace-nowrap">
                         {a.status === 'active' && (
                           <Button size="sm" variant="ghost" className="text-red-600" onClick={() => { setFreezeTarget(a); setReason('') }}>
-                            <SnowflakeIcon className="h-4 w-4" /> Freeze
+                            <LockClosedIcon className="h-4 w-4" /> Freeze
                           </Button>
                         )}
                         {a.status === 'frozen' && (
                           <Button size="sm" variant="ghost" className="text-emerald-600" onClick={() => setUnfreezeTarget(a)}>
-                            <FireIcon className="h-4 w-4" /> Unfreeze
+                            <LockOpenIcon className="h-4 w-4" /> Unfreeze
                           </Button>
                         )}
                       </td>
