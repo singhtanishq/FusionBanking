@@ -13,7 +13,7 @@ Facades::clearResolvedInstances();
 Facades::setFacadeApplication($app);
 
 // Run migrations for testing
-$app->make(\Illuminate\Contracts\Console\Kernel::class)->call('migrate', ['--force' => true, '--database' => 'testing']);
+$app->make('Illuminate\Contracts\Console\Kernel')->call('migrate', ['--force' => true, '--database' => 'testing']);
 
 // Configure database
 $app['config']->set('database.default', 'testing');
