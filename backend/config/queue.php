@@ -36,7 +36,8 @@ return [
 
     'failed' => [
         'driver' => env('QUEUE_FAILED_DRIVER', 'database-uuids'),
-        'database' => env('DB_DATABASE', 'forge'),
+        // Must be a *connection name* (e.g. mysql/sqlite), not a database name.
+        'database' => env('DB_CONNECTION', 'mysql'),
         'table' => 'failed_jobs',
     ],
 
