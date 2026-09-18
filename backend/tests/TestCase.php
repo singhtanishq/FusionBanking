@@ -35,11 +35,15 @@ class TestCase extends BaseTestCase
     
     protected function tearDown(): void
     {
-        // Clear the database after each test
+        // Clear the database after each test - only truncate existing tables
         if (config('database.default') === 'testing') {
-            $tables = \Illuminate\Support\Facades\DB::select("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name != 'migrations'");
-            foreach ($tables as $table) {
-                \Illuminate\Support\Facades\DB::statement("DELETE FROM {$table->name}");
+            try {
+                $tables = \Illuminate\Support\Facades\DB::select("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%' AND name != 'migrations'");
+                foreach ($tables as $table) {
+                    \Illuminate\Support\Facades\DB::statement("DELETE FROM {$table->name}");
+                }
+            } catch (\Exception $e) {
+                // Ignore cleanup errors
             }
         }
         parent::tearDown();
