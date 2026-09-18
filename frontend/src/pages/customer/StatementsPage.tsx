@@ -2,13 +2,11 @@ import { useState } from 'react'
 import { 
   MagnifyingGlassIcon, 
   FunnelIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
   DocumentTextIcon,
 } from '@heroicons/react/24/outline'
 import { Button } from '@/components/ui/Button'
 import { Input, Select } from '@/components/ui/Input'
-import { Card, CardContent, CardHeader } from '@/components/ui/Card'
+import { Card, CardContent } from '@/components/ui/Card'
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '@/components/ui/Table'
 import { Badge } from '@/components/ui/Badge'
 import { formatCurrency, formatDateTime } from '@/lib/utils'
