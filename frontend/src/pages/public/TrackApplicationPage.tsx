@@ -3,13 +3,13 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Link } from 'react-router-dom'
-import { MagnifyingGlassIcon, CheckCircleIcon, AlertCircleIcon, ClockIcon, XCircleIcon } from '@heroicons/react/24/outline'
+import { MagnifyingGlassIcon, CheckCircleIcon, XCircleIcon, InformationCircleIcon } from '@heroicons/react/24/outline'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { Card, CardContent, CardHeader } from '@/components/ui/Card'
-import { Badge, StatusBadge } from '@/components/ui/Badge'
-import { ApplicationService } from '@/services/application'
-import { formatDateTime } from '@/lib/utils'
+import { StatusBadge } from '@/components/ui/Badge'
+import { ApplicationService, type Application } from '@/services/application'
+import { formatDateTime, cn } from '@/lib/utils'
 import { toast } from 'react-hot-toast'
 
 const trackSchema = z.object({
@@ -19,19 +19,18 @@ const trackSchema = z.object({
 type TrackForm = z.infer<typeof trackSchema>
 
 const stepOrder = [
-  { key: 'submitted', label: 'Application Submitted', icon: CheckCircleIcon },
-  { key: 'personal_info', label: 'Personal Information', icon: CheckCircleIcon },
-  { key: 'contact_info', label: 'Contact Details', icon: CheckCircleIcon },
-  { key: 'kyc_info', label: 'KYC Verification', icon: CheckCircleIcon },
-  { key: 'documents', label: 'Document Verification', icon: CheckCircleIcon },
-  { key: 'review', label: 'Final Review', icon: CheckCircleIcon },
-  { key: 'account_creation', label: 'Account Creation', icon: CheckCircleIcon },
+  { key: 'submitted', label: 'Application Submitted' },
+  { key: 'personal_info', label: 'Personal Information' },
+  { key: 'contact_info', label: 'Contact Details' },
+  { key: 'kyc_info', label: 'KYC Verification' },
+  { key: 'documents', label: 'Document Verification' },
+  { key: 'review', label: 'Final Review' },
+  { key: 'account_creation', label: 'Account Creation' },
 ]
 
 export function TrackApplicationPage() {
   const [application, setApplication] = useState<Application | null>(null)
   const [searching, setSearching] = useState(false)
-  const [verifying, setVerifying] = useState(false)
   const [showDetails, setShowDetails] = useState(false)
 
   const {
@@ -61,19 +60,19 @@ export function TrackApplicationPage() {
     if (!application) return 'pending'
     const step = application.steps.find(s => s.step_key === stepKey)
     if (!step) return 'pending'
-    
+
     if (step.status === 'verified' || step.status === 'completed') return 'completed'
     if (step.status === 'in_review') return 'current'
     if (step.status === 'rejected' || step.status === 'correction_required') return 'error'
     return 'pending'
   }
 
-  if (!showDetails) {
+  if (!showDetails || !application) {
     return (
       <div className="max-w-md mx-auto py-12 px-4">
         <div className="text-center mb-8">
           <div className="w-16 h-16 rounded-full bg-primary-100 flex items-center justify-center mx-auto mb-4">
-            <MagnifyingGlassIcon className="h-8 w-8 text-primary-600" />
+            <MagnifyingGlassIcon className="h-8 w-8 text-primary-600" aria-hidden="true" />
           </div>
           <h1 className="text-2xl font-bold text-navy-900">Track Your Application</h1>
           <p className="mt-2 text-navy-600">Enter your acknowledgement number to check the status</p>
@@ -91,7 +90,7 @@ export function TrackApplicationPage() {
               />
               <Button type="submit" className="w-full" loading={searching}>
                 Track Application
-                <MagnifyingGlassIcon className="h-5 w-5" />
+                <MagnifyingGlassIcon className="h-5 w-5" aria-hidden="true" />
               </Button>
             </form>
             <p className="mt-4 text-center text-sm text-navy-500">
@@ -123,13 +122,13 @@ export function TrackApplicationPage() {
       {/* Status Overview */}
       <Card className="mb-6">
         <CardContent className="pt-6">
-          <div className="grid md:grid-cols-4 gap-4">
+          <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
             <div className="text-center p-4 bg-navy-50 rounded-lg">
-              <p className="text-2xl font-bold text-navy-900">{application.status.replace('_', ' ').toUpperCase()}</p>
+              <p className="text-2xl font-bold text-navy-900">{application.status.replace(/_/g, ' ').toUpperCase()}</p>
               <p className="text-sm text-navy-600">Current Status</p>
             </div>
             <div className="text-center p-4 bg-navy-50 rounded-lg">
-              <p className="text-2xl font-bold text-navy-900">{application.preferred_account_type}</p>
+              <p className="text-2xl font-bold text-navy-900 capitalize">{application.preferred_account_type}</p>
               <p className="text-sm text-navy-600">Account Type</p>
             </div>
             <div className="text-center p-4 bg-navy-50 rounded-lg">
@@ -152,7 +151,8 @@ export function TrackApplicationPage() {
             {stepOrder.map((step, index) => {
               const status = getStepStatus(step.key)
               const isLast = index === stepOrder.length - 1
-              
+              const stepInfo = application.steps.find(s => s.step_key === step.key)
+
               return (
                 <li key={step.key} className="relative flex items-start gap-4">
                   {!isLast && (
@@ -160,27 +160,27 @@ export function TrackApplicationPage() {
                       <div className="h-full bg-primary-600" style={{ height: status === 'completed' ? '100%' : '0%' }} />
                     </div>
                   )}
-                  <div className={cn('relative flex-shrink-0 w-10 h-10 rounded-full border-2 flex items-center justify-center', 
+                  <div className={cn('relative flex-shrink-0 w-10 h-10 rounded-full border-2 flex items-center justify-center',
                     status === 'completed' && 'bg-emerald-500 border-emerald-500',
                     status === 'current' && 'bg-white border-primary-500',
                     status === 'error' && 'bg-red-500 border-red-500',
                     status === 'pending' && 'bg-white border-navy-300'
                   )}>
-                    {status === 'completed' && <CheckCircleIcon className="h-6 w-6 text-white" />}
-                    {status === 'current' && <div className="w-3 h-3 rounded-full bg-primary-500" />}
-                    {status === 'error' && <XCircleIcon className="h-6 w-6 text-white" />}
+                    {status === 'completed' && <CheckCircleIcon className="h-6 w-6 text-white" aria-hidden="true" />}
+                    {status === 'current' && <div className="w-3 h-3 rounded-full bg-primary-500" aria-hidden="true" />}
+                    {status === 'error' && <XCircleIcon className="h-6 w-6 text-white" aria-hidden="true" />}
                     {status === 'pending' && <span className="text-sm font-medium text-navy-400">{index + 1}</span>}
                   </div>
                   <div className="flex-1 pt-1 min-w-0">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <h3 className="text-sm font-medium text-navy-900">{step.label}</h3>
-                      <StatusBadge status={application.steps.find(s => s.step_key === step.key)?.status || 'pending'} />
+                      <StatusBadge status={stepInfo?.status ?? 'pending'} />
                     </div>
-                    {application.steps.find(s => s.step_key === step.key)?.rejection_reason && (
-                      <p className="mt-1 text-sm text-red-600">Reason: {application.steps.find(s => s.step_key === step.key)!.rejection_reason}</p>
+                    {stepInfo?.rejection_reason && (
+                      <p className="mt-1 text-sm text-red-600">Reason: {stepInfo.rejection_reason}</p>
                     )}
-                    {application.steps.find(s => s.step_key === step.key)?.reviewed_at && (
-                      <p className="mt-1 text-xs text-navy-500">Reviewed: {formatDateTime(application.steps.find(s => s.step_key === step.key)!.reviewed_at)}</p>
+                    {stepInfo?.reviewed_at && (
+                      <p className="mt-1 text-xs text-navy-500">Reviewed: {formatDateTime(stepInfo.reviewed_at)}</p>
                     )}
                   </div>
                 </li>
@@ -194,7 +194,7 @@ export function TrackApplicationPage() {
       <Card>
         <CardHeader title="Application Details" />
         <CardContent>
-          <dl className="grid md:grid-cols-2 gap-4">
+          <dl className="grid sm:grid-cols-2 gap-4">
             <div>
               <dt className="text-sm text-navy-500">Acknowledgement Number</dt>
               <dd className="text-sm font-medium font-mono text-navy-900">{application.acknowledgement_number}</dd>
@@ -207,7 +207,7 @@ export function TrackApplicationPage() {
             </div>
             <div>
               <dt className="text-sm text-navy-500">Account Type</dt>
-              <dd className="text-sm font-medium text-navy-900">{application.preferred_account_type}</dd>
+              <dd className="text-sm font-medium text-navy-900 capitalize">{application.preferred_account_type}</dd>
             </div>
             <div>
               <dt className="text-sm text-navy-500">Submitted</dt>
@@ -218,11 +218,14 @@ export function TrackApplicationPage() {
               <dd className="text-sm font-medium text-navy-900">{application.approved_at ? formatDateTime(application.approved_at) : 'Pending'}</dd>
             </div>
           </dl>
+          <div className="mt-4 p-3 bg-navy-50 rounded-lg flex items-start gap-2">
+            <InformationCircleIcon className="h-5 w-5 text-navy-400 flex-shrink-0" aria-hidden="true" />
+            <p className="text-sm text-navy-600">
+              If a correction is required, you will receive an email with instructions and a secure token to update the flagged step.
+            </p>
+          </div>
         </CardContent>
       </Card>
     </div>
   )
 }
-
-import { Application } from '@/services/application'
-import { cn } from '@/lib/utils'
