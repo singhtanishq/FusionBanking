@@ -19,6 +19,15 @@ class TestCase extends BaseTestCase
             'database' => __DIR__ . '/../storage/testing.sqlite',
             'prefix' => '',
         ]);
+        
+        // Ensure database file exists
+        $dbPath = __DIR__ . '/../storage/testing.sqlite';
+        if (!file_exists($dbPath)) {
+            touch($dbPath);
+        }
+        
+        // Run migrations
+        $this->artisan('migrate', ['--database' => 'testing', '--force' => true]);
     }
     
     public function artisan($command, $parameters = [])
