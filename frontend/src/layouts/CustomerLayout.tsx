@@ -1,25 +1,31 @@
-import { Fragment, useState } from 'react'
+import { Fragment, useState, useEffect } from 'react'
 import { Link, useLocation, NavLink, Outlet } from 'react-router-dom'
 import { Dialog, Transition } from '@headlessui/react'
-import { 
-  HomeIcon, 
-  CreditCardIcon, 
-  ArrowPathIcon, 
-  UserCircleIcon, 
-  ShieldCheckIcon, 
+import { useQuery } from '@tanstack/react-query'
+import {
+  HomeIcon,
+  CreditCardIcon,
+  UserCircleIcon,
+  ShieldCheckIcon,
   BellIcon,
   ChatBubbleLeftRightIcon,
   BanknotesIcon,
   XMarkIcon,
   Bars3Icon,
   ChevronDownIcon,
+  ArrowRightStartOnRectangleIcon,
 } from '@heroicons/react/24/outline'
 import { cn } from '@/lib/utils'
 import { Avatar } from '@/components/ui/Avatar'
 import { useAuth } from '@/hooks/useAuth'
+import { api } from '@/services/api'
 
-function isCustomerUser(user: any): user is { customer_id: string } {
-  return user && 'customer_id' in user
+interface CustomerLike {
+  customer_id: string
+}
+
+function isCustomerUser(user: unknown): user is CustomerLike {
+  return typeof user === 'object' && user !== null && 'customer_id' in user
 }
 
 const navigation = [
@@ -28,7 +34,7 @@ const navigation = [
     { name: 'Overview', href: '/customer/accounts/overview' },
     { name: 'Details', href: '/customer/accounts/details' },
   ]},
-  { name: 'Payments', href: '/customer/payments', icon: ArrowPathIcon, current: false, children: [
+  { name: 'Payments', href: '/customer/payments', icon: BanknotesIcon, current: false, children: [
     { name: 'Send Money', href: '/customer/payments/send' },
     { name: 'Beneficiaries', href: '/customer/payments/beneficiaries' },
     { name: 'Transactions', href: '/customer/payments/transactions' },
@@ -46,14 +52,42 @@ const navigation = [
 
 export function CustomerLayout() {
   const location = useLocation()
-  const { user, logout, loading } = useAuth()
+  const { user, logout } = useAuth()
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [expandedSections, setExpandedSections] = useState<string[]>([])
+  const [expandedSections, setExpandedSections] = useState<string[]>(() => {
+    // Auto-expand the section matching the current route on first render
+    const active = navigation.find(n =>
+      n.children?.some(c => location.pathname.startsWith(c.href))
+    )
+    return active ? [active.name] : []
+  })
+
+  const unreadCountQuery = useQuery({
+    queryKey: ['unread-notifications'],
+    queryFn: async (): Promise<number> => {
+      const response = await api.get<{ success: boolean; data: Array<{ read_at: string | null }> }>('/customer/notifications')
+      return response.data.data.filter(n => n.read_at === null).length
+    },
+    staleTime: 30_000,
+    retry: false,
+  })
+  const unreadCount = unreadCountQuery.data ?? 0
+
+  // Keep the active section expanded when navigating
+  useEffect(() => {
+    const active = navigation.find(n =>
+      n.children?.some(c => location.pathname.startsWith(c.href))
+    )
+    if (active && !expandedSections.includes(active.name)) {
+      setExpandedSections(prev => [...prev, active.name])
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname])
 
   const toggleSection = (section: string) => {
-    setExpandedSections(prev => 
-      prev.includes(section) 
-        ? prev.filter(s => s !== section) 
+    setExpandedSections(prev =>
+      prev.includes(section)
+        ? prev.filter(s => s !== section)
         : [...prev, section]
     )
   }
@@ -63,6 +97,8 @@ export function CustomerLayout() {
   const handleLogout = async () => {
     await logout()
   }
+
+  const customerId = isCustomerUser(user) ? user.customer_id : ''
 
   return (
     <div className="min-h-screen bg-navy-50">
@@ -95,7 +131,7 @@ export function CustomerLayout() {
                 <div className="flex items-center justify-between h-16 px-4 border-b border-navy-100">
                   <Link to="/customer/dashboard" className="flex items-center gap-2">
                     <div className="w-8 h-8 rounded-lg bg-primary-600 flex items-center justify-center">
-                      <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
                       </svg>
                     </div>
@@ -112,9 +148,9 @@ export function CustomerLayout() {
                 </div>
                 <nav className="flex-1 overflow-y-auto p-4 space-y-1">
                   {navigation.map((item) => (
-                    <NavSection 
-                      key={item.name} 
-                      item={item} 
+                    <NavSection
+                      key={item.name}
+                      item={item}
                       isExpanded={isSectionExpanded(item.name)}
                       onToggle={() => toggleSection(item.name)}
                     />
@@ -125,7 +161,7 @@ export function CustomerLayout() {
                       className="btn-danger w-full justify-start"
                       onClick={handleLogout}
                     >
-                      <ArrowPathIcon className="h-5 w-5" />
+                      <ArrowRightStartOnRectangleIcon className="h-5 w-5" />
                       Logout
                     </button>
                   </div>
@@ -142,7 +178,7 @@ export function CustomerLayout() {
           <div className="flex items-center justify-between h-16 px-4 border-b border-navy-100">
             <Link to="/customer/dashboard" className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-primary-600 flex items-center justify-center">
-                <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
                 </svg>
               </div>
@@ -152,12 +188,11 @@ export function CustomerLayout() {
 
           <nav className="flex-1 overflow-y-auto p-4 space-y-1" aria-label="Sidebar">
             {navigation.map((item) => (
-              <NavSection 
-                key={item.name} 
-                item={item} 
+              <NavSection
+                key={item.name}
+                item={item}
                 isExpanded={isSectionExpanded(item.name)}
                 onToggle={() => toggleSection(item.name)}
-                isDesktop
               />
             ))}
 
@@ -167,26 +202,26 @@ export function CustomerLayout() {
                 className="btn-danger w-full justify-start"
                 onClick={handleLogout}
               >
-                <ArrowPathIcon className="h-5 w-5" />
+                <ArrowRightStartOnRectangleIcon className="h-5 w-5" />
                 Logout
               </button>
             </div>
           </nav>
 
           <div className="p-4 border-t border-navy-100">
-<div className="flex items-center gap-3">
-              <Avatar 
-                name={user?.full_name || 'Customer'} 
-                size="md" 
+            <div className="flex items-center gap-3">
+              <Avatar
+                name={user?.full_name || 'Customer'}
+                size="md"
               />
-<div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-navy-900 truncate">
-                    {user?.full_name || 'Customer'}
-                  </p>
-                  <p className="text-xs text-navy-500 truncate">
-                    {isCustomerUser(user) ? user.customer_id : 'Customer ID'}
-                  </p>
-                </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-navy-900 truncate">
+                  {user?.full_name || 'Customer'}
+                </p>
+                <p className="text-xs text-navy-500 truncate font-mono">
+                  {customerId || '—'}
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -207,20 +242,26 @@ export function CustomerLayout() {
                 <Bars3Icon className="h-6 w-6" />
               </button>
               <h1 className="text-lg font-semibold text-navy-900">
-                {navigation.find(n => location.pathname.startsWith(n.href))?.name || 'Dashboard'}
+                {[...navigation]
+                  .sort((a, b) => b.href.length - a.href.length)
+                  .find(n => location.pathname === n.href || location.pathname.startsWith(n.href + '/'))?.name || 'Dashboard'}
               </h1>
             </div>
-            
+
             <div className="flex items-center gap-3">
-              <Link to="/customer/notifications" className="relative btn-ghost p-2">
+              <Link to="/customer/notifications" className="relative btn-ghost p-2" aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ''}`}>
                 <BellIcon className="h-5 w-5 text-navy-600" />
-                <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 min-w-[1rem] h-4 px-1 bg-red-500 text-white text-[10px] font-semibold rounded-full flex items-center justify-center">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
+                )}
               </Link>
-              
+
               <div className="hidden sm:flex items-center gap-3">
                 <div className="text-right">
                   <p className="text-xs text-navy-500">Customer ID</p>
-                  <p className="text-sm font-medium text-navy-900 font-mono">{isCustomerUser(user) ? user.customer_id : 'CUS1234567'}</p>
+                  <p className="text-sm font-medium text-navy-900 font-mono">{customerId || '—'}</p>
                 </div>
                 <Avatar name={user?.full_name || 'User'} size="sm" />
               </div>
@@ -238,15 +279,15 @@ export function CustomerLayout() {
 }
 
 interface NavSectionProps {
-  item: typeof navigation[0]
+  item: (typeof navigation)[number]
   isExpanded: boolean
   onToggle: () => void
-  isDesktop?: boolean
 }
 
-function NavSection({ item, isExpanded, onToggle, isDesktop = true }: NavSectionProps) {
+function NavSection({ item, isExpanded, onToggle }: NavSectionProps) {
   const hasChildren = item.children && item.children.length > 0
-  const isActive = item.current
+  const location = useLocation()
+  const isActive = location.pathname === item.href || location.pathname.startsWith(item.href + '/')
 
   if (!hasChildren) {
     return (
@@ -282,20 +323,20 @@ function NavSection({ item, isExpanded, onToggle, isDesktop = true }: NavSection
           <item.icon className="h-5 w-5 flex-shrink-0" aria-hidden="true" />
           {item.name}
         </div>
-        <ChevronDownIcon 
-          className={cn('h-5 w-5 flex-shrink-0 transition-transform', isExpanded && 'rotate-180')} 
-          aria-hidden="true" 
+        <ChevronDownIcon
+          className={cn('h-5 w-5 flex-shrink-0 transition-transform', isExpanded && 'rotate-180')}
+          aria-hidden="true"
         />
       </button>
-      
+
       <Transition
         show={isExpanded}
         enter="transition ease-out duration-200"
-        enterFrom="opacity-0 height-0"
-        enterTo="opacity-100 height-auto"
+        enterFrom="opacity-0 -translate-y-1"
+        enterTo="opacity-100 translate-y-0"
         leave="transition ease-in duration-150"
-        leaveFrom="opacity-100 height-auto"
-        leaveTo="opacity-0 height-0"
+        leaveFrom="opacity-100 translate-y-0"
+        leaveTo="opacity-0 -translate-y-1"
       >
         <div className="overflow-hidden pl-10 mt-1 space-y-1">
           {item.children?.map((child) => (
