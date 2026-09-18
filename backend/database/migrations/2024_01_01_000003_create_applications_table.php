@@ -27,6 +27,11 @@ return new class extends Migration
             $table->softDeletes();
         });
 
+        // Link customers.application_id now that applications exists
+        Schema::table('customers', function (Blueprint $table) {
+            $table->foreign('application_id')->references('id')->on('applications')->nullOnDelete();
+        });
+
         Schema::create('application_steps', function (Blueprint $table) {
             $table->id();
             $table->foreignId('application_id')->constrained()->cascadeOnDelete();
@@ -69,7 +74,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('application_id')->constrained()->cascadeOnDelete();
             $table->foreignId('application_step_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('verification_token_id')->nullable()->constrained()->nullOnDelete();
+            // FK to verification_tokens added in a later migration
+            $table->unsignedBigInteger('verification_token_id')->nullable()->index();
             $table->timestamp('submitted_at')->nullable();
             $table->timestamp('reviewed_at')->nullable();
             $table->enum('status', [
@@ -85,6 +91,9 @@ return new class extends Migration
 
     public function down(): void
     {
+        Schema::table('customers', function (Blueprint $table) {
+            $table->dropForeign(['application_id']);
+        });
         Schema::dropIfExists('application_corrections');
         Schema::dropIfExists('application_reviews');
         Schema::dropIfExists('application_steps');
