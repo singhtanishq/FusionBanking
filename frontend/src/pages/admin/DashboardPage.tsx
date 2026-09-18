@@ -166,7 +166,7 @@ export function AdminDashboardPage() {
                       {isLoading ? (
                         <span className="animate-pulse bg-navy-200 h-8 w-24 rounded inline-block" />
                       ) : (
-                        stat.format((stats as any)?.[stat.key] || 0)
+                        stat.format((stats as unknown as Record<string, number>)?.[stat.key] ?? 0)
                       )}
                     </p>
                   </div>
