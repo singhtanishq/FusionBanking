@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/Input'
 import { Card, CardContent, CardHeader } from '@/components/ui/Card'
 import { Alert } from '@/components/ui/Alert'
 import { api } from '@/services/api'
-import { login, setUserType } from '@/services/auth'
+import { login } from '@/services/auth'
 import { toast } from 'react-hot-toast'
 
 const activationSchema = z.object({
@@ -34,7 +34,6 @@ export function NetBankingActivatePage() {
   const navigate = useNavigate()
   const [step, setStep] = useState<'verify' | 'password'>('verify')
   const [loading, setLoading] = useState(false)
-  const [token, setToken] = useState('')
 
   const activationForm = useForm<ActivationForm>({
     resolver: zodResolver(activationSchema),
@@ -72,7 +71,6 @@ export function NetBankingActivatePage() {
       
       if (response.data.success) {
         login(response.data.data.token, response.data.data.user, 'customer')
-        setUserType('customer')
         navigate('/customer/dashboard')
       } else {
         toast.error(response.data.message || 'Password setup failed')
