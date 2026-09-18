@@ -3,11 +3,9 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Link } from 'react-router-dom'
-import { 
-  ArrowPathIcon, 
-  CheckCircleIcon, 
-  UserCircleIcon, 
-  BanknotesIcon,
+import {
+  CheckCircleIcon,
+  UserCircleIcon,
   ArrowRightIcon,
   XCircleIcon,
 } from '@heroicons/react/24/outline'
@@ -16,7 +14,8 @@ import { Input } from '@/components/ui/Input'
 import { Card, CardContent, CardHeader } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
 import { StepTracker } from '@/components/forms/StepTracker'
-import { api } from '@/services/api'
+import { Alert } from '@/components/ui/Alert'
+import { api, handleApiError } from '@/services/api'
 import { formatCurrency, maskAccountNumber } from '@/lib/utils'
 import { toast } from 'react-hot-toast'
 
@@ -47,7 +46,6 @@ export function SendMoneyPage() {
     register,
     handleSubmit,
     watch,
-    setValue,
     formState: { errors },
     reset,
   } = useForm<TransferForm>({
@@ -151,7 +149,7 @@ export function SendMoneyPage() {
         <Card className="mt-8">
           <CardHeader title="Transfer Details" description="Enter recipient details and amount" />
           <CardContent>
-            <form onSubmit={handleSubmit(initiateTransfer)} className="space-y-6">
+            <form onSubmit={handleSubmit(() => setCurrentStep(1))} className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-navy-700 mb-2">Recipient Account Number</label>
                 <div className="flex gap-2">
@@ -262,7 +260,7 @@ export function SendMoneyPage() {
                   <XCircleIcon className="h-5 w-5" />
                   Back
                 </Button>
-                <Button onClick={() => handleSubmit(initiateTransfer)()} disabled={verifying}>
+                <Button onClick={() => handleSubmit(initiateTransfer)()} loading={verifying} disabled={!recipient}>
                   Confirm Transfer
                   <ArrowRightIcon className="h-5 w-5" />
                 </Button>
