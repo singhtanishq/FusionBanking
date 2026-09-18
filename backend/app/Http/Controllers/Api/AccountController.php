@@ -20,7 +20,7 @@ class AccountController extends Controller
         $this->accountService = $accountService;
     }
 
-    public function index(Request $request): AnonymousResourceCollection
+    public function index(Request $request): JsonResponse
     {
         $customer = $request->user();
         $accounts = $customer->accounts()
