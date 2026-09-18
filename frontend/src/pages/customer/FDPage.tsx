@@ -57,6 +57,7 @@ export function FDPage() {
   const queryClient = useQueryClient()
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [activeTab, setActiveTab] = useState<'active' | 'matured'>('active')
+  const [closeTarget, setCloseTarget] = useState<string | null>(null)
 
   const { data: fds } = useQuery({
     queryKey: ['fixed-deposits'],
@@ -97,11 +98,14 @@ export function FDPage() {
   const prematureCloseMutation = useMutation({
     mutationFn: (id: string) => api.post(`/customer/fixed-deposits/${id}/premature-close`),
     onSuccess: () => {
-      toast.success('FD closed prematurely')
+      toast.success('FD closed prematurely. Proceeds credited to your primary account.')
+      setCloseTarget(null)
       queryClient.invalidateQueries({ queryKey: ['fixed-deposits'] })
     },
-    onError: () => {
-      toast.error('Failed to close FD')
+    onError: (e) => {
+      const message = (e as { response?: { data?: { message?: string } } }).response?.data?.message
+      toast.error(message || 'Failed to close FD')
+      setCloseTarget(null)
     },
   })
 
