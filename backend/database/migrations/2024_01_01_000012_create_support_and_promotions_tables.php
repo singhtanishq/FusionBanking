@@ -29,7 +29,7 @@ return new class extends Migration
 
         Schema::create('support_ticket_messages', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('ticket_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('ticket_id')->constrained('support_tickets')->cascadeOnDelete();
             $table->string('sender_type');
             $table->unsignedBigInteger('sender_id');
             $table->text('message');
