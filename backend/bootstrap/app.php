@@ -32,26 +32,22 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (Throwable $e, Request $request) {
             if ($request->expectsJson()) {
-                $status = $e instanceof \Illuminate\Http\Exceptions\HttpResponseException
+                $status = $e instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface
                     ? $e->getStatusCode()
-                    : (method_exists($e, 'getStatusCode') && $e instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface
-                        ? $e->getStatusCode()
-                        : 500);
+                    : 500;
 
-                // Never leak internal exception details (SQL, paths, stack traces)
-                // to clients. Show the real message only for safe, user-facing
-                // HTTP exceptions or when debug mode is explicitly enabled.
-                $debug = (bool) config('app.debug');
-                $safeMessage = $e instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface
-                    || $e instanceof \Illuminate\Auth\AuthenticationException
-                    || $e instanceof \Illuminate\Validation\ValidationException
-                    || $e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException
-                    ? $e->getMessage()
-                    : ($status === 500 ? 'An unexpected error occurred. Please try again later.' : $e->getMessage());
+                // Never leak internal details (SQL, paths, stack traces) to clients.
+                // Real messages are shown for user-facing HTTP errors; generic
+                // message for 500s unless debug mode is explicitly enabled.
+                if ($status === 500 && !config('app.debug')) {
+                    $message = 'An unexpected error occurred. Please try again later.';
+                } else {
+                    $message = $e->getMessage() ?: ($status === 500 ? 'Server error' : 'Request failed');
+                }
 
                 $payload = [
                     'success' => false,
-                    'message' => $status === 500 && !$debug ? $safeMessage : ($status === 500 ? $e->getMessage() : $safeMessage),
+                    'message' => $message,
                 ];
 
                 if ($e instanceof \Illuminate\Validation\ValidationException) {
