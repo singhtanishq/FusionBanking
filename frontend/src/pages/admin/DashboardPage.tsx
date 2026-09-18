@@ -6,6 +6,7 @@ import {
   BanknotesIcon,
   ChartBarIcon,
   ExclamationTriangleIcon,
+  ArrowPathIcon,
   ChevronRightIcon,
   ShieldCheckIcon,
 } from '@heroicons/react/24/outline'
@@ -14,10 +15,8 @@ import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import { formatCurrency, formatNumber } from '@/lib/utils'
 import { useQuery } from '@tanstack/react-query'
-import { useQueryClient } from '@tanstack/react-query'
 import { api } from '@/services/api'
 import { cn } from '@/lib/utils'
-import { toast } from 'react-hot-toast'
 
 interface DashboardStats {
   total_customers: number
@@ -131,7 +130,6 @@ const iconColors = {
 }
 
 export function AdminDashboardPage() {
-  const queryClient = useQueryClient()
   const { data: stats, isLoading, refetch, isFetching } = useQuery({
     queryKey: ['admin-dashboard-stats'],
     queryFn: async () => {
