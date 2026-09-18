@@ -17,7 +17,7 @@ class BankAccountFactory extends Factory
         return [
             'account_number' => '50' . $this->faker->unique()->numberBetween(1000000000, 9999999999),
             'ifsc_code' => 'FUSB0001001',
-            'account_type' => $accountTypes[$this->faker->numberBetween(0, 1)],
+            'account_type' => $this->faker->randomElement($accountTypes),
             'status' => AccountStatus::ACTIVE,
             'balance' => $this->faker->randomFloat(2, 0, 1000000),
             'available_balance' => $this->faker->randomFloat(2, 0, 1000000),
