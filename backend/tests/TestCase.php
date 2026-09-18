@@ -12,11 +12,11 @@ class TestCase extends BaseTestCase
     {
         parent::setUp();
         
-        // Force the default database connection to sqlite in-memory
+        // Force the default database connection to sqlite file-based
         $this->app['config']->set('database.default', 'testing');
         $this->app['config']->set('database.connections.testing', [
             'driver' => 'sqlite',
-            'database' => ':memory:',
+            'database' => __DIR__ . '/../storage/testing.sqlite',
             'prefix' => '',
         ]);
     }
