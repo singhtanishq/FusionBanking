@@ -1,19 +1,18 @@
 import { useState } from 'react'
-import { 
-  PlusIcon, 
-  ChatBubbleLeftRightIcon, 
-  ClockIcon,
+import {
+  PlusIcon,
+  ChatBubbleLeftRightIcon,
   CheckCircleIcon,
-  ExclamationTriangleIcon,
   InformationCircleIcon,
-  PencilIcon,
+  ArrowLeftIcon,
+  PhoneIcon,
+  EnvelopeIcon,
   ArrowRightIcon,
 } from '@heroicons/react/24/outline'
 import { Button } from '@/components/ui/Button'
 import { Input, Textarea, Select } from '@/components/ui/Input'
 import { Card, CardContent, CardHeader } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
-import { Modal } from '@/components/ui/Modal'
 import { Alert } from '@/components/ui/Alert'
 import { formatDateTime } from '@/lib/utils'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
@@ -70,7 +69,6 @@ export function SupportPage() {
   const queryClient = useQueryClient()
   const [activeTab, setActiveTab] = useState<'list' | 'create'>('list')
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null)
-  const [showCreateModal, setShowCreateModal] = useState(false)
 
   const { data: tickets } = useQuery({
     queryKey: ['support-tickets'],
@@ -120,32 +118,24 @@ export function SupportPage() {
     createTicketMutation.mutate(data)
   }
 
-  const handleMessageSubmit = (data: MessageForm) => {
-    if (selectedTicket) {
-      addMessageMutation.mutate({ ticketId: selectedTicket.id, message: data.message })
-      messageForm.reset()
-    }
-  }
-
-  const getStatusColor = (status: string) => {
+  const getStatusVariant = (status: string): 'primary' | 'info' | 'warning' | 'success' | 'gray' => {
     switch (status) {
-      case 'open': return 'bg-primary-100 text-primary-800'
-      case 'assigned': return 'bg-blue-100 text-blue-800'
-      case 'in_progress': return 'bg-amber-100 text-amber-800'
-      case 'waiting_customer': return 'bg-purple-100 text-purple-800'
-      case 'resolved': return 'bg-emerald-100 text-emerald-800'
-      case 'closed': return 'bg-navy-100 text-navy-800'
-      default: return 'bg-navy-100 text-navy-800'
+      case 'open': return 'primary'
+      case 'assigned': return 'info'
+      case 'in_progress': return 'warning'
+      case 'waiting_customer': return 'info'
+      case 'resolved': return 'success'
+      case 'closed': return 'gray'
+      default: return 'gray'
     }
   }
 
-  const getPriorityColor = (priority: string) => {
+  const getPriorityVariant = (priority: string): 'danger' | 'warning' | 'info' | 'gray' => {
     switch (priority) {
-      case 'urgent': return 'bg-red-100 text-red-800'
-      case 'high': return 'bg-amber-100 text-amber-800'
-      case 'normal': return 'bg-primary-100 text-primary-800'
-      case 'low': return 'bg-navy-100 text-navy-800'
-      default: return 'bg-navy-100 text-navy-800'
+      case 'urgent': return 'danger'
+      case 'high': return 'warning'
+      case 'normal': return 'info'
+      default: return 'gray'
     }
   }
 
