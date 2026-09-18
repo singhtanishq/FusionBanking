@@ -121,7 +121,7 @@ class BeneficiaryController extends Controller
 
         $beneficiary->update([
             'verification_token_id' => \App\Models\VerificationToken::where('token_hash', \App\Models\VerificationToken::hashToken($tokenData['token']))->first()?->id,
-            'cooling_period_ends_at' => now()->addHours(config('system_settings.beneficiary_cooling_hours', 24)),
+            'cooling_period_ends_at' => now()->addHours((int) \App\Models\SystemSetting::get('beneficiary_cooling_hours', 24)),
         ]);
 
         // Send verification email
@@ -244,7 +244,7 @@ class BeneficiaryController extends Controller
             $beneficiary->update([
                 'is_verified' => true,
                 'verified_at' => now(),
-                'cooling_period_ends_at' => now()->addHours(config('system_settings.beneficiary_cooling_hours', 24)),
+                'cooling_period_ends_at' => now()->addHours((int) \App\Models\SystemSetting::get('beneficiary_cooling_hours', 24)),
             ]);
 
             return response()->json([
