@@ -22,7 +22,7 @@ test('transfer between two accounts works correctly', function () {
 
     $initialSenderBalance = $senderAccount->balance;
     $initialReceiverBalance = $receiverAccount->balance;
-    $transferAmount = 10000;
+    $transferAmount = 10000.00;
 
     $transferService = new TransferService();
     
@@ -38,7 +38,7 @@ test('transfer between two accounts works correctly', function () {
 
     expect($transfer)->toBeInstanceOf(Transfer::class);
     expect($transfer->status)->toBe(\App\Enums\TransferStatus::PENDING_VERIFICATION);
-    expect($transfer->amount)->toBe($transferAmount);
+    expect($transfer->amount)->toBe(10000.00);
 
     // Get the verification token
     $verificationToken = \App\Models\VerificationToken::where('resource_type', Transfer::class)
@@ -174,7 +174,7 @@ test('concurrent transfers from same account are handled correctly', function ()
     $receiverAccount2 = $receiver2->primaryAccount;
 
     $initialBalance = $senderAccount->balance;
-    $transferAmount = 80000;
+    $transferAmount = 80000.00;
 
     $transferService = new TransferService();
 
