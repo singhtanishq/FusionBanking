@@ -1,16 +1,13 @@
 import { useState } from 'react'
-import { 
-  ShieldCheckIcon, 
-  LockClosedIcon, 
+import { Link } from 'react-router-dom'
+import {
+  ShieldCheckIcon,
   KeyIcon,
-  BellIcon,
-  PhoneIcon,
-  EnvelopeIcon,
   ComputerDesktopIcon,
   XCircleIcon,
   CheckCircleIcon,
-  ClockIcon,
   ExclamationTriangleIcon,
+  ArrowRightIcon,
 } from '@heroicons/react/24/outline'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
@@ -20,7 +17,7 @@ import { Modal } from '@/components/ui/Modal'
 import { Alert } from '@/components/ui/Alert'
 import { formatDateTime } from '@/lib/utils'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { api } from '@/services/api'
+import { api, handleApiError } from '@/services/api'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -85,8 +82,8 @@ export function SecurityPage() {
       setShowPasswordModal(false)
       // Logout will be handled by the backend
     },
-    onError: () => {
-      toast.error('Failed to change password')
+    onError: (e) => {
+      toast.error(handleApiError(e as never) || 'Failed to change password')
     },
   })
 
@@ -117,6 +114,13 @@ export function SecurityPage() {
   const passwordForm = useForm<PasswordForm>({
     resolver: zodResolver(passwordSchema),
   })
+
+  // The backend does not flag which session is the current one; treat the most
+  // recently active non-revoked session as this device to avoid revoking it.
+  const activeSessions = (sessions ?? []).filter(s => !s.is_revoked)
+  const currentSessionId = activeSessions.length > 0
+    ? activeSessions.reduce((a, b) => (a.last_activity_at > b.last_activity_at ? a : b)).id
+    : null
 
   const handlePasswordSubmit = (data: PasswordForm) => {
     changePasswordMutation.mutate(data)
@@ -268,7 +272,7 @@ export function SecurityPage() {
                       Last active: {formatDateTime(session.last_activity_at)}
                     </span>
                     <Badge variant="info">Expires: {formatDateTime(session.expires_at)}</Badge>
-                    {!session.is_revoked && session.id !== 'current' && (
+                    {!session.is_revoked && session.id !== currentSessionId && (
                       <Button
                         variant="ghost"
                         size="sm"
