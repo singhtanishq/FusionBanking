@@ -1,61 +1,53 @@
 import { Fragment, useState } from 'react'
 import { Link, useLocation, NavLink, Outlet } from 'react-router-dom'
 import { Dialog, Transition } from '@headlessui/react'
-import { 
-  HomeIcon, 
-  UserCircleIcon, 
-  ShieldCheckIcon, 
-  BellIcon,
-  ChartBarIcon,
+import {
+  HomeIcon,
+  UserCircleIcon,
+  ShieldCheckIcon,
   CreditCardIcon,
-  ArrowPathIcon,
   BanknotesIcon,
   Cog6ToothIcon,
   XMarkIcon,
   Bars3Icon,
   ChevronDownIcon,
-  BuildingOfficeIcon,
   ClipboardDocumentListIcon,
   KeyIcon,
+  ArrowRightStartOnRectangleIcon,
 } from '@heroicons/react/24/outline'
 import { cn } from '@/lib/utils'
 import { Avatar } from '@/components/ui/Avatar'
 import { useAuth } from '@/hooks/useAuth'
 
-function isAdminUser(user: any): user is { is_master: boolean; username: string } {
-  return user && 'isAdmin' in user && user.isAdmin === true
+interface AdminUserLike {
+  is_master: boolean
+  username: string
 }
 
-function isCustomerUser(user: any): user is { customer_id: string } {
-  return user && 'customer_id' in user
+function isAdminUser(user: unknown): user is AdminUserLike {
+  return typeof user === 'object' && user !== null && 'is_master' in user && 'username' in user
 }
 
 const adminNavigation = [
   { name: 'Overview', href: '/admin', icon: HomeIcon, current: false },
-  { name: 'Applications', href: '/admin/applications', icon: ClipboardDocumentListIcon, current: false, children: [
-    { name: 'All Applications', href: '/admin/applications' },
-    { name: 'Pending Review', href: '/admin/applications?status=pending' },
-    { name: 'Corrections Required', href: '/admin/applications?status=correction' },
-  ]},
+  { name: 'Applications', href: '/admin/applications', icon: ClipboardDocumentListIcon, current: false },
   { name: 'Customers', href: '/admin/customers', icon: UserCircleIcon, current: false },
   { name: 'Accounts', href: '/admin/accounts', icon: CreditCardIcon, current: false },
-  { name: 'Transactions', href: '/admin/transactions', icon: ArrowPathIcon, current: false },
+  { name: 'Transactions', href: '/admin/transactions', icon: BanknotesIcon, current: false },
   { name: 'Loans', href: '/admin/loans', icon: BanknotesIcon, current: false },
-  { name: 'Fixed Deposits', href: '/admin/fd', icon: ChartBarIcon, current: false },
-  { name: 'Support', href: '/admin/support', icon: BellIcon, current: false },
-  { name: 'Promotions', href: '/admin/promotions', icon: ChartBarIcon, current: false },
-  { name: 'Security', href: '/admin/security', icon: ShieldCheckIcon, current: false },
+  { name: 'Fixed Deposits', href: '/admin/fd', icon: BanknotesIcon, current: false },
+  { name: 'Support', href: '/admin/support', icon: ShieldCheckIcon, current: false },
+  { name: 'Promotions', href: '/admin/promotions', icon: Cog6ToothIcon, current: false },
   { name: 'Audit Logs', href: '/admin/audit-logs', icon: KeyIcon, current: false },
   { name: 'Administration', href: '/admin/administration', icon: Cog6ToothIcon, current: false, children: [
     { name: 'Admin Users', href: '/admin/administration/users' },
-    { name: 'Roles & Permissions', href: '/admin/administration/roles' },
     { name: 'System Settings', href: '/admin/administration/settings' },
   ]},
 ]
 
 export function AdminLayout() {
   const location = useLocation()
-  const { user, logout, loading } = useAuth()
+  const { user, logout } = useAuth()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [expandedSections, setExpandedSections] = useState<string[]>([])
 
@@ -134,7 +126,7 @@ export function AdminLayout() {
                       className="btn-danger w-full justify-start"
                       onClick={handleLogout}
                     >
-                      <ArrowPathIcon className="h-5 w-5" />
+                      <ArrowRightStartOnRectangleIcon className="h-5 w-5" />
                       Logout
                     </button>
                   </div>
@@ -166,7 +158,6 @@ export function AdminLayout() {
                 item={item} 
                 isExpanded={isSectionExpanded(item.name)}
                 onToggle={() => toggleSection(item.name)}
-                isDesktop
               />
             ))}
 
@@ -176,7 +167,7 @@ export function AdminLayout() {
                 className="btn-danger w-full justify-start"
                 onClick={handleLogout}
               >
-                <ArrowPathIcon className="h-5 w-5" />
+                <ArrowRightStartOnRectangleIcon className="h-5 w-5" />
                 Logout
               </button>
             </div>
@@ -216,13 +207,15 @@ export function AdminLayout() {
                 <Bars3Icon className="h-6 w-6" />
               </button>
               <h1 className="text-lg font-semibold text-navy-900">
-                {adminNavigation.find(n => location.pathname.startsWith(n.href))?.name || 'Dashboard'}
+                {[...adminNavigation]
+                  .sort((a, b) => b.href.length - a.href.length)
+                  .find(n => location.pathname === n.href || location.pathname.startsWith(n.href + '/'))?.name || 'Admin'}
               </h1>
             </div>
             
             <div className="flex items-center gap-3">
-              <Link to="/admin/notifications" className="relative btn-ghost p-2">
-                <BellIcon className="h-5 w-5 text-navy-600" />
+              <Link to="/admin/support" className="relative btn-ghost p-2" aria-label="Support tickets">
+                <ShieldCheckIcon className="h-5 w-5 text-navy-600" />
               </Link>
               
               <div className="hidden sm:flex items-center gap-3">
@@ -246,13 +239,12 @@ export function AdminLayout() {
 }
 
 interface AdminNavSectionProps {
-  item: typeof adminNavigation[0]
+  item: (typeof adminNavigation)[number]
   isExpanded: boolean
   onToggle: () => void
-  isDesktop?: boolean
 }
 
-function AdminNavSection({ item, isExpanded, onToggle, isDesktop = true }: AdminNavSectionProps) {
+function AdminNavSection({ item, isExpanded, onToggle }: AdminNavSectionProps) {
   const hasChildren = item.children && item.children.length > 0
   const location = useLocation()
   const isActive = location.pathname.startsWith(item.href)
