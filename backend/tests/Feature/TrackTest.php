@@ -133,14 +133,19 @@ test('correction submission succeeds with a valid token', function () {
 test('internal server errors do not leak exception details', function () {
     config(['app.debug' => false]);
 
-    // Hit a route that triggers an unhandled exception (ambiguous model binding)
-    $response = $this->postJson('/api/v1/applications/not-a-valid-uuid/personal-info', ['full_name' => 'x']);
+    // Force an unhandled exception with sensitive-looking details
+    $this->mock(\App\Services\ApplicationService::class, function ($mock) {
+        $mock->shouldReceive('createDraftApplication')
+            ->andThrow(new \RuntimeException('SQLSTATE[HY000] connection refused at /var/lib/secret/db.sock'));
+    });
+
+    $response = $this->postJson('/api/v1/applications');
 
     expect($response->status())->toBe(500);
     $message = $response->json('message');
-    expect($message)->not->toContain('SQL');
-    expect($message)->not->toContain('vendor/');
-    expect($message)->not->toContain('storage/');
+    expect($message)->toBe('An unexpected error occurred. Please try again later.');
+    expect($message)->not->toContain('SQLSTATE');
+    expect($message)->not->toContain('secret');
 });
 
 test('http exceptions still return their user-facing message', function () {
