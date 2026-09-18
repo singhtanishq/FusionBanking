@@ -11,7 +11,8 @@ return new class extends Migration
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
             $table->string('customer_id', 20)->unique();
-            $table->foreignId('application_id')->nullable()->constrained()->nullOnDelete();
+            // FK to applications added in a later migration (table must exist first)
+            $table->unsignedBigInteger('application_id')->nullable()->index();
             $table->string('email')->unique();
             $table->string('password');
             $table->string('mobile', 20);
