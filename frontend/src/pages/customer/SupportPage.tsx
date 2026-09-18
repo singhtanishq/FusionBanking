@@ -375,7 +375,7 @@ export function SupportPage() {
   )
 }
 
-function TicketMessages({ ticketId, onClose }: { ticketId: string; onClose: () => void }) {
+function TicketMessages({ ticketId }: { ticketId: string }) {
   const queryClient = useQueryClient()
   const messageForm = useForm<MessageForm>({
     resolver: zodResolver(messageSchema),
