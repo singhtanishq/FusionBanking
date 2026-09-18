@@ -174,7 +174,7 @@ test('concurrent transfers from same account are handled correctly', function ()
     $receiverAccount2 = $receiver2->primaryAccount;
 
     $initialBalance = $senderAccount->balance;
-    $transferAmount = 10000.00; // Smaller amount to avoid daily limit
+    $transferAmount = 1000.00; // Smaller amount to avoid daily limit
 
     $transferService = new TransferService();
 
