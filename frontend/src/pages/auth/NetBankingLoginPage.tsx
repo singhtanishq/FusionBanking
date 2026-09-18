@@ -153,13 +153,13 @@ export function NetBankingLoginPage() {
                         newOtp[index] = value
                         setOtp(newOtp.join(''))
                         if (value && index < 5) {
-                          const next = e.target.nextElementSibling as HTMLInputElement | null
+                          const next = e.currentTarget.nextElementSibling as HTMLInputElement | null
                           next?.focus()
                         }
                       }}
                       onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                         if (e.key === 'Backspace' && !otp[index] && index > 0) {
-                          const prev = e.target.previousElementSibling as HTMLInputElement | null
+                          const prev = e.currentTarget.previousElementSibling as HTMLInputElement | null
                           prev?.focus()
                         }
                       }}
