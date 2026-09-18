@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
-import { MagnifyingGlassIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'import { api, handleApiError } from '@/services/api'
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'import { api, handleApiError } from '@/services/api'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
@@ -225,11 +225,6 @@ export function AdminApplicationsPage() {
             </Button>
           </div>
         </div>
-      )}
-      {!search && (
-        <p className="sr-only">
-          <MagnifyingGlassIcon /> search available
-        </p>
       )}
     </div>
   )
