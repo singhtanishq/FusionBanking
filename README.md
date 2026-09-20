@@ -12,6 +12,16 @@ A complete, production-grade digital banking web application built with Laravel 
 - **Account Creation** - Automatic customer ID, account number, IFSC generation
 - **Initial Deposit** - ₹1,00,000 welcome deposit with proper ledger entry
 
+### Public Website
+- **Home Page** - Hero, features, stats, product showcase, security/CTA sections
+- **Products** - Savings Account, Current Account, Fixed Deposits, Personal Loans, Education Loans, Business Banking
+- **Loans Page** - Personal, Education, Business loans with EMI calculator
+- **Deposits Page** - Fixed deposit products with rate comparison
+- **Security Page** - Security features, 2FA, encryption, fraud prevention
+- **Help Page** - FAQs, contact options, support channels
+- **Track Application** - Public application tracking by acknowledgement number
+- **Open Account** - Complete 7-step account opening flow with KYC
+
 ### NetBanking
 - **Secure Authentication** - Customer ID + password + email OTP (2FA)
 - **Dashboard** - Real-time balance, recent transactions, quick actions
@@ -134,12 +144,29 @@ APP_DEBUG=true
 APP_URL=http://localhost:8000
 APP_FRONTEND_URL=http://localhost:5173
 
+LOG_CHANNEL=stack
+LOG_DEPRECATIONS_CHANNEL=null
+LOG_LEVEL=debug
+
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=fusionbanking
 DB_USERNAME=fusionbanking
 DB_PASSWORD=secret
+
+SESSION_DRIVER=database
+SESSION_LIFETIME=120
+SESSION_ENCRYPT=false
+SESSION_PATH=/
+SESSION_DOMAIN=null
+
+BROADCAST_CONNECTION=log
+FILESYSTEM_DISK=local
+QUEUE_CONNECTION=database
+
+CACHE_STORE=database
+CACHE_PREFIX=fusionbanking_
 
 MAIL_MAILER=smtp
 MAIL_HOST=127.0.0.1
