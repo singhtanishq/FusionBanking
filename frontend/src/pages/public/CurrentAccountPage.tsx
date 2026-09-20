@@ -1,11 +1,25 @@
 import { Link } from 'react-router-dom'
 import {
   CheckCircleIcon,
+  CurrencyDollarIcon,
+  ShieldCheckIcon,
+  ArrowPathIcon,
+  LockClosedIcon,
   ArrowRightIcon,
+  SparklesIcon,
+  BuildingOfficeIcon,
+  ClockIcon,
 } from '@heroicons/react/24/outline'
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent } from '@/components/ui/Card'
-import { cn } from '@/lib/utils'
+import { Badge } from '@/components/ui/Badge'
+import { formatCurrency, formatDate } from '@/lib/utils'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { api } from '@/services/api'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+import { toast } from 'react-hot-toast'
 
 const features = [
   {
@@ -67,28 +81,6 @@ const faqs = [
     a: 'Yes, role-based access control allows you to set Viewer, Maker, Checker, and Admin roles for your team.',
   },
 ]
-
-import { Link } from 'react-router-dom'
-import {
-  CurrencyDollarIcon,
-  ShieldCheckIcon,
-  ArrowPathIcon,
-  LockClosedIcon,
-  ArrowRightIcon,
-  SparklesIcon,
-  BuildingOfficeIcon,
-  ClockIcon,
-} from '@heroicons/react/24/outline'
-import { Button } from '@/components/ui/Button'
-import { Card, CardContent } from '@/components/ui/Card'
-import { Badge } from '@/components/ui/Badge'
-import { formatCurrency, formatDate } from '@/lib/utils'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { api } from '@/services/api'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import { toast } from 'react-hot-toast'
 
 export function CurrentAccountPage() {
   return (
