@@ -131,12 +131,10 @@ export function CurrentAccountPage() {
                 <h3 className="mt-4 text-lg font-semibold text-navy-900">{feature.title}</h3>
                 <p className="mt-2 text-sm text-navy-600">{feature.description}</p>
               </div>
-            )}
+            ), 
           </div>
         </div>
-      </section>
-
-      {/* Requirements */}
+      </section>}
       <section className="py-16 bg-navy-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
