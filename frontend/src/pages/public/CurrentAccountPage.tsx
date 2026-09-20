@@ -133,6 +133,7 @@ export function CurrentAccountPage() {
               </div>
           ))}
         </div>
+        </div>
       </section>
       <section className="py-16 bg-navy-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
