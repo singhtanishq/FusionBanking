@@ -243,8 +243,8 @@ class AuthController extends Controller
             $admin->id
         );
 
-        // Send email (would need Admin notification)
-        // $admin->notify(new AdminLoginOtpNotification($admin, $result['token'], $request->ip()));
+        // Send email notification
+        $admin->notify(new AdminLoginOtpNotification($admin, $result['token'], $request->ip()));
 
         \App\Models\SecurityEvent::log(
             'admin_login_credentials_valid',
