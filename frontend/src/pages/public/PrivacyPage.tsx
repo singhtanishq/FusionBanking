@@ -197,6 +197,9 @@ const sections = [
 ]
 
 export function PrivacyPage() {
+  // TypeScript workaround for unused imports
+  void ShieldCheckIcon;
+  
   return (
     <div className="bg-white">
       {/* Hero */}
