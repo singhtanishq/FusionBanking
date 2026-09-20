@@ -78,14 +78,12 @@ const faqs = [
 ]
 
 export function SavingsAccountPage() {
-  // TypeScript workaround for unused imports through array mapping
-  void CheckCircleIcon;
-  void ArrowPathIcon;
-  void LockClosedIcon;
-  void ArrowRightIcon;
-  void SparklesIcon;
-  void Select;
-  void Badge;
+  // Suppress TypeScript unused import warnings
+void CheckCircleIcon;
+void ArrowPathIcon;
+void LockClosedIcon;
+void ArrowRightIcon;
+void SparklesIcon;
   
   return (
     <div className="bg-white">
