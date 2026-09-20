@@ -14,6 +14,12 @@ const PublicLoansPage = lazy(() => import('@/pages/public/LoansPage').then(m => 
 const DepositsPage = lazy(() => import('@/pages/public/DepositsPage').then(m => ({ default: m.DepositsPage })))
 const PublicSecurityPage = lazy(() => import('@/pages/public/SecurityPage').then(m => ({ default: m.SecurityPage })))
 const HelpPage = lazy(() => import('@/pages/public/HelpPage').then(m => ({ default: m.HelpPage })))
+const PersonalBankingPage = lazy(() => import('@/pages/public/PersonalBankingPage').then(m => ({ default: m.PersonalBankingPage })))
+const SavingsAccountPage = lazy(() => import('@/pages/public/SavingsAccountPage').then(m => ({ default: m.SavingsAccountPage })))
+const CurrentAccountPage = lazy(() => import('@/pages/public/CurrentAccountPage').then(m => ({ default: m.CurrentAccountPage })))
+const ContactPage = lazy(() => import('@/pages/public/ContactPage').then(m => ({ default: m.ContactPage })))
+const PrivacyPage = lazy(() => import('@/pages/public/PrivacyPage').then(m => ({ default: m.PrivacyPage })))
+const TermsPage = lazy(() => import('@/pages/public/TermsPage').then(m => ({ default: m.TermsPage })))
 
 const NetBankingLoginPage = lazy(() => import('@/pages/auth/NetBankingLoginPage').then(m => ({ default: m.NetBankingLoginPage })))
 const NetBankingActivatePage = lazy(() => import('@/pages/auth/NetBankingActivatePage').then(m => ({ default: m.NetBankingActivatePage })))
