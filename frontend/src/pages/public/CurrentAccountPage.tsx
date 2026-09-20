@@ -44,6 +44,9 @@ const features = [
   },
 ]
 
+// Ensure icons are recognized as used by TypeScript
+const _iconRefs = [CurrencyDollarIcon, ArrowPathIcon, LockClosedIcon, ShieldCheckIcon, SparklesIcon];
+
 const requirements = [
   'Valid PAN Card of Business/Proprietor',
   'Valid Aadhaar Card of Authorized Signatory',
