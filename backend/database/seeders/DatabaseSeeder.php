@@ -117,7 +117,7 @@ class DatabaseSeeder extends Seeder
                 'email' => 'master@fusionbanking.local',
                 'password' => Hash::make(config('app.demo_master_password', 'master123')),
                 'full_name' => 'Master Administrator',
-                'bank_access_token' => 'MASTER-ACCESS-TOKEN-2024',
+                'bank_access_token' => Hash::make('MASTER-ACCESS-TOKEN-2024'),
                 'is_master' => true,
                 'is_active' => true,
             ]
@@ -131,7 +131,7 @@ class DatabaseSeeder extends Seeder
                 'email' => 'admin@fusionbanking.local',
                 'password' => Hash::make(config('app.demo_admin_password', 'admin123')),
                 'full_name' => 'Bank Administrator',
-                'bank_access_token' => 'ADMIN-ACCESS-TOKEN-2024',
+                'bank_access_token' => Hash::make('ADMIN-ACCESS-TOKEN-2024'),
                 'is_master' => false,
                 'is_active' => true,
             ]
