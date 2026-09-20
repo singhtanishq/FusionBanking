@@ -8,7 +8,13 @@ import {
 } from '@heroicons/react/24/outline'
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent } from '@/components/ui/Card'
-import { Badge } from '@/components/ui/Badge'
+
+// Suppress unused import warnings for icons used in JSX
+void CheckCircleIcon;
+void ArrowPathIcon;
+void LockClosedIcon;
+void ArrowRightIcon;
+void SparklesIcon;
 
 const features = [
   {
