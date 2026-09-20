@@ -9,7 +9,7 @@ import {
 } from '@heroicons/react/24/outline'
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent } from '@/components/ui/Card'
-import { cn } from '@/lib/utils'
+
 
 const sections = [
   {
@@ -271,9 +271,9 @@ export function PrivacyPage() {
             <h2 className="text-2xl font-bold text-navy-900 mb-4">Questions about your privacy?</h2>
             <p className="text-navy-600 mb-6 max-w-xl mx-auto">
               Our Data Protection Officer is here to help. Contact us at
-              <Link to="mailto:privacy@fusionbanking.com" className="text-primary-600 hover:underline font-medium">
+              <a href="mailto:privacy@fusionbanking.com" className="text-primary-600 hover:underline font-medium">
                 privacy@fusionbanking.com
-              </Link>
+              </a>
             </p>
             <Link to="/contact">
               <Button variant="outline" className="mt-4">
