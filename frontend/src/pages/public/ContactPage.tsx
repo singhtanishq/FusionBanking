@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -187,7 +188,7 @@ export function ContactPage() {
           </div>
 
           {submitted && (
-            <Alert variant="success" className="mb-6" onClose={() => setSubmitted(false)}>
+            <Alert variant="success" className="mb-6">
               <CheckCircleIcon className="h-5 w-5 text-emerald-600" aria-hidden="true" />
               <div>
                 <p className="font-medium text-emerald-800">Message sent successfully!</p>
