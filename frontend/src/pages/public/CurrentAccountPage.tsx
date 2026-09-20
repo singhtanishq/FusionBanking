@@ -132,7 +132,7 @@ export function CurrentAccountPage() {
                 <p className="mt-2 text-sm text-navy-600">{feature.description}</p>
               </div>
             ),
-          </div>
+          ))}
         </div>
       </section>
       <section className="py-16 bg-navy-50">
