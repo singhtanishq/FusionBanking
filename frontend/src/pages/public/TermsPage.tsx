@@ -7,6 +7,11 @@ import {
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent } from '@/components/ui/Card'
 
+// TypeScript workaround for unused imports
+void DocumentTextIcon;
+void ArrowRightIcon;
+void ArrowLeftIcon;
+
 
 const sections = [
   {
