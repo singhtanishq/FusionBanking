@@ -253,7 +253,7 @@ export function TermsPage() {
                 >
                   {index + 1}. {section.title}
                 </Link>
-              )},
+              )}
             </div>
           </nav>
 
