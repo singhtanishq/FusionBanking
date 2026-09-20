@@ -231,7 +231,7 @@ export function PrivacyPage() {
               {sections.map((section, index) => (
                 <Link
                   key={section.title}
-                  href={`#${section.title.toLowerCase().replace(/\s+/g, '-').replace("'", '')}`}
+                  to={`#${section.title.toLowerCase().replace(/\s+/g, '-').replace("'", '')}`}
                   className="px-4 py-2 text-sm text-navy-600 hover:text-primary-600 hover:bg-navy-50 rounded-lg transition-colors"
                 >
                   {index + 1}. {section.title}
