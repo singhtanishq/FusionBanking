@@ -245,15 +245,17 @@ export function TermsPage() {
               Table of Contents
             </h2>
             <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-              {sections.map((section, index) => (
-                <Link
-                  key={section.title}
-                  href={`#${section.title.toLowerCase().replace(/\s+/g, '-').replace("'", '')}`}
-                  className="px-4 py-2 text-sm text-navy-600 hover:text-primary-600 hover:bg-navy-50 rounded-lg transition-colors"
-                >
-                  {index + 1}. {section.title}
-                </Link>
-              )},
+              {sections.map((section, index) => {
+                return (
+                  <Link
+                    key={section.title}
+                    href={`#${section.title.toLowerCase().replace(/\s+/g, '-').replace("'", '')}`}
+                    className="px-4 py-2 text-sm text-navy-600 hover:text-primary-600 hover:bg-navy-50 rounded-lg transition-colors"
+                  >
+                    {index + 1}. {section.title}
+                  </Link>
+                );
+              })},
             </div>
           </nav>
 
