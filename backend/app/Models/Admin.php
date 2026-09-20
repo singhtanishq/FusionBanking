@@ -43,7 +43,7 @@ class Admin extends Authenticatable
         'is_active' => 'boolean',
         'last_login_at' => 'datetime',
         'locked_until' => 'datetime',
-        'bank_access_token' => 'encrypted',
+        'bank_access_token' => 'hashed',
     ];
 
     public function getActivitylogOptions(): LogOptions
